@@ -15,6 +15,10 @@ public:
     explicit AddWindow(QWidget *parent = nullptr);
     ~AddWindow();
 
+private slots:
+    void on_pushButton_save_clicked();
+    void on_comboBox_type_textActivated(const QString &arg1);
+
 private:
     Ui::AddWindow *ui;
 };
