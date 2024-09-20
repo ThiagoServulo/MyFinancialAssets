@@ -19,6 +19,8 @@ private slots:
     void on_pushButton_save_clicked();
     void on_comboBox_type_textActivated(const QString &arg1);
 
+    void on_comboBox_operationType_textActivated(const QString &arg1);
+
 private:
     Ui::AddWindow *ui;
 };
