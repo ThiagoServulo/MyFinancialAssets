@@ -12,16 +12,19 @@ SOURCES += \
     constants.cpp \
     main.cpp \
     mainwindow.cpp \
-    newtransactionwindow.cpp
+    newtransactionwindow.cpp \
+    newyieldwindow.cpp
 
 HEADERS += \
     constants.h \
     mainwindow.h \
-    newtransactionwindow.h
+    newtransactionwindow.h \
+    newyieldwindow.h
 
 FORMS += \
     mainwindow.ui \
-    newtransactionwindow.ui
+    newtransactionwindow.ui \
+    newyieldwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

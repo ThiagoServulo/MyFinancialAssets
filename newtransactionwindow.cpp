@@ -9,8 +9,8 @@ NewTransactionWindow::NewTransactionWindow(QWidget *parent) :
     ui(new Ui::NewTransactionWindow)
 {
     ui->setupUi(this);
-    this->setMaximumSize(365, 245);
-    this->setMinimumSize(365, 245);
+    this->setMaximumSize(365, 274);
+    this->setMinimumSize(365, 274);
 
     // Add assets types
     ui->comboBox_assetType->addItem(getAssetTypeString(AssetType::ACAO));

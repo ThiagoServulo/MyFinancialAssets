@@ -28,7 +28,7 @@
      <string>Novo</string>
     </property>
     <addaction name="actionTransaction"/>
-    <addaction name="actionRendimento"/>
+    <addaction name="actionYield"/>
    </widget>
    <addaction name="menuNew"/>
   </widget>
@@ -38,7 +38,7 @@
     <string>Transação</string>
    </property>
   </action>
-  <action name="actionRendimento">
+  <action name="actionYield">
    <property name="text">
     <string>Rendimento</string>
    </property>

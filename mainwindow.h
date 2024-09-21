@@ -16,7 +16,8 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_actionRendimento_triggered();
+    void on_actionYield_triggered();
+    void on_actionTransaction_triggered();
 
 private:
     Ui::MainWindow *ui;
