@@ -4,13 +4,10 @@
 #include <QString>
 #include <string>
 
-enum class OperationType
+enum class TransactionType
 {
     COMPRA,
-    VENDA,
-    DIVIDENDOS,
-    JCP,
-    RENDIMENTOS
+    VENDA
 };
 
 enum class AssetType
@@ -19,9 +16,10 @@ enum class AssetType
     FUNDO
 };
 
-QString getOperationTypeString(OperationType type);
+QString getOperationTypeString(TransactionType type);
 QString getAssetTypeString(AssetType type);
 bool isValidOperationType(const QString& type);
+bool isValidAssetType(const QString& type);
 
 
 #endif // CONSTANTS_H

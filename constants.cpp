@@ -1,14 +1,11 @@
 #include "constants.h"
 
-QString getOperationTypeString(OperationType type)
+QString getOperationTypeString(TransactionType type)
 {
     switch (type)
     {
-        case OperationType::COMPRA: return "Compra";
-        case OperationType::VENDA: return "Venda";
-        case OperationType::DIVIDENDOS: return "Dividendos";
-        case OperationType::JCP: return "JCP";
-        case OperationType::RENDIMENTOS: return "Rendimentos";
+        case TransactionType::COMPRA: return "Compra";
+        case TransactionType::VENDA: return "Venda";
         default: return "Desconhecido";
     }
 }
@@ -25,9 +22,12 @@ QString getAssetTypeString(AssetType type)
 
 bool isValidOperationType(const QString& type)
 {
-    return (type == getOperationTypeString(OperationType::COMPRA) ||
-            type == getOperationTypeString(OperationType::VENDA) ||
-            type == getOperationTypeString(OperationType::DIVIDENDOS) ||
-            type == getOperationTypeString(OperationType::JCP) ||
-            type == getOperationTypeString(OperationType::RENDIMENTOS));
+    return (type == getOperationTypeString(TransactionType::COMPRA) ||
+            type == getOperationTypeString(TransactionType::VENDA));
+}
+
+bool isValidAssetType(const QString& type)
+{
+    return (type == getAssetTypeString(AssetType::ACAO) ||
+            type == getAssetTypeString(AssetType::FUNDO));
 }

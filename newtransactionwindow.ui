@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>AddWindow</class>
- <widget class="QMainWindow" name="AddWindow">
+ <class>NewTransactionWindow</class>
+ <widget class="QMainWindow" name="NewTransactionWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,10 +11,10 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Nova transação</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -27,7 +27,7 @@
      <item>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="QLabel" name="label_type">
+        <widget class="QLabel" name="label_assetType">
          <property name="font">
           <font>
            <pointsize>12</pointsize>
@@ -41,7 +41,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="comboBox_type">
+        <widget class="QComboBox" name="comboBox_assetType">
          <property name="font">
           <font>
            <pointsize>12</pointsize>
@@ -73,7 +73,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="label_operationType">
+        <widget class="QLabel" name="label_transactionType">
          <property name="font">
           <font>
            <pointsize>12</pointsize>
@@ -82,12 +82,12 @@
           </font>
          </property>
          <property name="text">
-          <string>Tipo de operação</string>
+          <string>Tipo de transação</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="comboBox_operationType">
+        <widget class="QComboBox" name="comboBox_transactionType">
          <property name="font">
           <font>
            <pointsize>12</pointsize>
@@ -132,7 +132,7 @@
           </font>
          </property>
          <property name="text">
-          <string>Valor</string>
+          <string>Valor unitário</string>
          </property>
         </widget>
        </item>

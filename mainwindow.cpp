@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "newtransactionwindow.h"
 #include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
@@ -13,3 +14,9 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+
+void MainWindow::on_actionRendimento_triggered()
+{
+    NewTransactionWindow *newTransactionWindow = new NewTransactionWindow(this);
+    newTransactionWindow->show();
+}
