@@ -2,6 +2,7 @@
 #include "newtransactionwindow.h"
 #include "newyieldwindow.h"
 #include "ui_mainwindow.h"
+#include "database.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -27,3 +28,10 @@ void MainWindow::on_actionYield_triggered()
     NewYieldWindow *newYieldWindow = new NewYieldWindow(this);
     newYieldWindow->show();
 }
+
+void MainWindow::on_pushButton_clicked()
+{
+    Database db;
+    db.prepareDatabase();
+}
+

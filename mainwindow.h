@@ -19,6 +19,8 @@ private slots:
     void on_actionYield_triggered();
     void on_actionTransaction_triggered();
 
+    void on_pushButton_clicked();
+
 private:
     Ui::MainWindow *ui;
 };

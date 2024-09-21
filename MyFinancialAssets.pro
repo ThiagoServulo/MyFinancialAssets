@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -10,6 +10,7 @@ CONFIG += c++11
 
 SOURCES += \
     constants.cpp \
+    database.cpp \
     main.cpp \
     mainwindow.cpp \
     newtransactionwindow.cpp \
@@ -17,6 +18,7 @@ SOURCES += \
 
 HEADERS += \
     constants.h \
+    database.h \
     mainwindow.h \
     newtransactionwindow.h \
     newyieldwindow.h
