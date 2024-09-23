@@ -15,6 +15,10 @@ public:
     explicit NewReorganizationWindow(QWidget *parent = nullptr);
     ~NewReorganizationWindow();
 
+private slots:
+    void on_pushButton_save_clicked();
+    void on_pushButton_cancel_clicked();
+
 private:
     Ui::NewReorganizationWindow *ui;
 };

@@ -1,4 +1,5 @@
 #include "database.h"
+#include "constants.h"
 #include <QApplication>
 #include <QSqlQuery>
 
@@ -28,39 +29,95 @@ void Database::closeDatabase()
 
 bool Database::createYieldTable()
 {
-    // Open database
-    if(openDatabase())
+    // Query to create yield table
+    QString createTableQuery = R"(
+        CREATE TABLE IF NOT EXISTS yield_table (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_ticker INTEGER NOT NULL,
+            id_yield_type INTEGER NOT NULL,
+            value DOUBLE NOT NULL,
+            date DATE NOT NULL
+        );
+    )";
+
+    // Execute query
+    QSqlQuery query;
+    if (!query.exec(createTableQuery))
     {
-        // Query to create yield table
-        QString createTableQuery = R"(
-            CREATE TABLE IF NOT EXISTS yield_table (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                id_asset_type INTEGER NOT NULL,
-                id_ticker INTEGER NOT NULL,
-                id_yield_type INTEGER NOT NULL,
-                value DOUBLE NOT NULL,
-                date DATE NOT NULL
-            );
-        )";
-
-        QSqlQuery query;
-        if (!query.exec(createTableQuery))
-        {
-            qDebug() << "Error to create yield_table";
-            closeDatabase();
-            return false;
-        }
-
-        // Close database
-        closeDatabase();
-        return true;
+        qDebug() << "Error to create yield_table";
+        return false;
     }
 
-    qDebug() << "Error to open database";
-    return false;
+    // Table created
+    qDebug() << "Table yield_table created";
+    return true;
+}
+
+bool Database::createAssetTypeTable()
+{
+    // Query to create asset type table
+    QString createTableQuery = R"(
+        CREATE TABLE IF NOT EXISTS asset_type_table (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            asset_type TEXT NOT NULL
+        );
+    )";
+
+    // Execute query
+    QSqlQuery query;
+    if (!query.exec(createTableQuery))
+    {
+        qDebug() << "Error to create asset_type_table";
+        return false;
+    }
+
+    // Table created
+    qDebug() << "Table asset_type_table created";
+    return true;
+}
+
+bool Database::populateAssetTypeTable()
+{
+    // Query to create asset type table
+    QString insertQuery = R"(
+        INSERT INTO asset_type_table (asset_type) VALUES
+        (:type1),
+        (:type2);
+    )";
+
+    QSqlQuery query;
+    query.prepare(insertQuery);
+    query.bindValue(":type1", getAssetTypeString(AssetType::ACAO));
+    query.bindValue(":type2", getAssetTypeString(AssetType::FUNDO));
+
+    // Execute query
+    if (!query.exec())
+    {
+        qDebug() << "Error to populate asset_type_table";
+        return false;
+    }
+
+    // Table populate
+    qDebug() << "Table asset_type_table populated";
+    return true;
 }
 
 bool Database::prepareDatabase()
 {
-    return createYieldTable();
+    bool createStatus = false;
+
+    if(openDatabase())
+    {
+        createStatus |= createYieldTable();
+        createStatus |= createAssetTypeTable();
+        populateAssetTypeTable();
+    }
+    else
+    {
+        qDebug() << "Error to open database";
+        return createStatus;
+    }
+
+    closeDatabase();
+    return createStatus;
 }

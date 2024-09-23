@@ -32,7 +32,7 @@ enum class ReorganizationType
 QString getOperationTypeString(TransactionType type);
 QString getAssetTypeString(AssetType type);
 QString getYieldTypeString(YieldType type);
-QString getrReorganizationTypeString(ReorganizationType type);
+QString getReorganizationTypeString(ReorganizationType type);
 bool isValidOperationType(const QString& type);
 bool isValidAssetType(const QString& type);
 bool isValidYieldType(const QString& type);

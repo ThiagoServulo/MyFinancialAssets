@@ -16,8 +16,8 @@ NewReorganizationWindow::NewReorganizationWindow(QWidget *parent) :
     ui->comboBox_assetType->setCurrentIndex(-1);
 
     // Add reorganization types
-    ui->comboBox_reorganizationType->addItem(getrReorganizationTypeString(ReorganizationType::DESDOBRAMENTO));
-    ui->comboBox_reorganizationType->addItem(getrReorganizationTypeString(ReorganizationType::GRUPAMENTO));
+    ui->comboBox_reorganizationType->addItem(getReorganizationTypeString(ReorganizationType::DESDOBRAMENTO));
+    ui->comboBox_reorganizationType->addItem(getReorganizationTypeString(ReorganizationType::GRUPAMENTO));
     ui->comboBox_reorganizationType->setCurrentIndex(-1);
 
     // Creating ratio validator
@@ -40,3 +40,15 @@ NewReorganizationWindow::~NewReorganizationWindow()
 {
     delete ui;
 }
+
+void NewReorganizationWindow::on_pushButton_save_clicked()
+{
+
+}
+
+
+void NewReorganizationWindow::on_pushButton_cancel_clicked()
+{
+    this->close();
+}
+

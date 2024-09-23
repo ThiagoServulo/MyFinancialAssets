@@ -31,7 +31,7 @@ QString getYieldTypeString(YieldType type)
     }
 }
 
-QString getrReorganizationTypeString(ReorganizationType type)
+QString getReorganizationTypeString(ReorganizationType type)
 {
     switch (type)
     {
@@ -62,6 +62,6 @@ bool isValidYieldType(const QString& type)
 
 bool isValidReorganizationType(const QString& type)
 {
-    return (type == getrReorganizationTypeString(ReorganizationType::DESDOBRAMENTO) ||
-            type == getrReorganizationTypeString(ReorganizationType::GRUPAMENTO));
+    return (type == getReorganizationTypeString(ReorganizationType::DESDOBRAMENTO) ||
+            type == getReorganizationTypeString(ReorganizationType::GRUPAMENTO));
 }

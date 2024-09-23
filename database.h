@@ -13,6 +13,8 @@ private:
     bool openDatabase();
     void closeDatabase();
     bool createYieldTable();
+    bool createAssetTypeTable();
+    bool populateAssetTypeTable();
 };
 
 #endif // DATABASE_H
