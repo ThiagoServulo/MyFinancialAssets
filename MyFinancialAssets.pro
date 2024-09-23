@@ -13,6 +13,7 @@ SOURCES += \
     database.cpp \
     main.cpp \
     mainwindow.cpp \
+    newreorganizationwindow.cpp \
     newtransactionwindow.cpp \
     newyieldwindow.cpp
 
@@ -20,11 +21,13 @@ HEADERS += \
     constants.h \
     database.h \
     mainwindow.h \
+    newreorganizationwindow.h \
     newtransactionwindow.h \
     newyieldwindow.h
 
 FORMS += \
     mainwindow.ui \
+    newreorganizationwindow.ui \
     newtransactionwindow.ui \
     newyieldwindow.ui
 

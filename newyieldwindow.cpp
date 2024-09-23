@@ -8,6 +8,8 @@ NewYieldWindow::NewYieldWindow(QWidget *parent) :
     ui(new Ui::NewYieldWindow)
 {
     ui->setupUi(this);
+    this->setMaximumSize(367, 268);
+    this->setMinimumSize(367, 268);
 
     // Add assets types
     ui->comboBox_assetType->addItem(getAssetTypeString(AssetType::ACAO));

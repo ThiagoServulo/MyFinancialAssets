@@ -31,6 +31,16 @@ QString getYieldTypeString(YieldType type)
     }
 }
 
+QString getrReorganizationTypeString(ReorganizationType type)
+{
+    switch (type)
+    {
+        case ReorganizationType::DESDOBRAMENTO: return "Desdobramento";
+        case ReorganizationType::GRUPAMENTO: return "Grupamento";
+        default: return "Desconhecido";
+    }
+}
+
 bool isValidOperationType(const QString& type)
 {
     return (type == getOperationTypeString(TransactionType::COMPRA) ||
@@ -43,9 +53,15 @@ bool isValidAssetType(const QString& type)
             type == getAssetTypeString(AssetType::FUNDO));
 }
 
-bool isYieldType(const QString& type)
+bool isValidYieldType(const QString& type)
 {
     return (type == getYieldTypeString(YieldType::RENDIMENTO) ||
             type == getYieldTypeString(YieldType::DIVIDENDO) ||
             type == getYieldTypeString(YieldType::JCP));
+}
+
+bool isValidReorganizationType(const QString& type)
+{
+    return (type == getrReorganizationTypeString(ReorganizationType::DESDOBRAMENTO) ||
+            type == getrReorganizationTypeString(ReorganizationType::GRUPAMENTO));
 }

@@ -43,6 +43,7 @@
     </property>
     <addaction name="actionTransaction"/>
     <addaction name="actionYield"/>
+    <addaction name="actionReorganization"/>
    </widget>
    <addaction name="menuNew"/>
   </widget>
@@ -55,6 +56,11 @@
   <action name="actionYield">
    <property name="text">
     <string>Rendimento</string>
+   </property>
+  </action>
+  <action name="actionReorganization">
+   <property name="text">
+    <string>Reorganização</string>
    </property>
   </action>
  </widget>

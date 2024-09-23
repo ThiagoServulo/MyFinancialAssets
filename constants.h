@@ -23,11 +23,19 @@ enum class YieldType
     RENDIMENTO
 };
 
+enum class ReorganizationType
+{
+    GRUPAMENTO,
+    DESDOBRAMENTO
+};
+
 QString getOperationTypeString(TransactionType type);
 QString getAssetTypeString(AssetType type);
 QString getYieldTypeString(YieldType type);
+QString getrReorganizationTypeString(ReorganizationType type);
 bool isValidOperationType(const QString& type);
 bool isValidAssetType(const QString& type);
-bool isYieldType(const QString& type);
+bool isValidYieldType(const QString& type);
+bool isValidReorganizationType(const QString& type);
 
 #endif // CONSTANTS_H
