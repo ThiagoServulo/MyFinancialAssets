@@ -40,7 +40,7 @@ NewYieldWindow::~NewYieldWindow()
 void NewYieldWindow::on_pushButton_save_clicked()
 {
     // Checking fields
-    if(isValidOperationType(ui->comboBox_yieldType->currentText()) &&
+    if(isValidTransactionType(ui->comboBox_yieldType->currentText()) &&
        isValidAssetType(ui->comboBox_assetType->currentText()) &&
        ui->lineEdit_ticker->text() != "" &&
        ui->lineEdit_value->text() != "")

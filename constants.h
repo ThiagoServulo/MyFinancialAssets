@@ -29,11 +29,11 @@ enum class ReorganizationType
     DESDOBRAMENTO
 };
 
-QString getOperationTypeString(TransactionType type);
+QString getTransactionTypeString(TransactionType type);
 QString getAssetTypeString(AssetType type);
 QString getYieldTypeString(YieldType type);
 QString getReorganizationTypeString(ReorganizationType type);
-bool isValidOperationType(const QString& type);
+bool isValidTransactionType(const QString& type);
 bool isValidAssetType(const QString& type);
 bool isValidYieldType(const QString& type);
 bool isValidReorganizationType(const QString& type);

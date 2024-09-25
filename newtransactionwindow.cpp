@@ -18,8 +18,8 @@ NewTransactionWindow::NewTransactionWindow(QWidget *parent) :
     ui->comboBox_assetType->setCurrentIndex(-1);
 
     // Add transaction types
-    ui->comboBox_transactionType->addItem(getOperationTypeString(TransactionType::COMPRA));
-    ui->comboBox_transactionType->addItem(getOperationTypeString(TransactionType::VENDA));
+    ui->comboBox_transactionType->addItem(getTransactionTypeString(TransactionType::COMPRA));
+    ui->comboBox_transactionType->addItem(getTransactionTypeString(TransactionType::VENDA));
     ui->comboBox_transactionType->setCurrentIndex(-1);
 
     // Creating quantity validator
@@ -50,7 +50,7 @@ NewTransactionWindow::~NewTransactionWindow()
 void NewTransactionWindow::on_pushButton_save_clicked()
 {
     // Checking fields
-    if(isValidOperationType(ui->comboBox_transactionType->currentText()) &&
+    if(isValidTransactionType(ui->comboBox_transactionType->currentText()) &&
        isValidAssetType(ui->comboBox_assetType->currentText()) &&
        ui->lineEdit_quantity->text() != "" &&
        ui->lineEdit_ticker->text() != "" &&

@@ -1,6 +1,6 @@
 #include "constants.h"
 
-QString getOperationTypeString(TransactionType type)
+QString getTransactionTypeString(TransactionType type)
 {
     switch (type)
     {
@@ -41,10 +41,10 @@ QString getReorganizationTypeString(ReorganizationType type)
     }
 }
 
-bool isValidOperationType(const QString& type)
+bool isValidTransactionType(const QString& type)
 {
-    return (type == getOperationTypeString(TransactionType::COMPRA) ||
-            type == getOperationTypeString(TransactionType::VENDA));
+    return (type == getTransactionTypeString(TransactionType::COMPRA) ||
+            type == getTransactionTypeString(TransactionType::VENDA));
 }
 
 bool isValidAssetType(const QString& type)

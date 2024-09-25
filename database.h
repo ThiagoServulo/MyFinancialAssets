@@ -15,6 +15,11 @@ private:
     bool createYieldTable();
     bool createAssetTypeTable();
     bool populateAssetTypeTable();
+    bool createYieldTypeTable();
+    bool populateYieldTypeTable();
+    bool createTransactionTypeTable();
+    bool createTickerTable();
+    bool populateTransactionTypeTable();
 };
 
 #endif // DATABASE_H
