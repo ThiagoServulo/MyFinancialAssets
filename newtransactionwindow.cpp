@@ -60,7 +60,7 @@ void NewTransactionWindow::on_pushButton_save_clicked()
     }
     else
     {
-        QMessageBox::about(this, "Inválido", "Inválido");
+        QMessageBox::about(this, "Inválido", "Um dos campos digitados está inválido");
     }
 }
 

@@ -1,12 +1,15 @@
 #ifndef DATABASE_H
 #define DATABASE_H
+
 #include <QSqlDatabase>
+#include <transaction.h>
 
 class Database
 {
 public:
     Database();
     bool prepareDatabase();
+    bool insertIntoTransactionTable(Transaction transaction);
 
 private:
     QSqlDatabase database;

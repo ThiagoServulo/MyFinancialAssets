@@ -230,12 +230,12 @@ bool Database::createTransactionTable()
 {
     // Query to create transaction table
     QString createTableQuery = R"(
-        CREATE TABLE IF NOT EXISTS yield_table (
+        CREATE TABLE IF NOT EXISTS transaction_table (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             id_ticker INTEGER NOT NULL,
             id_transaction INTEGER NOT NULL,
             quantity INTEGER NOT NULL,
-            average_price DOUBLE NOT NULL,
+            unitary_price DOUBLE NOT NULL,
             date DATE NOT NULL
         );
     )";
@@ -355,4 +355,29 @@ bool Database::prepareDatabase()
 
     closeDatabase();
     return createStatus;
+}
+
+bool Database::insertIntoTransactionTable(Transaction transaction)
+{
+    QSqlQuery query;
+/*
+    // Prepare the SQL insert query
+    query.prepare("INSERT INTO transaction_table (id_ticker, id_transaction, quantity, unitary_price, date) "
+                  "VALUES (:id_ticker, :id_transaction, :quantity, :unitary_price, :date)");
+
+    // Bind values to the query
+    query.bindValue(":id_ticker", transaction->get);
+    query.bindValue(":id_transaction", );
+    query.bindValue(":quantity", quantity);
+    query.bindValue(":unitary_price", unitaryPrice);
+    query.bindValue(":date", date);
+
+    // Execute the query and check for success
+    if (!query.exec())
+    {
+        qDebug() << "Erro to insert new transaction";
+        return false;
+    }
+*/
+    return true;
 }

@@ -29,6 +29,13 @@ enum class ReorganizationType
     DESDOBRAMENTO
 };
 
+enum class EventType
+{
+    TRANSACTION,
+    YIELD,
+    REORGANIZATION
+};
+
 QString getTransactionTypeString(TransactionType type);
 QString getAssetTypeString(AssetType type);
 QString getYieldTypeString(YieldType type);
