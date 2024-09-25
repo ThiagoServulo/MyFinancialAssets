@@ -226,6 +226,108 @@ bool Database::createTickerTable()
     return true;
 }
 
+bool Database::createTransactionTable()
+{
+    // Query to create transaction table
+    QString createTableQuery = R"(
+        CREATE TABLE IF NOT EXISTS yield_table (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_ticker INTEGER NOT NULL,
+            id_transaction INTEGER NOT NULL,
+            quantity INTEGER NOT NULL,
+            average_price DOUBLE NOT NULL,
+            date DATE NOT NULL
+        );
+    )";
+
+    // Execute query
+    QSqlQuery query;
+    if (!query.exec(createTableQuery))
+    {
+        qDebug() << "Error to create transaction_table";
+        return false;
+    }
+
+    // Table created
+    qDebug() << "Table transaction_table created";
+    return true;
+}
+
+bool Database::createReorganizationTypeTable()
+{
+    // Query to create reorganization type table
+    QString createTableQuery = R"(
+        CREATE TABLE IF NOT EXISTS reorganization_type_table (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            reorganization_type TEXT NOT NULL
+        );
+    )";
+
+    // Execute query
+    QSqlQuery query;
+    if (!query.exec(createTableQuery))
+    {
+        qDebug() << "Error to create reorganization_type_table";
+        return false;
+    }
+
+    // Table created
+    qDebug() << "Table reorganization_type_table created";
+    return true;
+}
+
+bool Database::populateReorganizationTypeTable()
+{
+    // Query to insert data into reorganization type table
+    QString insertQuery = R"(
+        INSERT INTO reorganization_type_table (reorganization_type) VALUES
+        (:type1),
+        (:type2);
+    )";
+
+    QSqlQuery query;
+    query.prepare(insertQuery);
+    query.bindValue(":type1", getReorganizationTypeString(ReorganizationType::DESDOBRAMENTO));
+    query.bindValue(":type2", getReorganizationTypeString(ReorganizationType::GRUPAMENTO));
+
+    // Execute query
+    if (!query.exec())
+    {
+        qDebug() << "Error to populate reorganization_type_table";
+        return false;
+    }
+
+    // Table populate
+    qDebug() << "Table reorganization_type_table populated";
+    return true;
+}
+
+bool Database::createReorganizationTable()
+{
+    // Query to create reorganization table
+    QString createTableQuery = R"(
+        CREATE TABLE IF NOT EXISTS reorganization_table (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_ticker INTEGER NOT NULL,
+            id_reorganization INTEGER NOT NULL,
+            ratio INTEGER NOT NULL,
+            date DATE NOT NULL
+        );
+    )";
+
+    // Execute query
+    QSqlQuery query;
+    if (!query.exec(createTableQuery))
+    {
+        qDebug() << "Error to create reorganization_table";
+        return false;
+    }
+
+    // Table created
+    qDebug() << "Table reorganization_table created";
+    return true;
+}
+
 bool Database::prepareDatabase()
 {
     bool createStatus = false;
@@ -237,9 +339,13 @@ bool Database::prepareDatabase()
         createStatus |= createYieldTypeTable();
         createStatus |= createTransactionTypeTable();
         createStatus |= createTickerTable();
+        createStatus |= createTransactionTable();
+        createStatus |= createReorganizationTypeTable();
+        createStatus |= createReorganizationTable();
         populateAssetTypeTable();
         populateYieldTypeTable();
         populateTransactionTypeTable();
+        populateReorganizationTypeTable();
     }
     else
     {

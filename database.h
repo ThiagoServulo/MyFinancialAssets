@@ -19,7 +19,11 @@ private:
     bool populateYieldTypeTable();
     bool createTransactionTypeTable();
     bool createTickerTable();
+    bool createTransactionTable();
     bool populateTransactionTypeTable();
+    bool createReorganizationTypeTable();
+    bool createReorganizationTable();
+    bool populateReorganizationTypeTable();
 };
 
 #endif // DATABASE_H
