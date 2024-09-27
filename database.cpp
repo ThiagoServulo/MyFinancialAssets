@@ -451,6 +451,9 @@ int Database::getYieldTypeId(YieldType yieldType)
 
 int Database::getTickerId(QString ticker)
 {
+    // Convert to upper case
+    ticker = ticker.toUpper();
+
     if(openDatabase())
     {
         QString queryStr = R"(
@@ -519,6 +522,9 @@ int Database::getTransactionTypeId(TransactionType transactionType)
 
 int Database::insertTicker(QString ticker, AssetType assetType)
 {
+    // Convert to upper case
+    ticker = ticker.toUpper();
+
     // Get asset id
     int assetTypeId = getAssetTypeId(assetType);
 
@@ -735,3 +741,97 @@ int Database::insertYield(QString ticker, Yield yield)
     qDebug() << "Error to open database to insert yield";
     return DATABASE_ERROR;
 }
+
+int Database::getTickerQuantity(QString ticker)
+{
+    // Get ticker id
+    int tickerId = getTickerId(ticker);
+
+    // Check ticker id
+    if(tickerId == NOT_FOUND || tickerId == DATABASE_ERROR)
+    {
+        return tickerId;
+    }
+
+    // Init quantity
+    int quantity = 0;
+
+    // Get transactions
+    std::vector<Transaction> transactions = getTransactionsByTickerId(tickerId);
+
+    for(auto transaction: transactions)
+    {
+        // Check transaction type
+        if(transaction.getTransactionType() == TransactionType::COMPRA)
+        {
+            quantity += transaction.getQuantity();
+        }
+        else if(transaction.getTransactionType() == TransactionType::VENDA)
+        {
+            quantity -= transaction.getQuantity();
+        }
+        else
+        {
+            throw std::invalid_argument("Transaction type invalid");
+        }
+    }
+
+    // Return quantity
+    return quantity;
+}
+
+std::vector<Transaction> Database::getTransactionsByTickerId(int tickerId)
+{
+    std::vector<Transaction> transactions;
+
+    if (openDatabase())
+    {
+        QSqlQuery query;
+
+        // Prepare the SQL select query with JOIN
+        query.prepare(R"(
+            SELECT tt.transaction_type, t.quantity, t.unitary_price, t.date
+            FROM transaction_table t
+            JOIN transaction_type_table tt ON t.id_transaction_type = tt.id
+            WHERE t.id_ticker = :id_ticker;
+        )");
+
+        // Bind the tickerId to the query
+        query.bindValue(":id_ticker", tickerId);
+
+        // Execute the query
+        if (!query.exec())
+        {
+            qDebug() << "Error retrieving transactions for tickerId:" << tickerId;
+            closeDatabase();
+            return transactions;  // Returning an empty vector in case of error
+        }
+
+        // Iterate over the results and populate the vector
+        while (query.next())
+        {
+            QString transactionTypeStr = query.value(0).toString();
+            int quantity = query.value(1).toInt();
+            double unitaryPrice = query.value(2).toDouble();
+            QString date = query.value(3).toString();
+
+            // Convert transaction type string to TransactionType
+            TransactionType transactionType = getTransactionTypeFromString(transactionTypeStr);
+
+            // Create a Transaction object
+            Transaction transaction( QDate::fromString(date, "yyyy-MM-dd"), transactionType, quantity, unitaryPrice);
+
+            // Add the transaction to the vector
+            transactions.push_back(transaction);
+        }
+
+        closeDatabase();
+    }
+    else
+    {
+        qDebug() << "Error opening database to retrieve transactions";
+    }
+
+    return transactions;
+}
+

@@ -12,7 +12,7 @@ private:
     double unitaryPrice;
 
 public:
-    Transaction(QDate eventData, EventType eventType, TransactionType transactionType, int quantity, double unitaryPrice);
+    Transaction(QDate eventData, TransactionType transactionType, int quantity, double unitaryPrice);
     TransactionType getTransactionType() const;
     int getQuantity() const;
     double getUnitaryPrice() const;

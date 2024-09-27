@@ -1,7 +1,7 @@
 #include "transaction.h"
 
-Transaction::Transaction(QDate eventData, EventType eventType, TransactionType transactionType, int quantity, double unitaryPrice)
-        : Event(eventData, eventType)
+Transaction::Transaction(QDate eventData, TransactionType transactionType, int quantity, double unitaryPrice)
+        : Event(eventData, EventType::TRANSACTION)
 {
     this->transactionType = transactionType;
     this->quantity =  quantity;

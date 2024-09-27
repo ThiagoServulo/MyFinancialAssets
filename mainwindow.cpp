@@ -16,6 +16,11 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    QStringList headerLabels = {"Ticker", "Distribuição", "Quantidade", "Rendimento", "Preço médio", "Preço atual", "Valorização", "Ganho de capital"};
+    ui->tableWidget_stocks->setColumnCount(headerLabels.size());
+    ui->tableWidget_stocks->setHorizontalHeaderLabels(headerLabels);
+
 }
 
 MainWindow::~MainWindow()
@@ -44,30 +49,6 @@ void MainWindow::on_pushButton_clicked()
     Yield yield(QDate(2020,5,5), EventType::YIELD, YieldType::DIVIDENDO, 2.55);
 
     qDebug() << db.insertYield("sapo", yield);
-    //qDebug() << db.insertTicker("SAPO", AssetType::ACAO);
-
-    //Database db;
-    //db.prepareDatabase();
-    /*
-    Asset a("teste",AssetType::ACAO);
-    std::shared_ptr<Transaction> t = std::make_shared<Transaction>(QDate(2020,5,5), EventType::TRANSACTION, TransactionType::COMPRA, 10, 1.50);
-    std::shared_ptr<Transaction> t2 = std::make_shared<Transaction>(QDate(2020,5,5), EventType::TRANSACTION, TransactionType::COMPRA, 18, 1.50);
-    std::shared_ptr<Yield> t3 = std::make_shared<Yield>(QDate(2020,5,5), EventType::YIELD, YieldType::DIVIDENDO, 20);
-    a.addEvent(t);
-    a.addEvent(t2);
-    a.addEvent(t3);
-    std::vector<Transaction> i = a.getTransactionList();
-    for (auto x : i)
-    {
-        qDebug() << "quantidade: " << x.getQuantity();
-    }
-    std::vector<Yield> i2 = a.getYieldList();
-    for (auto x : i2)
-    {
-        qDebug() << "valor: " << x.getValue();
-
-    }
-    */
 }
 
 void MainWindow::on_actionReorganization_triggered()

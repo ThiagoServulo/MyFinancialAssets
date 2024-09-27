@@ -17,6 +17,8 @@ public:
     bool insertTransaction(QString ticker, AssetType assetType, Transaction transaction);
     int insertYield(QString ticker, Yield yield);
     bool selectAllTickers(std::vector<std::pair<QString, AssetType>>& tickers);
+    int getTickerQuantity(QString ticker);
+    std::vector<Transaction> getTransactionsByTickerId(int tickerId);
 
 private:
     QSqlDatabase database;

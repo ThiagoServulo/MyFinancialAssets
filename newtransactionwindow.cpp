@@ -58,16 +58,42 @@ void NewTransactionWindow::on_pushButton_save_clicked()
        ui->lineEdit_ticker->text() != "" &&
        ui->lineEdit_value->text() != "")
     {
+        // Check transaction type
+        TransactionType transactionType = getTransactionTypeFromString(ui->comboBox_transactionType->currentText());
+
+        Database database;
+        QString ticker = ui->lineEdit_ticker->text();
+        int quantity = ui->lineEdit_quantity->text().toInt();
+
+        if(transactionType == TransactionType::VENDA)
+        {
+            int quantityAvailable = database.getTickerQuantity(ticker);
+
+            switch (quantityAvailable)
+            {
+                case NOT_FOUND:
+                    QMessageBox::critical(this, "Erro", "Você não tem esse ativo cadastrado, portanto não pode vendê-lo");
+                    return;
+
+                case DATABASE_ERROR:
+                    QMessageBox::critical(this, "Erro", "Erro ao inserir transação");
+                    this->close();
+                    return;
+
+                default:
+                    if(quantityAvailable < quantity)
+                    {
+                        QMessageBox::critical(this, "Erro", "Você tem apenas: " + QString::number(quantityAvailable) + " quantidade de papéis disponíveis");
+                        return;
+                    }
+            }
+        }
+
         // Create transaction
-        Transaction transaction(ui->dateEdit->date(), EventType::TRANSACTION,
-                                getTransactionTypeFromString(ui->comboBox_transactionType->currentText()),
-                                ui->lineEdit_quantity->text().toInt(),
-                                ui->lineEdit_value->text().toDouble());
+        Transaction transaction(ui->dateEdit->date(), transactionType, quantity, ui->lineEdit_value->text().toDouble());
 
         // Insert transaction into database
-        Database database;
-        if(database.insertTransaction(ui->lineEdit_ticker->text(),
-                                      getAssetTypeFromString(ui->comboBox_assetType->currentText()), transaction))
+        if(database.insertTransaction(ticker, getAssetTypeFromString(ui->comboBox_assetType->currentText()), transaction))
         {
             QMessageBox::information(this, "Sucesso", "Transação inserida com sucesso");
         }

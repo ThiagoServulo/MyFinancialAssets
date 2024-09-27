@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>1012</width>
     <height>600</height>
    </rect>
   </property>
@@ -17,8 +17,8 @@
    <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>
-      <x>230</x>
-      <y>200</y>
+      <x>460</x>
+      <y>520</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -27,13 +27,46 @@
      <string>PushButton</string>
     </property>
    </widget>
+   <widget class="QTabWidget" name="tabWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>0</y>
+      <width>991</width>
+      <height>511</height>
+     </rect>
+    </property>
+    <property name="currentIndex">
+     <number>1</number>
+    </property>
+    <widget class="QWidget" name="tab">
+     <attribute name="title">
+      <string>Geral</string>
+     </attribute>
+    </widget>
+    <widget class="QWidget" name="tab_stocks">
+     <attribute name="title">
+      <string>Ações</string>
+     </attribute>
+     <widget class="QTableWidget" name="tableWidget_stocks">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>961</width>
+        <height>192</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>1012</width>
      <height>21</height>
     </rect>
    </property>
@@ -47,7 +80,6 @@
    </widget>
    <addaction name="menuNew"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
   <action name="actionTransaction">
    <property name="text">
     <string>Transação</string>
