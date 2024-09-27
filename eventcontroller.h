@@ -1,8 +1,8 @@
 #ifndef EVENTCONTROLLER_H
 #define EVENTCONTROLLER_H
 
-#include "event.h"
 #include "transaction.h"
+#include "yield.h"
 #include <vector>
 
 class EventController
@@ -13,8 +13,8 @@ private:
 public:
     EventController();
     void addEvent(std::shared_ptr<Event> event);
-    bool removeEvent(Event event);
     std::vector<Transaction> getTransactionList();
+    std::vector<Yield> getYieldList();
 };
 
 #endif // EVENTCONTROLLER_H

@@ -12,38 +12,47 @@ void EventController::addEvent(std::shared_ptr<Event> event)
 std::vector<Transaction> EventController::getTransactionList()
 {
     std::vector<Transaction> transactionList;
-    for (const std::shared_ptr<Event>& event : eventList) // Usando range-based for loop com shared_ptr
+
+    for (const std::shared_ptr<Event>& event : eventList)
     {
-        qDebug() << (event->getEventType() == EventType::TRANSACTION);
         if (event->getEventType() == EventType::TRANSACTION)
         {
-            // Tente fazer um dynamic_cast para verificar se é um Transaction
+            // Use cast to convert event
             const Transaction* transaction = dynamic_cast<const Transaction*>(event.get());
-            if (transaction) // Se o cast for bem-sucedido
+
+            // Check object
+            if (transaction)
             {
-                transactionList.push_back(*transaction); // Adiciona o objeto Transaction
-            }
-            else
-            {
-                qDebug() << "Objeto não é uma Transaction.";
+                // Add transaction
+                transactionList.push_back(*transaction);
             }
         }
     }
+
+    // Return transactions
     return transactionList;
 }
 
-bool EventController::removeEvent(Event event)
+std::vector<Yield> EventController::getYieldList()
 {
-    /*
-    for (auto it = eventList.begin(); it != eventList.end(); ++it)
+    std::vector<Yield> yieldList;
+
+    for (const std::shared_ptr<Event>& event : eventList)
     {
-        if((it->getId() == event.getId()) && it->getEventType() == event.getEventType())
+        if (event->getEventType() == EventType::YIELD)
         {
-            eventList.erase(it);
-            return true;
+            // Use cast to convert event
+            const Yield* yield = dynamic_cast<const Yield*>(event.get());
+
+            // Check object
+            if (yield)
+            {
+                // Add yield
+                yieldList.push_back(*yield);
+            }
         }
     }
-    qDebug() << "Error to remove event";
-    return false;
-    */
+
+    // Return yields
+    return yieldList;
 }

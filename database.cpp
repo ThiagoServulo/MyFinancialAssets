@@ -2,6 +2,8 @@
 #include "constants.h"
 #include <QApplication>
 #include <QSqlQuery>
+#include <QFile>
+#include <QFileInfo>
 
 Database::Database()
 {
@@ -73,7 +75,9 @@ bool Database::createAssetTypeTable()
 
     // Table created
     qDebug() << "Table asset_type_table created";
-    return true;
+
+    // Populate table
+    return populateAssetTypeTable();;
 }
 
 bool Database::populateAssetTypeTable()
@@ -122,7 +126,9 @@ bool Database::createYieldTypeTable()
 
     // Table created
     qDebug() << "Table yield_type_table created";
-    return true;
+
+    // Populate table
+    return populateYieldTypeTable();
 }
 
 bool Database::populateYieldTypeTable()
@@ -173,7 +179,9 @@ bool Database::createTransactionTypeTable()
 
     // Table created
     qDebug() << "Table transaction_type_table created";
-    return true;
+
+    // Populate table
+    return populateTransactionTypeTable();
 }
 
 bool Database::populateTransactionTypeTable()
@@ -273,7 +281,9 @@ bool Database::createReorganizationTypeTable()
 
     // Table created
     qDebug() << "Table reorganization_type_table created";
-    return true;
+
+    // Populate table
+    return populateReorganizationTypeTable();
 }
 
 bool Database::populateReorganizationTypeTable()
@@ -328,12 +338,28 @@ bool Database::createReorganizationTable()
     return true;
 }
 
+bool checkIfDatabaseExists()
+{
+    QString appDir = QCoreApplication::applicationDirPath();
+    QString dbPath = appDir + "/database.db";
+    QFile file(dbPath);
+
+    return file.exists();
+}
+
 bool Database::prepareDatabase()
 {
     bool createStatus = false;
 
+    if(checkIfDatabaseExists())
+    {
+        return true;
+    }
+
+    // Creating database
     if(openDatabase())
     {
+        qDebug() << "Creating database";
         createStatus |= createYieldTable();
         createStatus |= createAssetTypeTable();
         createStatus |= createYieldTypeTable();
@@ -342,14 +368,10 @@ bool Database::prepareDatabase()
         createStatus |= createTransactionTable();
         createStatus |= createReorganizationTypeTable();
         createStatus |= createReorganizationTable();
-        populateAssetTypeTable();
-        populateYieldTypeTable();
-        populateTransactionTypeTable();
-        populateReorganizationTypeTable();
     }
     else
     {
-        qDebug() << "Error to open database";
+        qDebug() << "Error to create database";
         return createStatus;
     }
 
