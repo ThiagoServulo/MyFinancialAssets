@@ -39,7 +39,10 @@ void MainWindow::on_actionYield_triggered()
 void MainWindow::on_pushButton_clicked()
 {
     Database db;
-    db.prepareDatabase();
+    //qDebug() << db.insertTicker("SAPO", AssetType::ACAO);
+
+    //Database db;
+    //db.prepareDatabase();
     /*
     Asset a("teste",AssetType::ACAO);
     std::shared_ptr<Transaction> t = std::make_shared<Transaction>(QDate(2020,5,5), EventType::TRANSACTION, TransactionType::COMPRA, 10, 1.50);

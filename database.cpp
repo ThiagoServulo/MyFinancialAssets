@@ -338,7 +338,7 @@ bool Database::createReorganizationTable()
     return true;
 }
 
-bool checkIfDatabaseExists()
+bool Database::checkIfDatabaseExists()
 {
     QString appDir = QCoreApplication::applicationDirPath();
     QString dbPath = appDir + "/database.db";
@@ -378,6 +378,151 @@ bool Database::prepareDatabase()
     closeDatabase();
     return createStatus;
 }
+
+int Database::getAssetTypeId(AssetType assetType)
+{
+    if(openDatabase())
+    {
+        QString queryStr = R"(
+            SELECT id FROM asset_type_table WHERE asset_type = :type;
+        )";
+
+        QSqlQuery query;
+        query.prepare(queryStr);
+        query.bindValue(":type", getAssetTypeString(assetType));
+
+        if (!query.exec())
+        {
+            qDebug() << "Error fetching asset type id";
+            closeDatabase();
+            return DATABASE_ERROR;
+        }
+
+        if (query.next())
+        {
+            // Return the id
+            closeDatabase();
+            return query.value(0).toInt();
+        }
+
+        qDebug() << "Asset type not found";
+        closeDatabase();
+        return NOT_FOUND;
+    }
+
+    qDebug() << "Error to open database to get asset type id";
+    return DATABASE_ERROR;
+}
+
+int Database::getTickerId(QString ticker)
+{
+    if(openDatabase())
+    {
+        QString queryStr = R"(
+            SELECT id FROM ticker_table WHERE ticker = :ticker;
+        )";
+
+        QSqlQuery query;
+        query.prepare(queryStr);
+        query.bindValue(":ticker", ticker);
+
+        if (!query.exec())
+        {
+            qDebug() << "Error fetching ticker id";
+            closeDatabase();
+            return DATABASE_ERROR;
+        }
+
+        if (query.next())
+        {
+            // Return the ticker id
+            closeDatabase();
+            return query.value(0).toInt();
+        }
+
+        qDebug() << "Ticker not found";
+        closeDatabase();
+        return NOT_FOUND;
+    }
+
+    qDebug() << "Error to open database to get ticker id";
+    return DATABASE_ERROR;
+}
+
+int Database::insertTicker(QString ticker, AssetType assetType)
+{
+    // Get asset id
+    int assetTypeId = getAssetTypeId(assetType);
+
+    // Check asset id
+    if (assetTypeId == NOT_FOUND || assetTypeId == DATABASE_ERROR)
+    {
+        qDebug() << "Invalid asset type id, the database was loaded incorrect";
+        return DATABASE_ERROR;
+    }
+
+    if(openDatabase())
+    {
+        QString insertQuery = R"(
+            INSERT INTO ticker_table (ticker, id_asset_type)
+            VALUES (:ticker, :id_asset_type);
+        )";
+
+        QSqlQuery query;
+        query.prepare(insertQuery);
+        query.bindValue(":ticker", ticker);
+        query.bindValue(":id_asset_type", assetTypeId);
+
+        // Execute query
+        if (!query.exec())
+        {
+            qDebug() << "Error inserting ticker into ticker_table";
+            closeDatabase();
+            return DATABASE_ERROR;
+        }
+
+        closeDatabase();
+        return DATABASE_SUCCESS;
+    }
+
+    qDebug() << "Error to open database to insert ticker";
+    return DATABASE_ERROR;
+}
+
+/*
+bool Database::insertIntoTickerTable(QString ticker, AssetType assetType, Transaction transaction)
+{
+    int assetTypeId = getAssetTypeId(assetType);
+
+    if(assetTypeId == -1)
+    {
+        // Error to open database to get asset type id
+        return false;
+    }
+
+    QSqlQuery query;
+
+    // Prepare the SQL insert query
+    query.prepare("INSERT INTO transaction_table (id_ticker, id_transaction, quantity, unitary_price, date) "
+                  "VALUES (:id_ticker, :id_transaction, :quantity, :unitary_price, :date)");
+
+    // Bind values to the query
+    query.bindValue(":id_ticker", transaction->get);
+    query.bindValue(":id_transaction", );
+    query.bindValue(":quantity", quantity);
+    query.bindValue(":unitary_price", unitaryPrice);
+    query.bindValue(":date", date);
+
+    // Execute the query and check for success
+    if (!query.exec())
+    {
+        qDebug() << "Erro to insert new transaction";
+        return false;
+    }
+
+    return true;
+}
+*/
 
 bool Database::insertIntoTransactionTable(Transaction transaction)
 {
