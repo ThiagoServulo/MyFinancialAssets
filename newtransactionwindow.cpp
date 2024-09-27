@@ -1,6 +1,8 @@
 #include "newtransactionwindow.h"
 #include "ui_newtransactionwindow.h"
 #include "constants.h"
+#include "transaction.h"
+#include "database.h"
 #include <QIntValidator>
 #include <QMessageBox>
 
@@ -56,7 +58,22 @@ void NewTransactionWindow::on_pushButton_save_clicked()
        ui->lineEdit_ticker->text() != "" &&
        ui->lineEdit_value->text() != "")
     {
-        QMessageBox::about(this, "Válido", "Válido");
+        Transaction transaction(ui->dateEdit->date(), EventType::TRANSACTION,
+                                getTransactionTypeFromString(ui->comboBox_transactionType->currentText()),
+                                ui->lineEdit_quantity->text().toInt(),
+                                ui->lineEdit_value->text().toDouble());
+        Database database;
+        if(database.insertTransaction(ui->lineEdit_ticker->text(),
+                                      getAssetTypeFromString(ui->comboBox_assetType->currentText()), transaction))
+        {
+            QMessageBox::about(this, "inserido", "insert");
+        }
+        else
+        {
+            QMessageBox::about(this, "errado", "erro no insert");
+        }
+
+        this->close();
     }
     else
     {

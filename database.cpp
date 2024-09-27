@@ -440,12 +440,45 @@ int Database::getTickerId(QString ticker)
             return query.value(0).toInt();
         }
 
-        qDebug() << "Ticker not found";
         closeDatabase();
         return NOT_FOUND;
     }
 
     qDebug() << "Error to open database to get ticker id";
+    return DATABASE_ERROR;
+}
+
+int Database::getTransactionTypeId(TransactionType transactionType)
+{
+    if(openDatabase())
+    {
+        QString queryStr = R"(
+            SELECT id FROM transaction_type_table WHERE transaction_type = :type;
+        )";
+
+        QSqlQuery query;
+        query.prepare(queryStr);
+        query.bindValue(":type", getTransactionTypeString(transactionType));
+
+        if (!query.exec())
+        {
+            qDebug() << "Error fetching transaction type id";
+            closeDatabase();
+            return DATABASE_ERROR;
+        }
+
+        if (query.next())
+        {
+            // Return the id
+            closeDatabase();
+            return query.value(0).toInt();
+        }
+
+        closeDatabase();
+        return NOT_FOUND;
+    }
+
+    qDebug() << "Error to open database to get transaction type id";
     return DATABASE_ERROR;
 }
 
@@ -489,62 +522,78 @@ int Database::insertTicker(QString ticker, AssetType assetType)
     return DATABASE_ERROR;
 }
 
-/*
-bool Database::insertIntoTickerTable(QString ticker, AssetType assetType, Transaction transaction)
+bool Database::insertTransaction(QString ticker, AssetType assetType, Transaction transaction)
 {
-    int assetTypeId = getAssetTypeId(assetType);
+    // Convert to upper case
+    ticker = ticker.toUpper();
 
-    if(assetTypeId == -1)
+    // Get transaction type id
+    int transactionTypeId = getTransactionTypeId(transaction.getTransactionType());
+
+    // Check transaction type id
+    if (transactionTypeId == NOT_FOUND || transactionTypeId == DATABASE_ERROR)
     {
-        // Error to open database to get asset type id
+        qDebug() << "Invalid transaction type id, the database was loaded incorrect";
         return false;
     }
 
-    QSqlQuery query;
+    int tickerId = getTickerId(ticker);
 
-    // Prepare the SQL insert query
-    query.prepare("INSERT INTO transaction_table (id_ticker, id_transaction, quantity, unitary_price, date) "
-                  "VALUES (:id_ticker, :id_transaction, :quantity, :unitary_price, :date)");
-
-    // Bind values to the query
-    query.bindValue(":id_ticker", transaction->get);
-    query.bindValue(":id_transaction", );
-    query.bindValue(":quantity", quantity);
-    query.bindValue(":unitary_price", unitaryPrice);
-    query.bindValue(":date", date);
-
-    // Execute the query and check for success
-    if (!query.exec())
+    // Check ticker status
+    if(tickerId == DATABASE_ERROR)
     {
-        qDebug() << "Erro to insert new transaction";
         return false;
     }
 
-    return true;
-}
-*/
-
-bool Database::insertIntoTransactionTable(Transaction transaction)
-{
-    QSqlQuery query;
-/*
-    // Prepare the SQL insert query
-    query.prepare("INSERT INTO transaction_table (id_ticker, id_transaction, quantity, unitary_price, date) "
-                  "VALUES (:id_ticker, :id_transaction, :quantity, :unitary_price, :date)");
-
-    // Bind values to the query
-    query.bindValue(":id_ticker", transaction->get);
-    query.bindValue(":id_transaction", );
-    query.bindValue(":quantity", quantity);
-    query.bindValue(":unitary_price", unitaryPrice);
-    query.bindValue(":date", date);
-
-    // Execute the query and check for success
-    if (!query.exec())
+    // Check ticker id
+    if(tickerId == NOT_FOUND)
     {
-        qDebug() << "Erro to insert new transaction";
-        return false;
+        // Inser new ticker
+        int status = insertTicker(ticker, assetType);
+
+        // Check status
+        if(status == DATABASE_ERROR)
+        {
+            return false;
+        }
+
+        // Get ticker id
+        tickerId = getTickerId(ticker);
+
+        // Check ticker status
+        if(tickerId == DATABASE_ERROR || tickerId == NOT_FOUND)
+        {
+            return false;
+        }
     }
-*/
-    return true;
+
+    if(openDatabase())
+    {
+        QSqlQuery query;
+
+        // Prepare the SQL insert query
+        query.prepare("INSERT INTO transaction_table (id_ticker, id_transaction, quantity, unitary_price, date) "
+                      "VALUES (:id_ticker, :id_transaction, :quantity, :unitary_price, :date)");
+
+        // Bind values to the query
+        query.bindValue(":id_ticker", tickerId);
+        query.bindValue(":id_transaction", transactionTypeId);
+        query.bindValue(":quantity", transaction.getQuantity());
+        query.bindValue(":unitary_price", transaction.getUnitaryPrice());
+        query.bindValue(":date", transaction.getDate());
+
+        // Execute the query and check for success
+        if (!query.exec())
+        {
+            qDebug() << "Erro to insert new transaction";
+            closeDatabase();
+            return false;
+        }
+
+        closeDatabase();
+        return true;
+    }
+
+    qDebug() << "Error to open database to insert transaction";
+    return false;
 }

@@ -13,7 +13,7 @@ class Database
 public:
     Database();
     bool prepareDatabase();
-    bool insertIntoTransactionTable(Transaction transaction);
+    bool insertTransaction(QString ticker, AssetType assetType, Transaction transaction);
 
 private:
     QSqlDatabase database;
@@ -34,6 +34,7 @@ private:
     int getAssetTypeId(AssetType assetType);
     int getTickerId(QString ticker);
     int insertTicker(QString ticker, AssetType assetType);
+    int getTransactionTypeId(TransactionType transactionType);
     bool populateReorganizationTypeTable();
 };
 

@@ -41,6 +41,38 @@ QString getReorganizationTypeString(ReorganizationType type)
     }
 }
 
+TransactionType getTransactionTypeFromString(QString type)
+{
+    if (type == getTransactionTypeString(TransactionType::COMPRA))
+    {
+        return TransactionType::COMPRA;
+    }
+    else if (type == getTransactionTypeString(TransactionType::VENDA))
+    {
+        return TransactionType::VENDA;
+    }
+    else
+    {
+        throw std::invalid_argument("Transaction type invalid: " + type.toStdString());
+    }
+}
+
+AssetType getAssetTypeFromString(QString type)
+{
+    if (type == getAssetTypeString(AssetType::ACAO))
+    {
+        return AssetType::ACAO;
+    }
+    else if (type == getAssetTypeString(AssetType::FUNDO))
+    {
+        return AssetType::FUNDO;
+    }
+    else
+    {
+        throw std::invalid_argument("Asset type invalid: " + type.toStdString());
+    }
+}
+
 bool isValidTransactionType(const QString& type)
 {
     return (type == getTransactionTypeString(TransactionType::COMPRA) ||
