@@ -557,6 +557,49 @@ int Database::insertTicker(QString ticker, AssetType assetType)
     return DATABASE_ERROR;
 }
 
+bool Database::selectAllTickers(std::vector<std::pair<QString, AssetType>>& tickers)
+{
+    if (openDatabase())
+    {
+        QString selectQuery = R"(
+            SELECT ticker, asset_type
+            FROM ticker_table
+            JOIN asset_type_table ON ticker_table.id_asset_type = asset_type_table.id;
+        )";
+
+        QSqlQuery query;
+        query.prepare(selectQuery);
+
+        // Execute query
+        if (!query.exec())
+        {
+            qDebug() << "Error selecting tickers from ticker_table";
+            closeDatabase();
+            return false;
+        }
+
+        // Clear the vector to avoid overwriting old data
+        tickers.clear();
+
+        // Process the results
+        while (query.next())
+        {
+            QString ticker = query.value(0).toString();
+            QString assetTypeStr = query.value(1).toString();
+
+            // Convert assetTypeStr to AssetType
+            AssetType assetType = getAssetTypeFromString(assetTypeStr);
+            tickers.push_back(std::make_pair(ticker, assetType));
+        }
+
+        closeDatabase();
+        return true;
+    }
+
+    qDebug() << "Error opening database to select tickers";
+    return false;
+}
+
 bool Database::insertTransaction(QString ticker, AssetType assetType, Transaction transaction)
 {
     // Convert to upper case

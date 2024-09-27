@@ -7,13 +7,8 @@ NewReorganizationWindow::NewReorganizationWindow(QWidget *parent) :
     ui(new Ui::NewReorganizationWindow)
 {
     ui->setupUi(this);
-    this->setMaximumSize(370, 271);
-    this->setMinimumSize(370, 271);
-
-    // Add assets types
-    ui->comboBox_assetType->addItem(getAssetTypeString(AssetType::ACAO));
-    ui->comboBox_assetType->addItem(getAssetTypeString(AssetType::FUNDO));
-    ui->comboBox_assetType->setCurrentIndex(-1);
+    this->setMaximumSize(384, 215);
+    this->setMinimumSize(384, 215);
 
     // Add reorganization types
     ui->comboBox_reorganizationType->addItem(getReorganizationTypeString(ReorganizationType::DESDOBRAMENTO));
@@ -24,11 +19,6 @@ NewReorganizationWindow::NewReorganizationWindow(QWidget *parent) :
     QRegularExpression regexRatio("[0-9]*");
     QRegularExpressionValidator *validatorRatio = new QRegularExpressionValidator(regexRatio, ui->lineEdit_ratio);
     ui->lineEdit_ratio->setValidator(validatorRatio);
-
-    // Creating ticker validator
-    QRegularExpression regexTicker("[a-zA-Z0-9]*");
-    QRegularExpressionValidator *validatorTicker = new QRegularExpressionValidator(regexTicker, ui->lineEdit_ticker);
-    ui->lineEdit_ticker->setValidator(validatorTicker);
 
     // Setting current date
     QDate currentDate = QDate::currentDate();

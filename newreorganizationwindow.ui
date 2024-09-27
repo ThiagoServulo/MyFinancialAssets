@@ -6,21 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>370</width>
-    <height>271</height>
+    <width>384</width>
+    <height>215</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Nova reorganização</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QWidget" name="layoutWidget">
+   <widget class="QWidget" name="">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>348</width>
-      <height>251</height>
+      <x>11</x>
+      <y>11</y>
+      <width>363</width>
+      <height>195</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -29,7 +29,7 @@
        <item>
         <layout class="QVBoxLayout" name="verticalLayout">
          <item>
-          <widget class="QLabel" name="label_assetType">
+          <widget class="QLabel" name="label_asset">
            <property name="font">
             <font>
              <pointsize>12</pointsize>
@@ -38,35 +38,12 @@
             </font>
            </property>
            <property name="text">
-            <string>Tipo de ativo</string>
+            <string>Selecione o ativo</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="comboBox_assetType">
-           <property name="font">
-            <font>
-             <pointsize>12</pointsize>
-            </font>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="label_ticker">
-           <property name="font">
-            <font>
-             <pointsize>12</pointsize>
-             <weight>75</weight>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>Ticker</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLineEdit" name="lineEdit_ticker">
+          <widget class="QComboBox" name="comboBox_asset">
            <property name="font">
             <font>
              <pointsize>12</pointsize>
@@ -146,19 +123,6 @@
             </font>
            </property>
           </widget>
-         </item>
-         <item>
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
          </item>
         </layout>
        </item>
