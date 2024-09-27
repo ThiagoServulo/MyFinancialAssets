@@ -46,7 +46,6 @@ void NewReorganizationWindow::on_pushButton_save_clicked()
 
 }
 
-
 void NewReorganizationWindow::on_pushButton_cancel_clicked()
 {
     this->close();

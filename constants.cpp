@@ -73,6 +73,26 @@ AssetType getAssetTypeFromString(QString type)
     }
 }
 
+YieldType getYieldTypeFromString(QString type)
+{
+    if (type == getYieldTypeString(YieldType::DIVIDENDO))
+    {
+        return YieldType::DIVIDENDO;
+    }
+    else if (type == getYieldTypeString(YieldType::JCP))
+    {
+        return YieldType::JCP;
+    }
+    else if (type == getYieldTypeString(YieldType::RENDIMENTO))
+    {
+        return YieldType::RENDIMENTO;
+    }
+    else
+    {
+        throw std::invalid_argument("Yield type invalid: " + type.toStdString());
+    }
+}
+
 bool isValidTransactionType(const QString& type)
 {
     return (type == getTransactionTypeString(TransactionType::COMPRA) ||

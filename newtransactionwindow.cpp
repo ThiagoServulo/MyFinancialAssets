@@ -58,26 +58,29 @@ void NewTransactionWindow::on_pushButton_save_clicked()
        ui->lineEdit_ticker->text() != "" &&
        ui->lineEdit_value->text() != "")
     {
+        // Create transaction
         Transaction transaction(ui->dateEdit->date(), EventType::TRANSACTION,
                                 getTransactionTypeFromString(ui->comboBox_transactionType->currentText()),
                                 ui->lineEdit_quantity->text().toInt(),
                                 ui->lineEdit_value->text().toDouble());
+
+        // Insert transaction into database
         Database database;
         if(database.insertTransaction(ui->lineEdit_ticker->text(),
                                       getAssetTypeFromString(ui->comboBox_assetType->currentText()), transaction))
         {
-            QMessageBox::about(this, "inserido", "insert");
+            QMessageBox::information(this, "Sucesso", "Transação inserida com sucesso");
         }
         else
         {
-            QMessageBox::about(this, "errado", "erro no insert");
+            QMessageBox::critical(this, "Erro", "Erro ao inserir transação");
         }
 
         this->close();
     }
     else
     {
-        QMessageBox::about(this, "Inválido", "Um dos campos digitados está inválido");
+        QMessageBox::information(this, "Inválido", "Um dos campos digitados está inválido");
     }
 }
 

@@ -241,7 +241,7 @@ bool Database::createTransactionTable()
         CREATE TABLE IF NOT EXISTS transaction_table (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             id_ticker INTEGER NOT NULL,
-            id_transaction INTEGER NOT NULL,
+            id_transaction_type INTEGER NOT NULL,
             quantity INTEGER NOT NULL,
             unitary_price DOUBLE NOT NULL,
             date DATE NOT NULL
@@ -414,6 +414,41 @@ int Database::getAssetTypeId(AssetType assetType)
     return DATABASE_ERROR;
 }
 
+int Database::getYieldTypeId(YieldType yieldType)
+{
+    if(openDatabase())
+    {
+        QString queryStr = R"(
+            SELECT id FROM yield_type_table WHERE yield_type = :type;
+        )";
+
+        QSqlQuery query;
+        query.prepare(queryStr);
+        query.bindValue(":type", getYieldTypeString(yieldType));
+
+        if (!query.exec())
+        {
+            qDebug() << "Error fetching yield type id";
+            closeDatabase();
+            return DATABASE_ERROR;
+        }
+
+        if (query.next())
+        {
+            // Return the id
+            closeDatabase();
+            return query.value(0).toInt();
+        }
+
+        qDebug() << "Yield type not found";
+        closeDatabase();
+        return NOT_FOUND;
+    }
+
+    qDebug() << "Error to open database to get yield type id";
+    return DATABASE_ERROR;
+}
+
 int Database::getTickerId(QString ticker)
 {
     if(openDatabase())
@@ -572,12 +607,12 @@ bool Database::insertTransaction(QString ticker, AssetType assetType, Transactio
         QSqlQuery query;
 
         // Prepare the SQL insert query
-        query.prepare("INSERT INTO transaction_table (id_ticker, id_transaction, quantity, unitary_price, date) "
-                      "VALUES (:id_ticker, :id_transaction, :quantity, :unitary_price, :date)");
+        query.prepare("INSERT INTO transaction_table (id_ticker, id_transaction_type, quantity, unitary_price, date) "
+                      "VALUES (:id_ticker, :id_transaction_type, :quantity, :unitary_price, :date)");
 
         // Bind values to the query
         query.bindValue(":id_ticker", tickerId);
-        query.bindValue(":id_transaction", transactionTypeId);
+        query.bindValue(":id_transaction_type", transactionTypeId);
         query.bindValue(":quantity", transaction.getQuantity());
         query.bindValue(":unitary_price", transaction.getUnitaryPrice());
         query.bindValue(":date", transaction.getDate());
@@ -596,4 +631,64 @@ bool Database::insertTransaction(QString ticker, AssetType assetType, Transactio
 
     qDebug() << "Error to open database to insert transaction";
     return false;
+}
+
+int Database::insertYield(QString ticker, Yield yield)
+{
+    // Convert to upper case
+    ticker = ticker.toUpper();
+
+    // Get yield type id
+    int yieldTypeId = getYieldTypeId(yield.getYieldType());
+
+    // Check yield type id
+    if (yieldTypeId == NOT_FOUND || yieldTypeId == DATABASE_ERROR)
+    {
+        qDebug() << "Invalid yield type id, the database was loaded incorrect";
+        return DATABASE_ERROR;
+    }
+
+    int tickerId = getTickerId(ticker);
+
+    // Check ticker status
+    if(tickerId == DATABASE_ERROR || tickerId == NOT_FOUND)
+    {
+        // Ticker should exists to insert the yield
+        if(tickerId == NOT_FOUND)
+        {
+            qDebug() << "Ticker not found";
+            return NOT_FOUND;
+        }
+
+        return DATABASE_ERROR;
+    }
+
+    if(openDatabase())
+    {
+        QSqlQuery query;
+
+        // Prepare the SQL insert query
+        query.prepare("INSERT INTO yield_table (id_ticker, id_yield_type, value, date) "
+                      "VALUES (:id_ticker, :id_yield_type, :value, :date)");
+
+        // Bind values to the query
+        query.bindValue(":id_ticker", tickerId);
+        query.bindValue(":id_yield_type", yieldTypeId);
+        query.bindValue(":value", yield.getValue());
+        query.bindValue(":date", yield.getDate());
+
+        // Execute the query and check for success
+        if (!query.exec())
+        {
+            qDebug() << "Erro to insert new yield";
+            closeDatabase();
+            return DATABASE_ERROR;
+        }
+
+        closeDatabase();
+        return DATABASE_SUCCESS;
+    }
+
+    qDebug() << "Error to open database to insert yield";
+    return DATABASE_ERROR;
 }

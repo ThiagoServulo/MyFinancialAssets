@@ -39,8 +39,11 @@ void MainWindow::on_actionYield_triggered()
 void MainWindow::on_pushButton_clicked()
 {
     Database db;
-    Transaction t(QDate(2020,5,5), EventType::TRANSACTION, TransactionType::COMPRA, 10, 1.50);
-    qDebug() << db.insertTransaction("aaaa", AssetType::ACAO, t);
+    //db.prepareDatabase();
+
+    Yield yield(QDate(2020,5,5), EventType::YIELD, YieldType::DIVIDENDO, 2.55);
+
+    qDebug() << db.insertYield("sapo", yield);
     //qDebug() << db.insertTicker("SAPO", AssetType::ACAO);
 
     //Database db;

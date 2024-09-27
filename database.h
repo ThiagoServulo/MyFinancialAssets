@@ -3,6 +3,7 @@
 
 #include <QSqlDatabase>
 #include <transaction.h>
+#include <yield.h>
 
 #define NOT_FOUND -1
 #define DATABASE_ERROR -2
@@ -14,6 +15,7 @@ public:
     Database();
     bool prepareDatabase();
     bool insertTransaction(QString ticker, AssetType assetType, Transaction transaction);
+    int insertYield(QString ticker, Yield yield);
 
 private:
     QSqlDatabase database;
@@ -32,6 +34,7 @@ private:
     bool createReorganizationTable();
     bool checkIfDatabaseExists();
     int getAssetTypeId(AssetType assetType);
+    int getYieldTypeId(YieldType yieldType);
     int getTickerId(QString ticker);
     int insertTicker(QString ticker, AssetType assetType);
     int getTransactionTypeId(TransactionType transactionType);

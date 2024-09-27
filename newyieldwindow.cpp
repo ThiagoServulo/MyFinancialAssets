@@ -1,6 +1,8 @@
 #include "newyieldwindow.h"
 #include "ui_newyieldwindow.h"
 #include "constants.h"
+#include "database.h"
+#include "yield.h"
 #include <QMessageBox>
 
 NewYieldWindow::NewYieldWindow(QWidget *parent) :
@@ -40,16 +42,38 @@ NewYieldWindow::~NewYieldWindow()
 void NewYieldWindow::on_pushButton_save_clicked()
 {
     // Checking fields
-    if(isValidTransactionType(ui->comboBox_yieldType->currentText()) &&
+    if(isValidYieldType(ui->comboBox_yieldType->currentText()) &&
        isValidAssetType(ui->comboBox_assetType->currentText()) &&
        ui->lineEdit_ticker->text() != "" &&
        ui->lineEdit_value->text() != "")
     {
-        QMessageBox::about(this, "Válido", "Válido");
+        // Create yield
+        Yield yield(ui->dateEdit->date(), EventType::YIELD, getYieldTypeFromString(ui->comboBox_yieldType->currentText()), ui->lineEdit_value->text().toDouble());
+
+        // Insert yield into database
+        Database database;
+        int status = database.insertYield(ui->lineEdit_ticker->text(), yield);
+
+        switch (status)
+        {
+            case DATABASE_SUCCESS:
+                QMessageBox::information(this, "Sucesso", "Rendimento inserido com sucesso");
+            break;
+
+            case NOT_FOUND:
+                QMessageBox::information(this, "Erro", "Esse ativo não está cadastrado no banco");
+            break;
+
+            default:
+                QMessageBox::critical(this, "Erro", "Erro ao inserir rendimento");
+
+        }
+
+        this->close();
     }
     else
     {
-        QMessageBox::about(this, "Inválido", "Inválido");
+        QMessageBox::information(this, "Inválido", "Um dos campos digitados está inválido");
     }
 }
 
@@ -62,9 +86,13 @@ void NewYieldWindow::on_comboBox_assetType_textActivated(const QString &arg1)
         ui->comboBox_yieldType->addItem(getYieldTypeString(YieldType::DIVIDENDO));
         ui->comboBox_yieldType->addItem(getYieldTypeString(YieldType::JCP));
     }
-    else // FUNDO
+    else if (arg1 == getAssetTypeString(AssetType::FUNDO))
     {
         ui->comboBox_yieldType->addItem(getYieldTypeString(YieldType::RENDIMENTO));
+    }
+    else
+    {
+        throw std::invalid_argument("Yield type invalid: " + arg1.toStdString());
     }
 
     ui->comboBox_yieldType->setCurrentIndex(-1);
