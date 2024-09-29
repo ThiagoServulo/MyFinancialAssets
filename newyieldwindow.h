@@ -3,6 +3,9 @@
 
 #include <QMainWindow>
 #include "constants.h"
+#include "asset.h"
+#include "database.h"
+#include "assetcontroller.h"
 
 namespace Ui {
 class NewYieldWindow;
@@ -13,7 +16,7 @@ class NewYieldWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit NewYieldWindow(QWidget *parent = nullptr);
+    explicit NewYieldWindow(AssetController *assetController, QWidget *parent = nullptr);
     ~NewYieldWindow();
 
 private slots:
@@ -23,8 +26,10 @@ private slots:
 
 private:
     Ui::NewYieldWindow *ui;
-    std::vector<std::pair<QString, AssetType>> tickers;
+    Database database;
+    std::vector<std::shared_ptr<Asset>> assets;
     AssetType findAssetTypeByTicker(const QString& tickerToFind);
+    void initComboBoxAssets();
 };
 
 #endif // NEWYIELDWINDOW_H

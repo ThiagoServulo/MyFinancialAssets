@@ -14,6 +14,8 @@ private:
 public:
     Asset();
     Asset(QString ticker, AssetType assetType);
+    QString getTicker();
+    AssetType getAssetType();
 };
 
 #endif // ASSET_H

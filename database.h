@@ -2,8 +2,9 @@
 #define DATABASE_H
 
 #include <QSqlDatabase>
-#include <transaction.h>
-#include <yield.h>
+#include "transaction.h"
+#include "yield.h"
+#include "assetcontroller.h"
 
 #define NOT_FOUND -1
 #define DATABASE_ERROR -2
@@ -16,9 +17,10 @@ public:
     bool prepareDatabase();
     bool insertTransaction(QString ticker, AssetType assetType, Transaction transaction);
     int insertYield(QString ticker, Yield yield);
-    bool selectAllTickers(std::vector<std::pair<QString, AssetType>>& tickers);
     int getTickerQuantity(QString ticker);
     std::vector<Transaction> getTransactionsByTickerId(int tickerId);
+    bool selectAllAssets(std::vector<Asset>& assets);
+    bool assetControllerInitialization(AssetController* assetController);
 
 private:
     QSqlDatabase database;
@@ -42,6 +44,7 @@ private:
     int insertTicker(QString ticker, AssetType assetType);
     int getTransactionTypeId(TransactionType transactionType);
     bool populateReorganizationTypeTable();
+    bool selectEventsForAsset(Asset* asset);
 };
 
 #endif // DATABASE_H

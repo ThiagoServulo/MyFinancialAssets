@@ -9,6 +9,14 @@ void EventController::addEvent(std::shared_ptr<Event> event)
     eventList.push_back(event);
 }
 
+void EventController::addEvents(std::vector<std::shared_ptr<Event>>& events)
+{
+    for (auto& event : events)
+    {
+        eventList.push_back(event);
+    }
+}
+
 std::vector<Transaction> EventController::getTransactionList()
 {
     std::vector<Transaction> transactionList;

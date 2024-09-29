@@ -2,6 +2,7 @@
 #define NEWTRANSACTIONWINDOW_H
 
 #include <QMainWindow>
+#include "assetcontroller.h"
 
 namespace Ui {
 class NewTransactionWindow;

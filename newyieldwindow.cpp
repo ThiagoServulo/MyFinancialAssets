@@ -1,10 +1,9 @@
 #include "newyieldwindow.h"
 #include "ui_newyieldwindow.h"
-#include "database.h"
 #include "yield.h"
 #include <QMessageBox>
 
-NewYieldWindow::NewYieldWindow(QWidget *parent) :
+NewYieldWindow::NewYieldWindow(AssetController *assetController, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::NewYieldWindow)
 {
@@ -22,27 +21,11 @@ NewYieldWindow::NewYieldWindow(QWidget *parent) :
     ui->dateEdit->setDisplayFormat("dd/MM/yyyy");
     ui->dateEdit->setDate(currentDate);
 
-    Database database;
-    if(!database.selectAllTickers(tickers))
-    {
-        QMessageBox::critical(this, "Erro", "Erro ao ler tickers do banco");
-        this->close();
-        return;
-    }
+    // Get all assets
+    assets = assetController->getAllAssets();
 
-    // Populate combo box
-    ui->comboBox_asset->clear();
-
-    // Iterate through the vector and add each ticker to the combo box
-    for (const auto& tickerPair : tickers)
-    {
-        QString ticker = tickerPair.first;
-
-        // Add ticker to the combo box
-        ui->comboBox_asset->addItem(ticker);
-    }
-
-    ui->comboBox_asset->setCurrentIndex(-1);
+    // Init combo box assets
+    initComboBoxAssets();
 }
 
 NewYieldWindow::~NewYieldWindow()
@@ -64,6 +47,7 @@ void NewYieldWindow::on_pushButton_save_clicked()
         Database database;
         int status = database.insertYield(ui->comboBox_asset->currentText(), yield);
 
+        // Check status
         switch (status)
         {
             case DATABASE_SUCCESS:
@@ -79,6 +63,7 @@ void NewYieldWindow::on_pushButton_save_clicked()
 
         }
 
+        // Close window
         this->close();
     }
     else
@@ -94,12 +79,12 @@ void NewYieldWindow::on_pushButton_cancel_clicked()
 
 AssetType NewYieldWindow::findAssetTypeByTicker(const QString& tickerToFind)
 {
-    for (const auto& tickerPair : tickers)
+    for (auto asset : assets)
     {
-        if (tickerPair.first == tickerToFind)
+        if (asset->getTicker() == tickerToFind)
         {
             // Return the corresponding AssetType
-            return tickerPair.second;
+            return asset->getAssetType();
         }
     }
 
@@ -129,3 +114,17 @@ void NewYieldWindow::on_comboBox_asset_textActivated(const QString &arg1)
     ui->comboBox_yieldType->setCurrentIndex(-1);
 }
 
+void NewYieldWindow::initComboBoxAssets()
+{
+    // Populate combo box
+    ui->comboBox_asset->clear();
+
+    // Iterate through the vector and add each ticker to the combo box
+    for (auto asset : assets)
+    {
+        // Add ticker to the combo box
+        ui->comboBox_asset->addItem(asset->getTicker());
+    }
+
+    ui->comboBox_asset->setCurrentIndex(-1);
+}

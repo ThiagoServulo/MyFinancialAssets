@@ -3,8 +3,6 @@
 #include "newyieldwindow.h"
 #include "newreorganizationwindow.h"
 #include "ui_mainwindow.h"
-#include "database.h"
-
 #include "constants.h"
 #include "asset.h"
 #include "event.h"
@@ -21,6 +19,20 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tableWidget_stocks->setColumnCount(headerLabels.size());
     ui->tableWidget_stocks->setHorizontalHeaderLabels(headerLabels);
 
+    if(!database.assetControllerInitialization(&assetController))
+    {
+        qDebug() << "Erro in asset controller Initialization";
+    }
+
+    std::vector<std::shared_ptr<Asset>> assets = assetController.getAllAssets();
+
+    qDebug() << "xxxxxxxxxxxxxxxxxxxxx";
+
+    for(auto asset: assets)
+    {
+        qDebug() << "aaaaaaa";
+        qDebug() << asset->getTicker();
+    }
 }
 
 MainWindow::~MainWindow()
@@ -37,18 +49,17 @@ void MainWindow::on_actionTransaction_triggered()
 
 void MainWindow::on_actionYield_triggered()
 {
-    NewYieldWindow *newYieldWindow = new NewYieldWindow(this);
+    NewYieldWindow *newYieldWindow = new NewYieldWindow(&assetController, this);
     newYieldWindow->show();
 }
 
 void MainWindow::on_pushButton_clicked()
 {
-    Database db;
     //db.prepareDatabase();
 
     Yield yield(QDate(2020,5,5), EventType::YIELD, YieldType::DIVIDENDO, 2.55);
 
-    qDebug() << db.insertYield("sapo", yield);
+    qDebug() << database.insertYield("sapo", yield);
 }
 
 void MainWindow::on_actionReorganization_triggered()

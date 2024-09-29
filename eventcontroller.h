@@ -13,6 +13,7 @@ private:
 public:
     EventController();
     void addEvent(std::shared_ptr<Event> event);
+    void addEvents(std::vector<std::shared_ptr<Event>>& events);
     std::vector<Transaction> getTransactionList();
     std::vector<Yield> getYieldList();
 };

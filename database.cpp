@@ -563,49 +563,6 @@ int Database::insertTicker(QString ticker, AssetType assetType)
     return DATABASE_ERROR;
 }
 
-bool Database::selectAllTickers(std::vector<std::pair<QString, AssetType>>& tickers)
-{
-    if (openDatabase())
-    {
-        QString selectQuery = R"(
-            SELECT ticker, asset_type
-            FROM ticker_table
-            JOIN asset_type_table ON ticker_table.id_asset_type = asset_type_table.id;
-        )";
-
-        QSqlQuery query;
-        query.prepare(selectQuery);
-
-        // Execute query
-        if (!query.exec())
-        {
-            qDebug() << "Error selecting tickers from ticker_table";
-            closeDatabase();
-            return false;
-        }
-
-        // Clear the vector to avoid overwriting old data
-        tickers.clear();
-
-        // Process the results
-        while (query.next())
-        {
-            QString ticker = query.value(0).toString();
-            QString assetTypeStr = query.value(1).toString();
-
-            // Convert assetTypeStr to AssetType
-            AssetType assetType = getAssetTypeFromString(assetTypeStr);
-            tickers.push_back(std::make_pair(ticker, assetType));
-        }
-
-        closeDatabase();
-        return true;
-    }
-
-    qDebug() << "Error opening database to select tickers";
-    return false;
-}
-
 bool Database::insertTransaction(QString ticker, AssetType assetType, Transaction transaction)
 {
     // Convert to upper case
@@ -835,3 +792,97 @@ std::vector<Transaction> Database::getTransactionsByTickerId(int tickerId)
     return transactions;
 }
 
+bool Database::selectAllAssets(std::vector<Asset>& assets)
+{
+    if (openDatabase())
+    {
+        QString selectQuery = R"(
+            SELECT ticker, asset_type
+            FROM ticker_table
+            JOIN asset_type_table ON ticker_table.id_asset_type = asset_type_table.id;
+        )";
+
+        QSqlQuery query;
+        query.prepare(selectQuery);
+
+        // Execute query
+        if (!query.exec())
+        {
+            qDebug() << "Error selecting tickers from ticker_table";
+            closeDatabase();
+            return false;
+        }
+
+        // Clear the vector to avoid overwriting old data
+        assets.clear();
+
+        // Process the results
+        while (query.next())
+        {
+            QString ticker = query.value(0).toString();
+            QString assetTypeStr = query.value(1).toString();
+
+            // Convert assetTypeStr to AssetType
+            AssetType assetType = getAssetTypeFromString(assetTypeStr);
+            assets.push_back(Asset(ticker, assetType));
+        }
+
+        closeDatabase();
+        return true;
+    }
+
+    qDebug() << "Error opening database to select tickers";
+    return false;
+}
+
+bool Database::selectEventsForAsset(Asset* asset)
+{
+    // Create events vetor
+    std::vector<std::shared_ptr<Event>> events;
+
+    // Get ticker id
+    int tickerId = getTickerId(asset->getTicker());
+
+    // Check ticker id
+    if(tickerId == DATABASE_ERROR || tickerId == NOT_FOUND)
+    {
+        return false;
+    }
+
+    // Get transactions
+    std::vector<Transaction> transactions = getTransactionsByTickerId(tickerId);
+
+    // Convert transactions to events
+    for (const auto& transaction : transactions)
+    {
+        events.push_back(std::make_shared<Transaction>(transaction));
+    }
+
+    // Add events
+    asset->addEvents(events);
+
+    return true;
+}
+
+bool Database::assetControllerInitialization(AssetController* assetController)
+{
+    std::vector<Asset> assets;
+
+    // Get assets
+    if(!selectAllAssets(assets))
+    {
+        qDebug() << "Error to read assets from database";
+        return false;
+    }
+
+    // Get events
+    for(Asset asset: assets)
+    {
+        selectEventsForAsset(&asset);
+    }
+
+    // Adding assets
+    assetController->addAssets(assets);
+
+    return true;
+}

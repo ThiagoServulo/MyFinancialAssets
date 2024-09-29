@@ -10,6 +10,7 @@ CONFIG += c++11
 
 SOURCES += \
     asset.cpp \
+    assetcontroller.cpp \
     constants.cpp \
     database.cpp \
     event.cpp \
@@ -24,6 +25,7 @@ SOURCES += \
 
 HEADERS += \
     asset.h \
+    assetcontroller.h \
     constants.h \
     database.h \
     event.h \
