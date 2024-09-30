@@ -23,16 +23,7 @@ MainWindow::MainWindow(QWidget *parent)
     {
         qDebug() << "Erro in asset controller Initialization";
     }
-
-    std::vector<std::shared_ptr<Asset>> assets = assetController.getAllAssets();
-
-    qDebug() << "xxxxxxxxxxxxxxxxxxxxx";
-
-    for(auto asset: assets)
-    {
-        qDebug() << "aaaaaaa";
-        qDebug() << asset->getTicker();
-    }
+    initSotcksTable();
 }
 
 MainWindow::~MainWindow()
@@ -66,4 +57,28 @@ void MainWindow::on_actionReorganization_triggered()
 {
     NewReorganizationWindow *newReorganizationWindow = new NewReorganizationWindow(this);
     newReorganizationWindow->show();
+}
+
+void MainWindow::initSotcksTable()
+{
+    std::vector<std::shared_ptr<Asset>> assets = assetController.getAllAssets();
+
+    int row = 0;
+
+    for(auto asset: assets)
+    {
+        ui->tableWidget_stocks->insertRow(row); // Insira uma nova linha no final
+
+        // Defina os itens para cada coluna da linha
+        ui->tableWidget_stocks->setItem(row, 0, new QTableWidgetItem(asset->getTicker())); // Ticker
+        ui->tableWidget_stocks->setItem(row, 1, new QTableWidgetItem("30%")); // Distribuição
+        ui->tableWidget_stocks->setItem(row, 2, new QTableWidgetItem(QString::number(assetController.getAssetQuantity(asset->getTicker()))));
+        ui->tableWidget_stocks->setItem(row, 3, new QTableWidgetItem("5.00%")); // Rendimento
+        ui->tableWidget_stocks->setItem(row, 4, new QTableWidgetItem("120.00")); // Preço médio
+        ui->tableWidget_stocks->setItem(row, 5, new QTableWidgetItem("125.00")); // Preço atual
+        ui->tableWidget_stocks->setItem(row, 6, new QTableWidgetItem("4.17%")); // Valorização
+        ui->tableWidget_stocks->setItem(row, 7, new QTableWidgetItem("500.00")); // Ganho de capital
+
+        ++row;
+    }
 }

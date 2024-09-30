@@ -13,6 +13,7 @@ public:
     void addAsset(std::shared_ptr<Asset> asset);
     std::vector<std::shared_ptr<Asset>> getAllAssets();
     void addAssets(std::vector<Asset>& assets);
+    int getAssetQuantity(QString ticker);
 };
 
 #endif // ASSETCONTROLLER_H
