@@ -18,9 +18,10 @@ public:
     bool insertTransaction(QString ticker, AssetType assetType, Transaction transaction);
     int insertYield(QString ticker, Yield yield);
     int getTickerQuantity(QString ticker);
-    std::vector<Transaction> getTransactionsByTickerId(int tickerId);
     bool selectAllAssets(std::vector<Asset>& assets);
     bool assetControllerInitialization(AssetController* assetController);
+    double getTickerAveragePrice(QString ticker);
+    double getTickerTotalYield(QString ticker);
 
 private:
     QSqlDatabase database;
@@ -45,6 +46,8 @@ private:
     int getTransactionTypeId(TransactionType transactionType);
     bool populateReorganizationTypeTable();
     bool selectEventsForAsset(Asset* asset);
+    std::vector<Transaction> getTransactionsByTickerId(int tickerId);
+    std::vector<Yield> getYieldsByTickerId(int tickerId);
 };
 
 #endif // DATABASE_H

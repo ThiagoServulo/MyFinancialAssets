@@ -761,7 +761,9 @@ std::vector<Transaction> Database::getTransactionsByTickerId(int tickerId)
         {
             qDebug() << "Error retrieving transactions for tickerId:" << tickerId;
             closeDatabase();
-            return transactions;  // Returning an empty vector in case of error
+
+             // Returning an empty vector in case of error
+            return transactions;
         }
 
         // Iterate over the results and populate the vector
@@ -885,4 +887,118 @@ bool Database::assetControllerInitialization(AssetController* assetController)
     assetController->addAssets(assets);
 
     return true;
+}
+
+double Database::getTickerAveragePrice(QString ticker)
+{
+    // Get ticker id
+    int tickerId = getTickerId(ticker);
+
+    // Check ticker id
+    if(tickerId == NOT_FOUND || tickerId == DATABASE_ERROR)
+    {
+        return tickerId;
+    }
+
+    // Init variables
+    double total = 0;
+    int quantity = 0;
+
+    // Get transactions
+    std::vector<Transaction> transactions = getTransactionsByTickerId(tickerId);
+
+    for(auto transaction: transactions)
+    {
+        // Check transaction type
+        if(transaction.getTransactionType() == TransactionType::COMPRA)
+        {
+            total += (transaction.getUnitaryPrice() * transaction.getQuantity());
+            quantity += transaction.getQuantity();
+        }
+    }
+
+    // Return average price
+    return total/quantity;
+}
+
+std::vector<Yield> Database::getYieldsByTickerId(int tickerId)
+{
+    std::vector<Yield> yields;
+
+    if (openDatabase())
+    {
+        QSqlQuery query;
+
+        // Prepare the SQL select query with JOIN
+        query.prepare(R"(
+            SELECT yt.yield_type, y.value, y.date
+            FROM yield_table y
+            JOIN yield_type_table yt ON y.id_yield_type = yt.id
+            WHERE y.id_ticker = :id_ticker;
+        )");
+
+        // Bind the tickerId to the query
+        query.bindValue(":id_ticker", tickerId);
+
+        // Execute the query
+        if (!query.exec())
+        {
+            qDebug() << "Error retrieving yields for tickerId:" << tickerId;
+            closeDatabase();
+
+              // Returning an empty vector in case of error
+            return yields;
+        }
+
+        // Iterate over the results and populate the vector
+        while (query.next())
+        {
+            QString yieldTypeStr = query.value(0).toString();  // Yield type as string
+            double value = query.value(1).toDouble();           // Yield value
+            QString date = query.value(2).toString();           // Date as string
+
+            // Convert yield type string to YieldType
+            YieldType yieldType = getYieldTypeFromString(yieldTypeStr);
+
+            // Create a Yield object
+            Yield yield(QDate::fromString(date, "yyyy-MM-dd"), yieldType, value);
+
+            // Add the yield to the vector
+            yields.push_back(yield);
+        }
+
+        closeDatabase();
+    }
+    else
+    {
+        qDebug() << "Error opening database to retrieve yields";
+    }
+
+    return yields;
+}
+
+double Database::getTickerTotalYield(QString ticker)
+{
+    // Get ticker id
+    int tickerId = getTickerId(ticker);
+
+    // Check ticker id
+    if(tickerId == NOT_FOUND || tickerId == DATABASE_ERROR)
+    {
+        return tickerId;
+    }
+
+    // Init variables
+    double total = 0;
+
+    // Get yields
+    std::vector<Yield> yields = getYieldsByTickerId(tickerId);
+
+    for(auto yield: yields)
+    {
+        total += yield.getValue();
+    }
+
+    // Return total
+    return total;
 }

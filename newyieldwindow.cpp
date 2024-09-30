@@ -41,7 +41,7 @@ void NewYieldWindow::on_pushButton_save_clicked()
        ui->lineEdit_value->text() != "")
     {
         // Create yield
-        Yield yield(ui->dateEdit->date(), EventType::YIELD, getYieldTypeFromString(ui->comboBox_yieldType->currentText()), ui->lineEdit_value->text().toDouble());
+        Yield yield(ui->dateEdit->date(), getYieldTypeFromString(ui->comboBox_yieldType->currentText()), ui->lineEdit_value->text().toDouble());
 
         // Insert yield into database
         Database database;

@@ -27,6 +27,6 @@ private:
     Ui::MainWindow *ui;
     AssetController assetController;
     Database database;
-    void initSotcksTable();
+    void updateSotcksTable();
 };
 #endif // MAINWINDOW_H

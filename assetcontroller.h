@@ -14,6 +14,9 @@ public:
     std::vector<std::shared_ptr<Asset>> getAllAssets();
     void addAssets(std::vector<Asset>& assets);
     int getAssetQuantity(QString ticker);
+    double getAveragePrice(QString ticker);
+    double getAssetDistribution(QString ticker);
+    double getAssetTotalYield(QString ticker);
 };
 
 #endif // ASSETCONTROLLER_H

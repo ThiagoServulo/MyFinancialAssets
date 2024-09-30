@@ -1,7 +1,7 @@
 #include "yield.h"
 
-Yield::Yield(QDate eventData, EventType eventType, YieldType yieldType, double value)
-        : Event(eventData, eventType)
+Yield::Yield(QDate eventData, YieldType yieldType, double value)
+        : Event(eventData, EventType::YIELD)
 {
     this->yieldType = yieldType;
     this->value =  value;
