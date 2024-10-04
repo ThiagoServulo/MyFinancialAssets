@@ -1,4 +1,4 @@
-QT       += core gui sql
+QT       += core gui sql network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -10,6 +10,7 @@ CONFIG += c++11
 
 SOURCES += \
     asset.cpp \
+    assetapi.cpp \
     assetcontroller.cpp \
     constants.cpp \
     database.cpp \
@@ -25,6 +26,7 @@ SOURCES += \
 
 HEADERS += \
     asset.h \
+    assetapi.h \
     assetcontroller.h \
     constants.h \
     database.h \

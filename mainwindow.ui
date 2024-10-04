@@ -37,7 +37,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -53,6 +53,21 @@
        <rect>
         <x>10</x>
         <y>20</y>
+        <width>961</width>
+        <height>192</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_funds">
+     <attribute name="title">
+      <string>Fundos</string>
+     </attribute>
+     <widget class="QTableWidget" name="tableWidget_funds">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
         <width>961</width>
         <height>192</height>
        </rect>
