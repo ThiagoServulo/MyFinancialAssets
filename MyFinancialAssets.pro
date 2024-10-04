@@ -12,6 +12,7 @@ SOURCES += \
     asset.cpp \
     assetapi.cpp \
     assetcontroller.cpp \
+    assetwindow.cpp \
     constants.cpp \
     database.cpp \
     event.cpp \
@@ -28,6 +29,7 @@ HEADERS += \
     asset.h \
     assetapi.h \
     assetcontroller.h \
+    assetwindow.h \
     constants.h \
     database.h \
     event.h \
@@ -40,6 +42,7 @@ HEADERS += \
     yield.h
 
 FORMS += \
+    assetwindow.ui \
     mainwindow.ui \
     newreorganizationwindow.ui \
     newtransactionwindow.ui \

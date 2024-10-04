@@ -9,6 +9,7 @@
 #include "transaction.h"
 #include "yield.h"
 #include "assetapi.h"
+#include "assetwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -145,7 +146,11 @@ void MainWindow::updateSotckAndFundTable()
 
 void MainWindow::on_tableWidget_stocks_cellDoubleClicked(int row, int column)
 {
-    qDebug() << "aaaaa " << row;
+    // Get ticker
+    QString ticker = ui->tableWidget_stocks->item(row , 0)->text();
+
+    AssetWindow *assetWindow = new AssetWindow(ticker, this);
+    assetWindow->show();
 }
 
 void MainWindow::addNewLineToTable(QTableWidget *tableWidget, int row, QString ticker, QString distribution, QString quantity, QString totalYield, QString averagePrice, QString currentPriceStr, QString profitPercentage, QString capitalGain)
