@@ -14,6 +14,7 @@ class AssetWindow : public QMainWindow
 public:
     explicit AssetWindow(QString ticker, QWidget *parent = nullptr);
     ~AssetWindow();
+    void updateTransactionTable(QString ticker);
 
 private:
     Ui::AssetWindow *ui;

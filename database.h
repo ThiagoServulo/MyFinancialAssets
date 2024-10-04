@@ -22,6 +22,8 @@ public:
     bool assetControllerInitialization(AssetController* assetController);
     double getTickerAveragePrice(QString ticker);
     double getTickerTotalYield(QString ticker);
+    std::vector<Transaction> getTickerTransactions(QString ticker);
+    std::vector<Yield> getTickerYields(QString ticker);
 
 private:
     QSqlDatabase database;

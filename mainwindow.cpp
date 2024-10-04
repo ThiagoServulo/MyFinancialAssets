@@ -149,8 +149,12 @@ void MainWindow::on_tableWidget_stocks_cellDoubleClicked(int row, int column)
     // Get ticker
     QString ticker = ui->tableWidget_stocks->item(row , 0)->text();
 
-    AssetWindow *assetWindow = new AssetWindow(ticker, this);
-    assetWindow->show();
+    // Check ticker
+    if(ticker != "Total")
+    {
+        AssetWindow *assetWindow = new AssetWindow(ticker, this);
+        assetWindow->show();
+    }
 }
 
 void MainWindow::addNewLineToTable(QTableWidget *tableWidget, int row, QString ticker, QString distribution, QString quantity, QString totalYield, QString averagePrice, QString currentPriceStr, QString profitPercentage, QString capitalGain)

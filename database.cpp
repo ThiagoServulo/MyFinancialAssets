@@ -1002,3 +1002,45 @@ double Database::getTickerTotalYield(QString ticker)
     // Return total
     return total;
 }
+
+std::vector<Transaction> Database::getTickerTransactions(QString ticker)
+{
+    // Init transactions
+    std::vector<Transaction> transactions;
+
+    // Get ticker id
+    int tickerId = getTickerId(ticker);
+
+    // Check ticker id
+    if(tickerId == NOT_FOUND || tickerId == DATABASE_ERROR)
+    {
+        return transactions;
+    }
+
+    // Get transactions
+    transactions = getTransactionsByTickerId(tickerId);
+
+    // Return transactions
+    return transactions;
+}
+
+std::vector<Yield> Database::getTickerYields(QString ticker)
+{
+    // Init yields
+    std::vector<Yield> yields;
+
+    // Get ticker id
+    int tickerId = getTickerId(ticker);
+
+    // Check ticker id
+    if(tickerId == NOT_FOUND || tickerId == DATABASE_ERROR)
+    {
+        return yields;
+    }
+
+    // Get yields
+    yields = getYieldsByTickerId(tickerId);
+
+    // Return yields
+    return yields;
+}
