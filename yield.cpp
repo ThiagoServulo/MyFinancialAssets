@@ -7,7 +7,7 @@ Yield::Yield(QDate eventData, YieldType yieldType, double value)
     this->value =  value;
 }
 
-int Yield::getValue() const
+double Yield::getValue() const
 {
     return this->value;
 }

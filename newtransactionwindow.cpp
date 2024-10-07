@@ -29,7 +29,7 @@ NewTransactionWindow::NewTransactionWindow(QWidget *parent) :
     ui->lineEdit_quantity->setValidator(validatorQuantity);
 
     // Creating value validator
-    QRegularExpression regexValue(R"(\d{0,4}([,.]\d{0,2})?)");
+    QRegularExpression regexValue(R"(\d{0,4}([.]\d{0,2})?)");
     QRegularExpressionValidator *validatorValue = new QRegularExpressionValidator(regexValue, ui->lineEdit_value);
     ui->lineEdit_value->setValidator(validatorValue);
 

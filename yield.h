@@ -12,7 +12,7 @@ private:
 
 public:
     Yield(QDate eventData, YieldType yieldType, double value);
-    int getValue() const;
+    double getValue() const;
     YieldType getYieldType() const;
 };
 
