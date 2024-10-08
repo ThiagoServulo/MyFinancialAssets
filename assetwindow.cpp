@@ -14,8 +14,16 @@ AssetWindow::AssetWindow(QString ticker, QWidget *parent) :
     // Update yield table
     updateYieldTable(ticker);
 
-    // Update label
+    // Update labels
     ui->label_ticker->setText(ticker);
+
+    // Configure label styles
+    ui->label_ticker->setStyleSheet("color: rgb(255, 255, 255);");
+    ui->label_transactions->setStyleSheet("color: rgb(255, 255, 255);");
+    ui->label_yields->setStyleSheet("color: rgb(255, 255, 255);");
+
+    // Set window background color
+    ui->centralwidget->setStyleSheet("background-color: rgb(18, 18, 18);");
 }
 
 AssetWindow::~AssetWindow()
@@ -31,21 +39,8 @@ void AssetWindow::updateTransactionTable(QString ticker)
     auto transactions = database.getTickerTransactions(ticker);
 
     // Configure transaction table
-    QStringList headerLabels = {"Operação", "Data da operação", "Quantidade", "Preço unitário", "Valor total da operação", "Quantidade acumulado", "Preço médio", "Valor total acumulado"};
-    ui->tableWidget_transactions->setColumnCount(headerLabels.size());
-    ui->tableWidget_transactions->setHorizontalHeaderLabels(headerLabels);
-    ui->tableWidget_transactions->verticalHeader()->setVisible(false);
-    ui->tableWidget_transactions->setSelectionBehavior(QAbstractItemView::SelectRows);
-    ui->tableWidget_transactions->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    ui->tableWidget_transactions->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
-
-    // Set column width
-    for(int i = 0; i < headerLabels.size(); i++)
-    {
-        QFontMetrics fontMetrics(ui->tableWidget_transactions->font());
-        int width = fontMetrics.horizontalAdvance(headerLabels[i]) + 30;
-        ui->tableWidget_transactions->setColumnWidth(i, width);
-    }
+    QStringList headerLabels = {"Operação", "Data da operação", "Quantidade", "Preço unitário", "Total da operação", "Quantidade acumulado", "Preço médio", "Valor total acumulado"};
+    configureTableWidget(headerLabels, ui->tableWidget_transactions);
 
     // Init variables
     int row = 0;
@@ -99,6 +94,25 @@ void AssetWindow::updateTransactionTable(QString ticker)
     }
 }
 
+void changeRowBackgroundColor(QTableWidget *tableWidget, int row, const QColor &color)
+{
+    int columnCount = tableWidget->columnCount();
+
+    // Itera sobre cada célula da linha
+    for (int col = 0; col < columnCount; ++col) {
+        QTableWidgetItem *item = tableWidget->item(row, col);
+
+        if (!item) {
+            // Se não houver item, cria um novo
+            item = new QTableWidgetItem();
+            tableWidget->setItem(row, col, item);
+        }
+
+        // Define a cor de fundo para a célula
+        item->setBackground(color);
+    }
+}
+
 void AssetWindow::updateYieldTable(QString ticker)
 {
     Database database;
@@ -107,13 +121,8 @@ void AssetWindow::updateYieldTable(QString ticker)
     auto yields = database.getTickerYields(ticker);
 
     // Configure yield table
-    QStringList headerLabels = {"Tipo", "Data", "Valor recebido", "Valor agregado"};
-    ui->tableWidget_yields->setColumnCount(headerLabels.size());
-    ui->tableWidget_yields->setHorizontalHeaderLabels(headerLabels);
-    ui->tableWidget_yields->verticalHeader()->setVisible(false);
-    ui->tableWidget_yields->setSelectionBehavior(QAbstractItemView::SelectRows);
-    ui->tableWidget_yields->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    ui->tableWidget_yields->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+    QStringList headerLabels = {"Tipo de rendimento", "Data do rendimento", "Valor recebido", "Valor agregado"};
+    configureTableWidget(headerLabels, ui->tableWidget_yields);
 
     // Init variables
     int row = 0;
@@ -139,3 +148,5 @@ void AssetWindow::updateYieldTable(QString ticker)
         ++row;
     }
 }
+
+

@@ -19,18 +19,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Configure stock table
     QStringList headerLabels = {"Ticker", "Distribuição", "Quantidade", "Rendimento", "Preço médio", "Preço atual", "Valorização", "Ganho de capital"};
-    ui->tableWidget_stocks->setColumnCount(headerLabels.size());
-    ui->tableWidget_stocks->setHorizontalHeaderLabels(headerLabels);
-    ui->tableWidget_stocks->verticalHeader()->setVisible(false);
-    ui->tableWidget_stocks->setSelectionBehavior(QAbstractItemView::SelectRows);
-    ui->tableWidget_stocks->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    configureTableWidget(headerLabels, ui->tableWidget_stocks);
 
     // Configure fund table
-    ui->tableWidget_funds->setColumnCount(headerLabels.size());
-    ui->tableWidget_funds->setHorizontalHeaderLabels(headerLabels);
-    ui->tableWidget_funds->verticalHeader()->setVisible(false);
-    ui->tableWidget_funds->setSelectionBehavior(QAbstractItemView::SelectRows);
-    ui->tableWidget_funds->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    configureTableWidget(headerLabels, ui->tableWidget_funds);
 
     // Init asset controller
     if(!database.assetControllerInitialization(&assetController))
@@ -40,6 +32,21 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Init stocks table
     updateSotckAndFundTable();
+
+    // Set main window background color
+    this->setStyleSheet("QMainWindow { background-color: rgb(18, 18, 18); }");
+
+    // Set tab background color
+    ui->tab_funds->setStyleSheet("background-color: rgb(18, 18, 18);");
+    ui->tab_stocks->setStyleSheet("background-color: rgb(18, 18, 18);");
+    ui->tab_general->setStyleSheet("background-color: rgb(18, 18, 18);");
+
+    // Set tab widget style sheet
+    ui->tabWidget->setStyleSheet(
+        "QTabWidget::pane { background-color: rgb(18, 18, 18); }"
+        "QTabBar::tab { background-color: rgb(28, 28, 28); color: rgb(255, 255, 255); font-size: 14px; font-weight: bold; }"
+        "QTabBar::tab:selected { background-color: rgb(18, 18, 18); color: rgb(255, 255, 255); font-size: 14px; font-weight: bold; }"
+    );
 }
 
 MainWindow::~MainWindow()
@@ -100,7 +107,8 @@ void MainWindow::updateSotckAndFundTable()
         int quantity = assetController.getAssetQuantity(ticker);
         double totalYield = assetController.getAssetTotalYield(ticker);
         double averagePrice = assetController.getAveragePrice(ticker);
-        double currentPrice = assetController.getAssetCurrentPrice(ticker);
+        //double currentPrice = assetController.getAssetCurrentPrice(ticker);
+        double currentPrice = 0;
 
         // Show values if is relevant
         if(currentPrice > 0)
@@ -162,13 +170,39 @@ void MainWindow::addNewLineToTable(QTableWidget *tableWidget, int row, QString t
     // Insert new row
     tableWidget->insertRow(row);
 
-    // Insert data
-    tableWidget->setItem(row, 0, new QTableWidgetItem(ticker));
-    tableWidget->setItem(row, 1, new QTableWidgetItem(distribution + "%"));
-    tableWidget->setItem(row, 2, new QTableWidgetItem(quantity));
-    tableWidget->setItem(row, 3, new QTableWidgetItem(totalYield));
-    tableWidget->setItem(row, 4, new QTableWidgetItem(averagePrice));
-    tableWidget->setItem(row, 5, new QTableWidgetItem(currentPriceStr));
-    tableWidget->setItem(row, 6, new QTableWidgetItem(profitPercentage));
-    tableWidget->setItem(row, 7, new QTableWidgetItem(capitalGain));
+    if(ticker == "Total")
+    {
+        // Set bold item
+        auto createBoldItem = [](const QString &text)
+        {
+            QTableWidgetItem* item = new QTableWidgetItem(text);
+            QFont font = item->font();
+            font.setBold(true);
+            font.setPointSize(12);
+            item->setFont(font);
+            return item;
+        };
+
+        // Insert data
+        tableWidget->setItem(row, 0, createBoldItem(ticker));
+        tableWidget->setItem(row, 1, createBoldItem(distribution + "%"));
+        tableWidget->setItem(row, 2, createBoldItem(quantity));
+        tableWidget->setItem(row, 3, createBoldItem("R$ " + totalYield));
+        tableWidget->setItem(row, 4, createBoldItem("R$ " + averagePrice));
+        tableWidget->setItem(row, 5, createBoldItem("R$ " + currentPriceStr));
+        tableWidget->setItem(row, 6, createBoldItem(profitPercentage + "%"));
+        tableWidget->setItem(row, 7, createBoldItem("R$ " + capitalGain));
+    }
+    else
+    {
+        // Insert data
+        tableWidget->setItem(row, 0, new QTableWidgetItem(ticker));
+        tableWidget->setItem(row, 1, new QTableWidgetItem(distribution + "%"));
+        tableWidget->setItem(row, 2, new QTableWidgetItem(quantity));
+        tableWidget->setItem(row, 3, new QTableWidgetItem("R$ " + totalYield));
+        tableWidget->setItem(row, 4, new QTableWidgetItem("R$ " + averagePrice));
+        tableWidget->setItem(row, 5, new QTableWidgetItem("R$ " + currentPriceStr));
+        tableWidget->setItem(row, 6, new QTableWidgetItem(profitPercentage + "%"));
+        tableWidget->setItem(row, 7, new QTableWidgetItem("R$ " + capitalGain));
+    }
 }

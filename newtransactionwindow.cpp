@@ -14,6 +14,9 @@ NewTransactionWindow::NewTransactionWindow(QWidget *parent) :
     this->setMaximumSize(365, 274);
     this->setMinimumSize(365, 274);
 
+    // Configure labels style
+    ui->label_data->setStyleSheet("color: rgb(255, 255, 255);");
+
     // Add assets types
     ui->comboBox_assetType->addItem(getAssetTypeString(AssetType::ACAO));
     ui->comboBox_assetType->addItem(getAssetTypeString(AssetType::FUNDO));
