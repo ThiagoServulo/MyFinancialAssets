@@ -1,12 +1,15 @@
 #include "assetwindow.h"
 #include "ui_assetwindow.h"
 #include "database.h"
+#include "basics.h"
 
 AssetWindow::AssetWindow(QString ticker, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::AssetWindow)
 {
     ui->setupUi(this);
+    this->setMaximumSize(1082, 642);
+    this->setMinimumSize(1082, 642);
 
     // Update transaction table
     updateTransactionTable(ticker);
@@ -138,11 +141,15 @@ void AssetWindow::updateYieldTable(QString ticker)
         double value = yield.getValue();
         accumulatedValue += value;
 
-        // Insert data
-        ui->tableWidget_yields->setItem(row, 0, new QTableWidgetItem(getYieldTypeString(yieldType)));
-        ui->tableWidget_yields->setItem(row, 1, new QTableWidgetItem(yield.getDate().toString("dd/MM/yyyy")));
-        ui->tableWidget_yields->setItem(row, 2, new QTableWidgetItem(QString::number(value, 'f', 2)));
-        ui->tableWidget_yields->setItem(row, 3, new QTableWidgetItem(QString::number(accumulatedValue, 'f', 2)));
+        // Set style
+        int style = (yieldType == YieldType::DIVIDENDO) ? HIGHLIGHT_CELL : STANDART_CELL;
+
+        // Create string list
+        QStringList itens = {getYieldTypeString(yieldType), yield.getDate().toString("dd/MM/yyyy"),
+                             "R$ " + QString::number(value, 'f', 2), "R$ " + QString::number(accumulatedValue, 'f', 2)};
+
+        // Insert itens
+        addTableWidgetItens(ui->tableWidget_yields, row, itens, style);
 
         // Add row
         ++row;

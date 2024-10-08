@@ -11,6 +11,26 @@ NewYieldWindow::NewYieldWindow(AssetController *assetController, QWidget *parent
     this->setMaximumSize(362, 214);
     this->setMinimumSize(362, 214);
 
+    // Set labels style
+    ui->label_asset->setStyleSheet("color: rgb(255, 255, 255);");
+    ui->label_data->setStyleSheet("color: rgb(255, 255, 255);");
+    ui->label_value->setStyleSheet("color: rgb(255, 255, 255);");
+    ui->label_yieldType->setStyleSheet("color: rgb(255, 255, 255);");
+
+    // Set buttons style
+    ui->pushButton_save->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255);");
+    ui->pushButton_cancel->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255);");
+
+    // Set combo box style
+    ui->comboBox_yieldType->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); border: 1px solid rgb(50, 50, 50);");
+    ui->comboBox_asset->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); border: 1px solid rgb(50, 50, 50);");
+
+    // Set data edit style
+    ui->dateEdit->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); border: 1px solid rgb(50, 50, 50);");
+
+    // Set line edit style
+    ui->lineEdit_value->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); border: 1px solid rgb(50, 50, 50);");
+
     // Creating value validator
     QRegularExpression regexValue(R"(\d{0,4}([.]\d{0,2})?)");
     QRegularExpressionValidator *validatorValue = new QRegularExpressionValidator(regexValue, ui->lineEdit_value);

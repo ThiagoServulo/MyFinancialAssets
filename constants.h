@@ -2,7 +2,6 @@
 #define CONSTANTS_H
 
 #include <QString>
-#include <QtWidgets/QTableWidget>
 
 enum class TransactionType
 {
@@ -47,6 +46,5 @@ bool isValidTransactionType(const QString& type);
 bool isValidAssetType(const QString& type);
 bool isValidYieldType(const QString& type);
 bool isValidReorganizationType(const QString& type);
-void configureTableWidget(QStringList headerLabels, QTableWidget *tableWidget);
 
 #endif // CONSTANTS_H

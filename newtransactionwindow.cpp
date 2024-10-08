@@ -16,6 +16,27 @@ NewTransactionWindow::NewTransactionWindow(QWidget *parent) :
 
     // Configure labels style
     ui->label_data->setStyleSheet("color: rgb(255, 255, 255);");
+    ui->label_assetType->setStyleSheet("color: rgb(255, 255, 255);");
+    ui->label_quantity->setStyleSheet("color: rgb(255, 255, 255);");
+    ui->label_ticker->setStyleSheet("color: rgb(255, 255, 255);");
+    ui->label_transactionType->setStyleSheet("color: rgb(255, 255, 255);");
+    ui->label_value->setStyleSheet("color: rgb(255, 255, 255);");
+
+    // Set buttons style
+    ui->pushButton_save->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255);");
+    ui->pushButton_cancel->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255);");
+
+    // Set combo box style
+    ui->comboBox_assetType->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); border: 1px solid rgb(50, 50, 50);");
+    ui->comboBox_transactionType->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); border: 1px solid rgb(50, 50, 50);");
+
+    // Set line edit style
+    ui->lineEdit_quantity->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); border: 1px solid rgb(50, 50, 50);");
+    ui->lineEdit_ticker->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); border: 1px solid rgb(50, 50, 50);");
+    ui->lineEdit_value->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); border: 1px solid rgb(50, 50, 50);");
+
+    // Set data edit style
+    ui->dateEdit->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); border: 1px solid rgb(50, 50, 50);");
 
     // Add assets types
     ui->comboBox_assetType->addItem(getAssetTypeString(AssetType::ACAO));

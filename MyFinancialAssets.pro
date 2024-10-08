@@ -13,6 +13,7 @@ SOURCES += \
     assetapi.cpp \
     assetcontroller.cpp \
     assetwindow.cpp \
+    basics.cpp \
     constants.cpp \
     database.cpp \
     event.cpp \
@@ -30,6 +31,7 @@ HEADERS += \
     assetapi.h \
     assetcontroller.h \
     assetwindow.h \
+    basics.h \
     constants.h \
     database.h \
     event.h \

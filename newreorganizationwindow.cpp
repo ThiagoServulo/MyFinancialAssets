@@ -10,21 +10,6 @@ NewReorganizationWindow::NewReorganizationWindow(QWidget *parent) :
     this->setMaximumSize(384, 215);
     this->setMinimumSize(384, 215);
 
-    // Add reorganization types
-    ui->comboBox_reorganizationType->addItem(getReorganizationTypeString(ReorganizationType::DESDOBRAMENTO));
-    ui->comboBox_reorganizationType->addItem(getReorganizationTypeString(ReorganizationType::GRUPAMENTO));
-    ui->comboBox_reorganizationType->setCurrentIndex(-1);
-
-    // Create ratio validator
-    QRegularExpression regexRatio("[0-9]*");
-    QRegularExpressionValidator *validatorRatio = new QRegularExpressionValidator(regexRatio, ui->lineEdit_ratio);
-    ui->lineEdit_ratio->setValidator(validatorRatio);
-
-    // Set current date
-    QDate currentDate = QDate::currentDate();
-    ui->dateEdit->setDisplayFormat("dd/MM/yyyy");
-    ui->dateEdit->setDate(currentDate);
-
     // Set labels style
     ui->label_asset->setStyleSheet("color: rgb(255, 255, 255);");
     ui->label_data->setStyleSheet("color: rgb(255, 255, 255);");
@@ -41,6 +26,24 @@ NewReorganizationWindow::NewReorganizationWindow(QWidget *parent) :
 
     // Set line edit style
     ui->lineEdit_ratio->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); border: 1px solid rgb(50, 50, 50);");
+
+    // Set data edit style
+    ui->dateEdit->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); border: 1px solid rgb(50, 50, 50);");
+
+    // Add reorganization types
+    ui->comboBox_reorganizationType->addItem(getReorganizationTypeString(ReorganizationType::DESDOBRAMENTO));
+    ui->comboBox_reorganizationType->addItem(getReorganizationTypeString(ReorganizationType::GRUPAMENTO));
+    ui->comboBox_reorganizationType->setCurrentIndex(-1);
+
+    // Create ratio validator
+    QRegularExpression regexRatio("[0-9]*");
+    QRegularExpressionValidator *validatorRatio = new QRegularExpressionValidator(regexRatio, ui->lineEdit_ratio);
+    ui->lineEdit_ratio->setValidator(validatorRatio);
+
+    // Set current date
+    QDate currentDate = QDate::currentDate();
+    ui->dateEdit->setDisplayFormat("dd/MM/yyyy");
+    ui->dateEdit->setDate(currentDate);
 }
 
 NewReorganizationWindow::~NewReorganizationWindow()

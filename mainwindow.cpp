@@ -10,6 +10,7 @@
 #include "yield.h"
 #include "assetapi.h"
 #include "assetwindow.h"
+#include "basics.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
