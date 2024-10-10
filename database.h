@@ -26,6 +26,7 @@ public:
     double getTickerTotalYield(QString ticker);
     std::vector<Transaction> getTickerTransactions(QString ticker);
     std::vector<Yield> getTickerYields(QString ticker);
+    std::vector<Reorganization> getTickerReorganizations(QString ticker);
 
 private:
     QSqlDatabase database;
@@ -53,6 +54,7 @@ private:
     bool selectEventsForAsset(Asset* asset);
     std::vector<Transaction> getTransactionsByTickerId(int tickerId);
     std::vector<Yield> getYieldsByTickerId(int tickerId);
+    std::vector<Reorganization> getReorganizationsByTickerId(int tickerId);
 };
 
 #endif // DATABASE_H

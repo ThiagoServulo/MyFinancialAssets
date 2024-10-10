@@ -41,6 +41,9 @@ void AssetWindow::updateTransactionTable(QString ticker)
     // Get transactions
     auto transactions = database.getTickerTransactions(ticker);
 
+    // Get reorganizations
+    auto reorganizations = database.getTickerReorganizations(ticker);
+
     // Configure transaction table
     QStringList headerLabels = {"Operação", "Data da operação", "Quantidade", "Preço unitário", "Total da operação", "Quantidade acumulado", "Preço médio", "Valor total acumulado"};
     configureTableWidget(headerLabels, ui->tableWidget_transactions);

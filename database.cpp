@@ -1048,9 +1048,9 @@ std::vector<Yield> Database::getYieldsByTickerId(int tickerId)
         // Iterate over the results and populate the vector
         while (query.next())
         {
-            QString yieldTypeStr = query.value(0).toString();  // Yield type as string
-            double value = query.value(1).toDouble();           // Yield value
-            QString date = query.value(2).toString();           // Date as string
+            QString yieldTypeStr = query.value(0).toString();
+            double value = query.value(1).toDouble();
+            QString date = query.value(2).toString();
 
             // Convert yield type string to YieldType
             YieldType yieldType = getYieldTypeFromString(yieldTypeStr);
@@ -1070,6 +1070,62 @@ std::vector<Yield> Database::getYieldsByTickerId(int tickerId)
     }
 
     return yields;
+}
+
+std::vector<Reorganization> Database::getReorganizationsByTickerId(int tickerId)
+{
+    std::vector<Reorganization> reorganizations;
+
+    if (openDatabase())
+    {
+        QSqlQuery query;
+
+        // Prepare the SQL select query with JOIN
+        query.prepare(R"(
+            SELECT rt.reorganization_type, r.ratio, r.date
+            FROM reorganization_table r
+            JOIN reorganization_type_table rt ON r.id_reorganization = rt.id
+            WHERE r.id_ticker = :id_ticker;
+        )");
+
+        // Bind the tickerId to the query
+        query.bindValue(":id_ticker", tickerId);
+
+        // Execute the query
+        if (!query.exec())
+        {
+            qDebug() << "Error retrieving reorganizations for tickerId:" << tickerId;
+            closeDatabase();
+
+              // Returning an empty vector in case of error
+            return reorganizations;
+        }
+
+        // Iterate over the results and populate the vector
+        while (query.next())
+        {
+            QString reorganizationTypeStr = query.value(0).toString();
+            int ratio = query.value(1).toDouble();
+            QString date = query.value(2).toString();
+
+            // Convert reorganization type string to ReorganizationType
+            ReorganizationType reorganizationType = getReorganizationTypeFromString(reorganizationTypeStr);
+
+            // Create a reorganization object
+            Reorganization reorganization(QDate::fromString(date, "yyyy-MM-dd"), reorganizationType, ratio);
+
+            // Add the reorganization to the vector
+            reorganizations.push_back(reorganization);
+        }
+
+        closeDatabase();
+    }
+    else
+    {
+        qDebug() << "Error opening database to retrieve yields";
+    }
+
+    return reorganizations;
 }
 
 double Database::getTickerTotalYield(QString ticker)
@@ -1138,4 +1194,25 @@ std::vector<Yield> Database::getTickerYields(QString ticker)
 
     // Return yields
     return yields;
+}
+
+std::vector<Reorganization> Database::getTickerReorganizations(QString ticker)
+{
+    // Init reorganizations
+    std::vector<Reorganization> reorganizations;
+
+    // Get ticker id
+    int tickerId = getTickerId(ticker);
+
+    // Check ticker id
+    if(tickerId == NOT_FOUND || tickerId == DATABASE_ERROR)
+    {
+        return reorganizations;
+    }
+
+    // Get reorganizations
+    reorganizations = getReorganizationsByTickerId(tickerId);
+
+    // Return reorganizations
+    return reorganizations;
 }
