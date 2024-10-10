@@ -38,14 +38,13 @@ void AssetWindow::updateTransactionTable(QString ticker)
 {
     Database database;
 
-    // Get transactions
+    // Get events
     auto transactions = database.getTickerTransactions(ticker);
-
-    // Get reorganizations
     auto reorganizations = database.getTickerReorganizations(ticker);
+    auto events = mergeAndSortEvents(transactions, reorganizations);
 
     // Configure transaction table
-    QStringList headerLabels = {"Operação", "Data da operação", "Quantidade", "Preço unitário", "Total da operação", "Quantidade acumulado", "Preço médio", "Valor total acumulado"};
+    QStringList headerLabels = {"Tipo de operação", "Data da operação", "Quantidade", "Preço unitário", "Total da operação", "Quantidade acumulado", "Preço médio", "Valor total acumulado"};
     configureTableWidget(headerLabels, ui->tableWidget_transactions);
 
     // Init variables
@@ -53,42 +52,102 @@ void AssetWindow::updateTransactionTable(QString ticker)
     int accumulatedQuantity = 0;
     double accumulatedTotal = 0;
     double averagePrice = 0;
+    QStringList itens;
 
-    for(auto transaction: transactions)
+    for(auto event: events)
     {
-        // Get variables
-        TransactionType transactionType = transaction.getTransactionType();
-        int quantity = transaction.getQuantity();
-        double unitaryPrice = transaction.getUnitaryPrice();
-        double totalOperation = quantity * unitaryPrice;
         int style;
 
-        // Check transaction type
-        if(transactionType == TransactionType::COMPRA)
+        if(event->getEventType() == EventType::REORGANIZATION)
         {
-            accumulatedQuantity += quantity;
-            accumulatedTotal += totalOperation;
-            style = STANDART_CELL;
-        }
-        else if (transactionType == TransactionType::VENDA)
-        {
-            accumulatedQuantity -= quantity;
-            accumulatedTotal -= totalOperation;
+            // Cast to reorganization
+            Reorganization* reorganization = dynamic_cast<Reorganization*>(event);
+
+            // Check cast
+            if (!reorganization)
+            {
+                qDebug() << "Reorganization cast error";
+                continue;
+            }
+
+            // Set style
             style = HIGHLIGHT_CELL;
+
+            ReorganizationType reorganizationType = reorganization->getReorganizationType();
+
+            // Check reorganization type
+            if(reorganizationType == ReorganizationType::GRUPAMENTO)
+            {
+                accumulatedQuantity = (accumulatedQuantity == 0) ? 0 : (accumulatedQuantity / reorganization->getRatio());
+            }
+            else if (reorganizationType == ReorganizationType::DESDOBRAMENTO)
+            {
+                accumulatedQuantity = static_cast<int>(accumulatedQuantity * reorganization->getRatio());
+            }
+            else
+            {
+                throw std::invalid_argument("Reorganization type invalid");
+            }
+
+            // Calculate average price and total
+            averagePrice = (accumulatedQuantity > 0) ? (accumulatedTotal / accumulatedQuantity) : 0;
+
+            // Populate string list
+            itens = {getReorganizationTypeString(reorganizationType), reorganization->getDate().toString("dd/MM/yyyy"),
+                    QString::number(reorganization->getRatio()), "-", "-",
+                    QString::number(accumulatedQuantity), "R$ " + QString::number(averagePrice, 'f', 2),
+                    "R$ " + QString::number(accumulatedTotal, 'f', 2)};
+        }
+        else if(event->getEventType() == EventType::TRANSACTION)
+        {
+            // Cast to transaction
+            Transaction* transaction = dynamic_cast<Transaction*>(event);
+
+            // Check cast
+            if (!transaction)
+            {
+                qDebug() << "Transaction cast error";
+                continue;
+            }
+
+            // Get variables
+            TransactionType transactionType = transaction->getTransactionType();
+            int quantity = transaction->getQuantity();
+            double unitaryPrice = transaction->getUnitaryPrice();
+            double totalOperation = quantity * unitaryPrice;
+
+            // Check transaction type
+            if(transactionType == TransactionType::COMPRA)
+            {
+                // Calculate values
+                accumulatedQuantity += quantity;
+                accumulatedTotal = (accumulatedQuantity > 0) ? accumulatedTotal + totalOperation : 0;
+                averagePrice = (accumulatedQuantity > 0) ? (accumulatedTotal / accumulatedQuantity) : 0;
+                style = STANDART_CELL;
+            }
+            else if (transactionType == TransactionType::VENDA)
+            {
+                // Calculate values
+                accumulatedQuantity -= quantity;
+                accumulatedTotal =  accumulatedQuantity * averagePrice;
+                style = HIGHLIGHT_CELL;
+            }
+            else
+            {
+                throw std::invalid_argument("Transaction type invalid");
+            }
+
+            // Populate string list
+            itens = {getTransactionTypeString(transactionType), transaction->getDate().toString("dd/MM/yyyy"), QString::number(quantity),
+                    "R$ " + QString::number(unitaryPrice, 'f', 2), "R$ " + QString::number(totalOperation, 'f', 2),
+                    QString::number(accumulatedQuantity), "R$ " + QString::number(averagePrice, 'f', 2),
+                    "R$ " + QString::number(accumulatedTotal, 'f', 2)};
         }
         else
         {
-            throw std::invalid_argument("Transaction type invalid");
+            qDebug() << "Invalid event type";
+            continue;
         }
-
-        // Calculate average price
-        averagePrice = (accumulatedQuantity > 0) ? (accumulatedTotal / accumulatedQuantity) : 0;
-        accumulatedTotal = (accumulatedQuantity > 0) ? accumulatedTotal : 0;
-
-        // Create string list
-        QStringList itens = {getTransactionTypeString(transactionType), transaction.getDate().toString("dd/MM/yyyy"), QString::number(quantity),
-                            "R$ " + QString::number(unitaryPrice, 'f', 2), "R$ " + QString::number(totalOperation, 'f', 2), QString::number(accumulatedQuantity),
-                            "R$ " + QString::number(averagePrice, 'f', 2), "R$ " + QString::number(accumulatedTotal, 'f', 2)};
 
         // Insert itens
         addTableWidgetItens(ui->tableWidget_transactions, row, itens, style);

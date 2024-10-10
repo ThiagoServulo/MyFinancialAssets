@@ -1,5 +1,6 @@
 #include "database.h"
 #include "constants.h"
+#include "basics.h"
 #include <QApplication>
 #include <QSqlQuery>
 #include <QFile>
@@ -808,23 +809,58 @@ int Database::getTickerQuantity(QString ticker)
     // Init quantity
     int quantity = 0;
 
-    // Get transactions
-    std::vector<Transaction> transactions = getTransactionsByTickerId(tickerId);
+    // Get events
+    auto transactions = getTransactionsByTickerId(tickerId);
+    auto reorganizations = getReorganizationsByTickerId(tickerId);
+    auto events = mergeAndSortEvents(transactions, reorganizations);
 
-    for(auto transaction: transactions)
+    for(auto event: events)
     {
-        // Check transaction type
-        if(transaction.getTransactionType() == TransactionType::COMPRA)
+        if(event->getEventType() == EventType::REORGANIZATION)
         {
-            quantity += transaction.getQuantity();
+            // Cast to reorganization
+            Reorganization* reorganization = dynamic_cast<Reorganization*>(event);
+
+            // Check cast
+            if (reorganization)
+            {
+                // Check reorganization type
+                if(reorganization->getReorganizationType() == ReorganizationType::GRUPAMENTO)
+                {
+                    quantity = (quantity == 0) ? 0 : (quantity / reorganization->getRatio());
+                }
+                else if (reorganization->getReorganizationType() == ReorganizationType::DESDOBRAMENTO)
+                {
+                    quantity = static_cast<int>(quantity * reorganization->getRatio());
+                }
+                else
+                {
+                    throw std::invalid_argument("Reorganization type invalid");
+                }
+            }
         }
-        else if(transaction.getTransactionType() == TransactionType::VENDA)
+        else if(event->getEventType() == EventType::TRANSACTION)
         {
-            quantity -= transaction.getQuantity();
-        }
-        else
-        {
-            throw std::invalid_argument("Transaction type invalid");
+            // Cast to transaction
+            Transaction* transaction = dynamic_cast<Transaction*>(event);
+
+            // Check cast
+            if (transaction)
+            {
+                // Check transaction type
+                if(transaction->getTransactionType() == TransactionType::COMPRA)
+                {
+                    quantity += transaction->getQuantity();
+                }
+                else if(transaction->getTransactionType() == TransactionType::VENDA)
+                {
+                    quantity -= transaction->getQuantity();
+                }
+                else
+                {
+                    throw std::invalid_argument("Transaction type invalid");
+                }
+            }
         }
     }
 

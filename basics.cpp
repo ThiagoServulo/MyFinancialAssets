@@ -31,7 +31,6 @@ QTableWidgetItem* createStyledItem(QString text, int style)
     return item;
 }
 
-
 void configureTableWidget(QStringList headerLabels, QTableWidget *tableWidget)
 {
     // Configure table
@@ -97,4 +96,29 @@ void initComboBoxAssets(QComboBox *comboBox, AssetController *assetController)
 
     // Set current index
     comboBox->setCurrentIndex(-1);
+}
+
+std::vector<Event*> mergeAndSortEvents(const std::vector<Transaction>& transactions, const std::vector<Reorganization>& reorganizations)
+{
+    std::vector<Event*> events;
+
+    // Add transactions
+    for (const auto& transaction : transactions)
+    {
+        events.push_back(const_cast<Transaction*>(&transaction));
+    }
+
+    // Add reorganizations
+    for (const auto& reorganization : reorganizations)
+    {
+        events.push_back(const_cast<Reorganization*>(&reorganization));
+    }
+
+    // Sort events by date
+    std::sort(events.begin(), events.end(), [](Event* a, Event* b)
+    {
+        return a->getDate() < b->getDate();
+    });
+
+    return events;
 }
