@@ -21,9 +21,10 @@ public:
 private slots:
     void on_actionYield_triggered();
     void on_actionTransaction_triggered();
-    void on_pushButton_clicked();
     void on_actionReorganization_triggered();
     void on_tableWidget_stocks_cellDoubleClicked(int row, int column);
+
+    void on_tableWidget_funds_cellDoubleClicked(int row, int column);
 
 private:
     Ui::MainWindow *ui;

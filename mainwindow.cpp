@@ -17,6 +17,8 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    this->setMaximumSize(1010, 600);
+    this->setMinimumSize(1010, 600);
 
     // Configure stock table
     QStringList headerLabels = {"Ticker", "Distribuição", "Quantidade", "Rendimento", "Preço médio", "Preço atual", "Valorização", "Ganho de capital"};
@@ -68,16 +70,9 @@ void MainWindow::on_actionYield_triggered()
     newYieldWindow->show();
 }
 
-void MainWindow::on_pushButton_clicked()
-{
-    AssetApi assetApi;
-    double valor = assetApi.getAssetCurrentPrice("BBAS3");
-    qDebug() << valor;
-}
-
 void MainWindow::on_actionReorganization_triggered()
 {
-    NewReorganizationWindow *newReorganizationWindow = new NewReorganizationWindow(this);
+    NewReorganizationWindow *newReorganizationWindow = new NewReorganizationWindow(&assetController, this);
     newReorganizationWindow->show();
 }
 
@@ -168,42 +163,27 @@ void MainWindow::on_tableWidget_stocks_cellDoubleClicked(int row, int column)
 
 void MainWindow::addNewLineToTable(QTableWidget *tableWidget, int row, QString ticker, QString distribution, QString quantity, QString totalYield, QString averagePrice, QString currentPriceStr, QString profitPercentage, QString capitalGain)
 {
-    // Insert new row
-    tableWidget->insertRow(row);
+    // Set style
+    int style = (ticker == "Total") ? (HIGHLIGHT_CELL | FONT_BOLD | FONT_SIZE) : STANDART_CELL;
 
-    if(ticker == "Total")
-    {
-        // Set bold item
-        auto createBoldItem = [](const QString &text)
-        {
-            QTableWidgetItem* item = new QTableWidgetItem(text);
-            QFont font = item->font();
-            font.setBold(true);
-            font.setPointSize(12);
-            item->setFont(font);
-            return item;
-        };
+    // Get itens
+    QStringList itens = {ticker, distribution + "%", quantity, "R$ " + totalYield, "R$ " + averagePrice, "R$ " + currentPriceStr,
+                         profitPercentage + "%", "R$ " + capitalGain};
 
-        // Insert data
-        tableWidget->setItem(row, 0, createBoldItem(ticker));
-        tableWidget->setItem(row, 1, createBoldItem(distribution + "%"));
-        tableWidget->setItem(row, 2, createBoldItem(quantity));
-        tableWidget->setItem(row, 3, createBoldItem("R$ " + totalYield));
-        tableWidget->setItem(row, 4, createBoldItem("R$ " + averagePrice));
-        tableWidget->setItem(row, 5, createBoldItem("R$ " + currentPriceStr));
-        tableWidget->setItem(row, 6, createBoldItem(profitPercentage + "%"));
-        tableWidget->setItem(row, 7, createBoldItem("R$ " + capitalGain));
-    }
-    else
+    // Insert itens
+    addTableWidgetItens(tableWidget, row, itens, style);
+}
+
+void MainWindow::on_tableWidget_funds_cellDoubleClicked(int row, int column)
+{
+    // Get ticker
+    QString ticker = ui->tableWidget_funds->item(row , 0)->text();
+
+    // Check ticker
+    if(ticker != "Total")
     {
-        // Insert data
-        tableWidget->setItem(row, 0, new QTableWidgetItem(ticker));
-        tableWidget->setItem(row, 1, new QTableWidgetItem(distribution + "%"));
-        tableWidget->setItem(row, 2, new QTableWidgetItem(quantity));
-        tableWidget->setItem(row, 3, new QTableWidgetItem("R$ " + totalYield));
-        tableWidget->setItem(row, 4, new QTableWidgetItem("R$ " + averagePrice));
-        tableWidget->setItem(row, 5, new QTableWidgetItem("R$ " + currentPriceStr));
-        tableWidget->setItem(row, 6, new QTableWidgetItem(profitPercentage + "%"));
-        tableWidget->setItem(row, 7, new QTableWidgetItem("R$ " + capitalGain));
+        AssetWindow *assetWindow = new AssetWindow(ticker, this);
+        assetWindow->show();
     }
 }
+

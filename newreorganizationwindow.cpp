@@ -1,8 +1,9 @@
 #include "newreorganizationwindow.h"
 #include "ui_newreorganizationwindow.h"
 #include "constants.h"
+#include "basics.h"
 
-NewReorganizationWindow::NewReorganizationWindow(QWidget *parent) :
+NewReorganizationWindow::NewReorganizationWindow(AssetController *assetController, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::NewReorganizationWindow)
 {
@@ -44,6 +45,9 @@ NewReorganizationWindow::NewReorganizationWindow(QWidget *parent) :
     QDate currentDate = QDate::currentDate();
     ui->dateEdit->setDisplayFormat("dd/MM/yyyy");
     ui->dateEdit->setDate(currentDate);
+
+    // Init combo box asset
+    initComboBoxAssets(ui->comboBox_asset, assetController);
 }
 
 NewReorganizationWindow::~NewReorganizationWindow()
@@ -60,4 +64,3 @@ void NewReorganizationWindow::on_pushButton_cancel_clicked()
 {
     this->close();
 }
-

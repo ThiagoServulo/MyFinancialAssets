@@ -6,6 +6,7 @@ QTableWidgetItem* createStyledItem(QString text, int style)
 {
     QTableWidgetItem* item = new QTableWidgetItem(text);
 
+    // Background color
     if(style & HIGHLIGHT_CELL)
     {
        item->setBackground(QColor(38, 38, 38));
@@ -15,9 +16,12 @@ QTableWidgetItem* createStyledItem(QString text, int style)
         item->setBackground(QColor(28, 28, 28));
     }
 
+    // Text color
     item->setForeground(QColor(255, 255, 255));
 
     QFont font = item->font();
+    font.setBold(style & FONT_BOLD);
+    font.setPointSize((style & FONT_SIZE) ? 12 : 10);
     item->setFont(font);
 
     return item;
@@ -59,13 +63,34 @@ void configureTableWidget(QStringList headerLabels, QTableWidget *tableWidget)
 
 void addTableWidgetItem(QTableWidget *tableWidget, int row, int column, QString item, int style)
 {
+    // Add item
     tableWidget->setItem(row, column, createStyledItem(item, style));
 }
 
 void addTableWidgetItens(QTableWidget *tableWidget, int row, QStringList itens, int style)
 {
+    // Insert row
+    tableWidget->insertRow(row);
+
+    // Add item
     for(int column = 0; column < itens.size(); column++)
     {
         addTableWidgetItem(tableWidget, row, column, itens[column], style);
     }
+}
+
+void initComboBoxAssets(QComboBox *comboBox, AssetController *assetController)
+{
+    // Clear combo box
+    comboBox->clear();
+
+    // Iterate to add each ticker to the combo box
+    for (auto asset : assetController->getAllAssets())
+    {
+        // Add ticker to the combo box
+        comboBox->addItem(asset->getTicker());
+    }
+
+    // Set current index
+    comboBox->setCurrentIndex(-1);
 }

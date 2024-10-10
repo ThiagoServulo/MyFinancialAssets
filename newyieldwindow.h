@@ -27,9 +27,7 @@ private slots:
 private:
     Ui::NewYieldWindow *ui;
     Database database;
-    std::vector<std::shared_ptr<Asset>> assets;
-    AssetType findAssetTypeByTicker(const QString& tickerToFind);
-    void initComboBoxAssets();
+    AssetController *assetController;
 };
 
 #endif // NEWYIELDWINDOW_H

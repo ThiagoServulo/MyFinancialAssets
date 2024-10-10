@@ -2,6 +2,7 @@
 #define NEWREORGANIZATIONWINDOW_H
 
 #include <QMainWindow>
+#include "assetcontroller.h"
 
 namespace Ui {
 class NewReorganizationWindow;
@@ -12,7 +13,7 @@ class NewReorganizationWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit NewReorganizationWindow(QWidget *parent = nullptr);
+    explicit NewReorganizationWindow(AssetController *assetController, QWidget *parent = nullptr);
     ~NewReorganizationWindow();
 
 private slots:

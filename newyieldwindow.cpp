@@ -2,6 +2,7 @@
 #include "ui_newyieldwindow.h"
 #include "yield.h"
 #include <QMessageBox>
+#include "basics.h"
 
 NewYieldWindow::NewYieldWindow(AssetController *assetController, QWidget *parent) :
     QMainWindow(parent),
@@ -41,11 +42,11 @@ NewYieldWindow::NewYieldWindow(AssetController *assetController, QWidget *parent
     ui->dateEdit->setDisplayFormat("dd/MM/yyyy");
     ui->dateEdit->setDate(currentDate);
 
-    // Get all assets
-    assets = assetController->getAllAssets();
+    // Get asset controller
+    this->assetController = assetController;
 
     // Init combo box assets
-    initComboBoxAssets();
+    initComboBoxAssets(ui->comboBox_asset, assetController);
 }
 
 NewYieldWindow::~NewYieldWindow()
@@ -97,25 +98,11 @@ void NewYieldWindow::on_pushButton_cancel_clicked()
     this->close();
 }
 
-AssetType NewYieldWindow::findAssetTypeByTicker(const QString& tickerToFind)
-{
-    for (auto asset : assets)
-    {
-        if (asset->getTicker() == tickerToFind)
-        {
-            // Return the corresponding AssetType
-            return asset->getAssetType();
-        }
-    }
-
-    throw std::invalid_argument("Ticker not found");
-}
-
 void NewYieldWindow::on_comboBox_asset_textActivated(const QString &arg1)
 {
     ui->comboBox_yieldType->clear();
 
-    AssetType assetType = findAssetTypeByTicker(arg1);
+    AssetType assetType = assetController->getAsset(arg1)->getAssetType();
 
     if(assetType == AssetType::ACAO)
     {
@@ -132,19 +119,4 @@ void NewYieldWindow::on_comboBox_asset_textActivated(const QString &arg1)
     }
 
     ui->comboBox_yieldType->setCurrentIndex(-1);
-}
-
-void NewYieldWindow::initComboBoxAssets()
-{
-    // Populate combo box
-    ui->comboBox_asset->clear();
-
-    // Iterate through the vector and add each ticker to the combo box
-    for (auto asset : assets)
-    {
-        // Add ticker to the combo box
-        ui->comboBox_asset->addItem(asset->getTicker());
-    }
-
-    ui->comboBox_asset->setCurrentIndex(-1);
 }

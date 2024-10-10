@@ -2,6 +2,8 @@
 #define BASICS_H
 
 #include <QTableWidgetItem>
+#include <QComboBox>
+#include "assetcontroller.h"
 
 #define STANDART_CELL 0
 #define HIGHLIGHT_CELL (1 << 0) // Bit 0
@@ -12,5 +14,6 @@ QTableWidgetItem* createStyledItem(QString text, int style);
 void configureTableWidget(QStringList headerLabels, QTableWidget *tableWidget);
 void addTableWidgetItem(QTableWidget *tableWidget, int row, int column, QString item, int style);
 void addTableWidgetItens(QTableWidget *tableWidget, int row, QStringList itens, int style);
+void initComboBoxAssets(QComboBox *comboBox, AssetController *assetController);
 
 #endif // BASICS_H

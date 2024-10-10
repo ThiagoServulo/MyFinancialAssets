@@ -53,25 +53,25 @@ void AssetWindow::updateTransactionTable(QString ticker)
 
     for(auto transaction: transactions)
     {
-        // Insert new row
-        ui->tableWidget_transactions->insertRow(row);
-
         // Get variables
         TransactionType transactionType = transaction.getTransactionType();
         int quantity = transaction.getQuantity();
         double unitaryPrice = transaction.getUnitaryPrice();
         double totalOperation = quantity * unitaryPrice;
+        int style;
 
         // Check transaction type
         if(transactionType == TransactionType::COMPRA)
         {
             accumulatedQuantity += quantity;
             accumulatedTotal += totalOperation;
+            style = STANDART_CELL;
         }
         else if (transactionType == TransactionType::VENDA)
         {
             accumulatedQuantity -= quantity;
             accumulatedTotal -= totalOperation;
+            style = HIGHLIGHT_CELL;
         }
         else
         {
@@ -82,37 +82,16 @@ void AssetWindow::updateTransactionTable(QString ticker)
         averagePrice = (accumulatedQuantity > 0) ? (accumulatedTotal / accumulatedQuantity) : 0;
         accumulatedTotal = (accumulatedQuantity > 0) ? accumulatedTotal : 0;
 
-        // Insert data
-        ui->tableWidget_transactions->setItem(row, 0, new QTableWidgetItem(getTransactionTypeString(transactionType)));
-        ui->tableWidget_transactions->setItem(row, 1, new QTableWidgetItem(transaction.getDate().toString("dd/MM/yyyy")));
-        ui->tableWidget_transactions->setItem(row, 2, new QTableWidgetItem(QString::number(quantity)));
-        ui->tableWidget_transactions->setItem(row, 3, new QTableWidgetItem(QString::number(unitaryPrice, 'f', 2)));
-        ui->tableWidget_transactions->setItem(row, 4, new QTableWidgetItem(QString::number(totalOperation, 'f', 2)));
-        ui->tableWidget_transactions->setItem(row, 5, new QTableWidgetItem(QString::number(accumulatedQuantity)));
-        ui->tableWidget_transactions->setItem(row, 6, new QTableWidgetItem(QString::number(averagePrice, 'f', 2)));
-        ui->tableWidget_transactions->setItem(row, 7, new QTableWidgetItem(QString::number(accumulatedTotal, 'f', 2)));
+        // Create string list
+        QStringList itens = {getTransactionTypeString(transactionType), transaction.getDate().toString("dd/MM/yyyy"), QString::number(quantity),
+                            QString::number(unitaryPrice, 'f', 2), QString::number(totalOperation, 'f', 2), QString::number(accumulatedQuantity),
+                            QString::number(averagePrice, 'f', 2), QString::number(accumulatedTotal, 'f', 2)};
+
+        // Insert itens
+        addTableWidgetItens(ui->tableWidget_transactions, row, itens, style);
 
         // Add row
         ++row;
-    }
-}
-
-void changeRowBackgroundColor(QTableWidget *tableWidget, int row, const QColor &color)
-{
-    int columnCount = tableWidget->columnCount();
-
-    // Itera sobre cada célula da linha
-    for (int col = 0; col < columnCount; ++col) {
-        QTableWidgetItem *item = tableWidget->item(row, col);
-
-        if (!item) {
-            // Se não houver item, cria um novo
-            item = new QTableWidgetItem();
-            tableWidget->setItem(row, col, item);
-        }
-
-        // Define a cor de fundo para a célula
-        item->setBackground(color);
     }
 }
 
@@ -133,9 +112,6 @@ void AssetWindow::updateYieldTable(QString ticker)
 
     for(auto yield: yields)
     {
-        // Insert new row
-        ui->tableWidget_yields->insertRow(row);
-
         // Get variables
         YieldType yieldType = yield.getYieldType();
         double value = yield.getValue();
