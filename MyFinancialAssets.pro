@@ -23,6 +23,7 @@ SOURCES += \
     newreorganizationwindow.cpp \
     newtransactionwindow.cpp \
     newyieldwindow.cpp \
+    reorganization.cpp \
     transaction.cpp \
     yield.cpp
 
@@ -40,6 +41,7 @@ HEADERS += \
     newreorganizationwindow.h \
     newtransactionwindow.h \
     newyieldwindow.h \
+    reorganization.h \
     transaction.h \
     yield.h
 

@@ -42,6 +42,7 @@ QString getReorganizationTypeString(ReorganizationType type);
 TransactionType getTransactionTypeFromString(QString type);
 AssetType getAssetTypeFromString(QString type);
 YieldType getYieldTypeFromString(QString type);
+ReorganizationType getReorganizationTypeFromString(QString type);
 bool isValidTransactionType(const QString& type);
 bool isValidAssetType(const QString& type);
 bool isValidYieldType(const QString& type);

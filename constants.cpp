@@ -74,6 +74,22 @@ AssetType getAssetTypeFromString(QString type)
     }
 }
 
+ReorganizationType getReorganizationTypeFromString(QString type)
+{
+    if (type == getReorganizationTypeString(ReorganizationType::DESDOBRAMENTO))
+    {
+        return ReorganizationType::DESDOBRAMENTO;
+    }
+    else if (type == getReorganizationTypeString(ReorganizationType::GRUPAMENTO))
+    {
+        return ReorganizationType::GRUPAMENTO;
+    }
+    else
+    {
+        throw std::invalid_argument("Reorganization type invalid: " + type.toStdString());
+    }
+}
+
 YieldType getYieldTypeFromString(QString type)
 {
     if (type == getYieldTypeString(YieldType::DIVIDENDO))

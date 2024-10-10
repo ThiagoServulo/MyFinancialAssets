@@ -84,8 +84,8 @@ void AssetWindow::updateTransactionTable(QString ticker)
 
         // Create string list
         QStringList itens = {getTransactionTypeString(transactionType), transaction.getDate().toString("dd/MM/yyyy"), QString::number(quantity),
-                            QString::number(unitaryPrice, 'f', 2), QString::number(totalOperation, 'f', 2), QString::number(accumulatedQuantity),
-                            QString::number(averagePrice, 'f', 2), QString::number(accumulatedTotal, 'f', 2)};
+                            "R$ " + QString::number(unitaryPrice, 'f', 2), "R$ " + QString::number(totalOperation, 'f', 2), QString::number(accumulatedQuantity),
+                            "R$ " + QString::number(averagePrice, 'f', 2), "R$ " + QString::number(accumulatedTotal, 'f', 2)};
 
         // Insert itens
         addTableWidgetItens(ui->tableWidget_transactions, row, itens, style);

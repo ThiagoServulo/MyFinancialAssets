@@ -4,6 +4,7 @@
 #include <QSqlDatabase>
 #include "transaction.h"
 #include "yield.h"
+#include "reorganization.h"
 #include "assetcontroller.h"
 
 #define NOT_FOUND -1
@@ -17,6 +18,7 @@ public:
     bool prepareDatabase();
     bool insertTransaction(QString ticker, AssetType assetType, Transaction transaction);
     int insertYield(QString ticker, Yield yield);
+    int insertReorganization(QString ticker, Reorganization reorganization);
     int getTickerQuantity(QString ticker);
     bool selectAllAssets(std::vector<Asset>& assets);
     bool assetControllerInitialization(AssetController* assetController);
@@ -43,6 +45,7 @@ private:
     bool checkIfDatabaseExists();
     int getAssetTypeId(AssetType assetType);
     int getYieldTypeId(YieldType yieldType);
+    int getReorganizationTypeId(ReorganizationType reorganizationType);
     int getTickerId(QString ticker);
     int insertTicker(QString ticker, AssetType assetType);
     int getTransactionTypeId(TransactionType transactionType);

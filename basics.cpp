@@ -6,24 +6,28 @@ QTableWidgetItem* createStyledItem(QString text, int style)
 {
     QTableWidgetItem* item = new QTableWidgetItem(text);
 
-    // Background color
-    if(style & HIGHLIGHT_CELL)
-    {
-       item->setBackground(QColor(38, 38, 38));
-    }
-    else
-    {
-        item->setBackground(QColor(28, 28, 28));
-    }
+    // Set background color
+    item->setBackground((style & HIGHLIGHT_CELL) ? QColor(38, 38, 38) : QColor(28, 28, 28));
 
-    // Text color
+    // Set text color
     item->setForeground(QColor(255, 255, 255));
 
+    // Set text alignment
+    item->setTextAlignment(Qt::AlignCenter | Qt::AlignVCenter);
+
+    // Create font
     QFont font = item->font();
+
+    // Set bold
     font.setBold(style & FONT_BOLD);
+
+    // Set point size
     font.setPointSize((style & FONT_SIZE) ? 12 : 10);
+
+    // Use font
     item->setFont(font);
 
+    // Return item
     return item;
 }
 

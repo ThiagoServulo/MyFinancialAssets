@@ -2,6 +2,9 @@
 #include "ui_newreorganizationwindow.h"
 #include "constants.h"
 #include "basics.h"
+#include "reorganization.h"
+#include "database.h"
+#include <QMessageBox>
 
 NewReorganizationWindow::NewReorganizationWindow(AssetController *assetController, QWidget *parent) :
     QMainWindow(parent),
@@ -57,7 +60,36 @@ NewReorganizationWindow::~NewReorganizationWindow()
 
 void NewReorganizationWindow::on_pushButton_save_clicked()
 {
+    // Checking fields
+    if(isValidReorganizationType(ui->comboBox_reorganizationType->currentText()) &&
+       ui->lineEdit_ratio->text() != "" && ui->comboBox_asset->currentText() != "")
+    {
+        Reorganization reorganization(ui->dateEdit->date(), getReorganizationTypeFromString(ui->comboBox_reorganizationType->currentText()),
+                                      ui->lineEdit_ratio->text().toInt());
 
+        // Insert reorganization into database
+        Database database;
+        int status = database.insertReorganization(ui->comboBox_asset->currentText(), reorganization);
+
+        // Check status
+        switch (status)
+        {
+            case DATABASE_SUCCESS:
+                QMessageBox::information(this, "Sucesso", "Reorganização inserido com sucesso");
+            break;
+
+            case NOT_FOUND:
+                QMessageBox::information(this, "Erro", "Esse ativo não está cadastrado no banco");
+            break;
+
+            default:
+                QMessageBox::critical(this, "Erro", "Erro ao inserir reorganização");
+
+        }
+
+        // Close window
+        this->close();
+    }
 }
 
 void NewReorganizationWindow::on_pushButton_cancel_clicked()
