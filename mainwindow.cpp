@@ -20,6 +20,9 @@ MainWindow::MainWindow(QWidget *parent)
     this->setMaximumSize(1010, 600);
     this->setMinimumSize(1010, 600);
 
+    // Create database
+    database.prepareDatabase();
+
     // Configure stock table
     QStringList headerLabels = {"Ticker", "Distribuição", "Quantidade", "Rendimento", "Preço médio", "Preço atual", "Valorização", "Ganho de capital"};
     configureTableWidget(headerLabels, ui->tableWidget_stocks);
@@ -104,7 +107,8 @@ void MainWindow::updateSotckAndFundTable()
         double totalYield = assetController.getAssetTotalYield(ticker);
         double averagePrice = assetController.getAveragePrice(ticker);
         //double currentPrice = assetController.getAssetCurrentPrice(ticker);
-        double currentPrice = 0;
+        double currentPrice = asset->getCurrentPrice();
+        //double currentPrice = 0;
 
         // Show values if is relevant
         if(currentPrice > 0)

@@ -1,6 +1,7 @@
 #include "database.h"
 #include "constants.h"
 #include "basics.h"
+#include "assetapi.h"
 #include <QApplication>
 #include <QSqlQuery>
 #include <QFile>
@@ -132,6 +133,30 @@ bool Database::createYieldTypeTable()
     return populateYieldTypeTable();
 }
 
+bool Database::createCurrentPriceTable()
+{
+    // Query to create current price table
+    QString createTableQuery = R"(
+        CREATE TABLE IF NOT EXISTS current_price_table (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_ticker INTEGER NOT NULL,
+            current_price DOUBLE NOT NULL
+        );
+    )";
+
+    // Execute query
+    QSqlQuery query;
+    if (!query.exec(createTableQuery))
+    {
+        qDebug() << "Error to create current_price_table";
+        return false;
+    }
+
+    // Table created
+    qDebug() << "Table current_price_table created";
+    return true;
+}
+
 bool Database::populateYieldTypeTable()
 {
     // Query to insert data into yield type table
@@ -218,7 +243,8 @@ bool Database::createTickerTable()
         CREATE TABLE IF NOT EXISTS ticker_table (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             ticker TEXT NOT NULL,
-            id_asset_type INTEGER NOT NULL
+            id_asset_type INTEGER NOT NULL,
+            current_price DOUBLE NOT NULL
         );
     )";
 
@@ -364,6 +390,7 @@ bool Database::prepareDatabase()
         createStatus |= createYieldTable();
         createStatus |= createAssetTypeTable();
         createStatus |= createYieldTypeTable();
+        createStatus |= createCurrentPriceTable();
         createStatus |= createTransactionTypeTable();
         createStatus |= createTickerTable();
         createStatus |= createTransactionTable();
@@ -571,17 +598,20 @@ int Database::insertTicker(QString ticker, AssetType assetType)
         return DATABASE_ERROR;
     }
 
+    double currentPrice = 10; //aqui
+
     if(openDatabase())
     {
         QString insertQuery = R"(
-            INSERT INTO ticker_table (ticker, id_asset_type)
-            VALUES (:ticker, :id_asset_type);
+            INSERT INTO ticker_table (ticker, id_asset_type, current_price)
+            VALUES (:ticker, :id_asset_type, :current_price);
         )";
 
         QSqlQuery query;
         query.prepare(insertQuery);
         query.bindValue(":ticker", ticker);
         query.bindValue(":id_asset_type", assetTypeId);
+        query.bindValue(":current_price", currentPrice);
 
         // Execute query
         if (!query.exec())
@@ -930,7 +960,7 @@ bool Database::selectAllAssets(std::vector<Asset>& assets)
     if (openDatabase())
     {
         QString selectQuery = R"(
-            SELECT ticker, asset_type
+            SELECT ticker, asset_type, current_price
             FROM ticker_table
             JOIN asset_type_table ON ticker_table.id_asset_type = asset_type_table.id;
         )";
@@ -954,10 +984,11 @@ bool Database::selectAllAssets(std::vector<Asset>& assets)
         {
             QString ticker = query.value(0).toString();
             QString assetTypeStr = query.value(1).toString();
+            double currentPrice = query.value(2).toDouble();
 
             // Convert assetTypeStr to AssetType
             AssetType assetType = getAssetTypeFromString(assetTypeStr);
-            assets.push_back(Asset(ticker, assetType));
+            assets.push_back(Asset(ticker, assetType, currentPrice));
         }
 
         closeDatabase();
@@ -1001,6 +1032,16 @@ bool Database::assetControllerInitialization(AssetController* assetController)
 {
     std::vector<Asset> assets;
 
+    /*
+     * checar a data atual na tabela
+     * se a data for antiga atualiza o current price na ticker table
+     * atualiza a data atual
+    // Update current price table
+    AssetApi assetApi;
+    QString ticker = asset.getTicker();
+    double currentPrice = assetApi.getAssetCurrentPrice(ticker);
+    */
+
     // Get assets
     if(!selectAllAssets(assets))
     {
@@ -1011,6 +1052,7 @@ bool Database::assetControllerInitialization(AssetController* assetController)
     // Get events
     for(Asset asset: assets)
     {
+        // Select events
         selectEventsForAsset(&asset);
     }
 

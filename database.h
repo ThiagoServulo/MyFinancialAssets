@@ -36,6 +36,7 @@ private:
     bool createAssetTypeTable();
     bool populateAssetTypeTable();
     bool createYieldTypeTable();
+    bool createCurrentPriceTable();
     bool populateYieldTypeTable();
     bool createTransactionTypeTable();
     bool createTickerTable();
