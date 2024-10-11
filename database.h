@@ -27,6 +27,7 @@ public:
     std::vector<Transaction> getTickerTransactions(QString ticker);
     std::vector<Yield> getTickerYields(QString ticker);
     std::vector<Reorganization> getTickerReorganizations(QString ticker);
+    bool checkLastUpdate();
 
 private:
     QSqlDatabase database;
@@ -34,6 +35,7 @@ private:
     void closeDatabase();
     bool createYieldTable();
     bool createAssetTypeTable();
+    bool createLastUpdateTable();
     bool populateAssetTypeTable();
     bool createYieldTypeTable();
     bool createCurrentPriceTable();
@@ -49,13 +51,17 @@ private:
     int getYieldTypeId(YieldType yieldType);
     int getReorganizationTypeId(ReorganizationType reorganizationType);
     int getTickerId(QString ticker);
-    int insertTicker(QString ticker, AssetType assetType);
+    int insertTicker(QString ticker, AssetType assetType, double currentPrice);
     int getTransactionTypeId(TransactionType transactionType);
     bool populateReorganizationTypeTable();
     bool selectEventsForAsset(Asset* asset);
     std::vector<Transaction> getTransactionsByTickerId(int tickerId);
     std::vector<Yield> getYieldsByTickerId(int tickerId);
     std::vector<Reorganization> getReorganizationsByTickerId(int tickerId);
+    QDate selectLastUpdateDate();
+    bool selectAllTicker(QStringList *tickers);
+    int updateTickerCurrentPrice(QString ticker, double currentPrice);
+    int insertLastUpdateDate(QDate date);
 };
 
 #endif // DATABASE_H

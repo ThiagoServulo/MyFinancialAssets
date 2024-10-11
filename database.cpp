@@ -82,6 +82,28 @@ bool Database::createAssetTypeTable()
     return populateAssetTypeTable();;
 }
 
+bool Database::createLastUpdateTable()
+{
+    // Query to create last update table
+    QString createTableQuery = R"(
+        CREATE TABLE IF NOT EXISTS last_update_table (
+            date DATE NOT NULL
+        );
+    )";
+
+    // Execute query
+    QSqlQuery query;
+    if (!query.exec(createTableQuery))
+    {
+        qDebug() << "Error to create last_update_table";
+        return false;
+    }
+
+    // Table created
+    qDebug() << "Table last_update_table created";
+    return true;
+}
+
 bool Database::populateAssetTypeTable()
 {
     // Query to insert data into asset type table
@@ -396,6 +418,7 @@ bool Database::prepareDatabase()
         createStatus |= createTransactionTable();
         createStatus |= createReorganizationTypeTable();
         createStatus |= createReorganizationTable();
+        createStatus |= createLastUpdateTable();
     }
     else
     {
@@ -583,7 +606,7 @@ int Database::getTransactionTypeId(TransactionType transactionType)
     return DATABASE_ERROR;
 }
 
-int Database::insertTicker(QString ticker, AssetType assetType)
+int Database::insertTicker(QString ticker, AssetType assetType, double currentPrice)
 {
     // Convert to upper case
     ticker = ticker.toUpper();
@@ -597,8 +620,6 @@ int Database::insertTicker(QString ticker, AssetType assetType)
         qDebug() << "Invalid asset type id, the database was loaded incorrect";
         return DATABASE_ERROR;
     }
-
-    double currentPrice = 10; //aqui
 
     if(openDatabase())
     {
@@ -655,8 +676,12 @@ bool Database::insertTransaction(QString ticker, AssetType assetType, Transactio
     // Check ticker id
     if(tickerId == NOT_FOUND)
     {
+        // Get current price from API
+        AssetApi assetApi;
+        double currentPrice = assetApi.getAssetCurrentPrice(ticker);
+
         // Inser new ticker
-        int status = insertTicker(ticker, assetType);
+        int status = insertTicker(ticker, assetType, currentPrice);
 
         // Check status
         if(status == DATABASE_ERROR)
@@ -1032,15 +1057,23 @@ bool Database::assetControllerInitialization(AssetController* assetController)
 {
     std::vector<Asset> assets;
 
-    /*
-     * checar a data atual na tabela
-     * se a data for antiga atualiza o current price na ticker table
-     * atualiza a data atual
-    // Update current price table
-    AssetApi assetApi;
-    QString ticker = asset.getTicker();
-    double currentPrice = assetApi.getAssetCurrentPrice(ticker);
-    */
+    if(checkLastUpdate())
+    {
+        // Update current price
+        QStringList tickers;
+        if(selectAllTicker(&tickers))
+        {
+            for(const QString &ticker: tickers)
+            {
+                AssetApi assetApi;
+                double currentPrice = assetApi.getAssetCurrentPrice(ticker);
+                updateTickerCurrentPrice(ticker, currentPrice);
+            }
+
+            // Update last update date
+            insertLastUpdateDate(QDate::currentDate());
+        }
+    }
 
     // Get assets
     if(!selectAllAssets(assets))
@@ -1293,4 +1326,152 @@ std::vector<Reorganization> Database::getTickerReorganizations(QString ticker)
 
     // Return reorganizations
     return reorganizations;
+}
+
+QDate Database::selectLastUpdateDate()
+{
+    if (openDatabase())
+    {
+        // Query to get last update
+        QString selectQuery = R"(
+                SELECT date FROM last_update_table;
+        )";
+
+        // Execute query
+        QSqlQuery query;
+        if (!query.exec(selectQuery))
+        {
+            qDebug() << "Error to get last update date";
+            closeDatabase();
+            return QDate(0, 0, 0);
+        }
+
+        query.next();
+        QString date = query.value(0).toString();
+        closeDatabase();
+        return QDate::fromString(date, "yyyy-MM-dd");
+    }
+
+    qDebug() << "Error opening database to select last update date";
+    return QDate(0, 0, 0);
+}
+
+bool Database::checkLastUpdate()
+{
+    QDate lastUpdateDate = selectLastUpdateDate();
+    QDate currentDate = QDate::currentDate();
+
+    qDebug() << lastUpdateDate << " " << currentDate;
+
+    return lastUpdateDate < currentDate;
+}
+
+bool Database::selectAllTicker(QStringList *tickers)
+{
+    if (openDatabase())
+    {
+        QString selectQuery = R"(
+            SELECT ticker
+            FROM ticker_table;
+        )";
+
+        QSqlQuery query;
+        query.prepare(selectQuery);
+
+        // Execute query
+        if (!query.exec())
+        {
+            qDebug() << "Error selecting tickers from ticker_table";
+            closeDatabase();
+            return false;
+        }
+
+        // Clear string list
+        tickers->clear();
+
+        // Process the results
+        while (query.next())
+        {
+            tickers->append(query.value(0).toString());
+        }
+
+        closeDatabase();
+        return true;
+    }
+
+    qDebug() << "Error opening database to select tickers";
+    return false;
+}
+
+int Database::updateTickerCurrentPrice(QString ticker, double currentPrice)
+{
+    // Convert to upper case
+    ticker = ticker.toUpper();
+
+    if(openDatabase())
+    {
+        QString insertQuery = R"(
+            UPDATE ticker_table SET current_price = :current_price WHERE ticker = :ticker;
+        )";
+
+        QSqlQuery query;
+        query.prepare(insertQuery);
+        query.bindValue(":ticker", ticker);
+        query.bindValue(":current_price", currentPrice);
+
+        // Execute query
+        if (!query.exec())
+        {
+            qDebug() << "Error updating current price into ticker_table";
+            closeDatabase();
+            return DATABASE_ERROR;
+        }
+
+        closeDatabase();
+        return DATABASE_SUCCESS;
+    }
+
+    qDebug() << "Error to open database to update current price";
+    return DATABASE_ERROR;
+}
+
+int Database::insertLastUpdateDate(QDate date)
+{
+    QSqlQuery query;
+
+    if(openDatabase())
+    {
+        // Clear the table
+        QString deleteQuery = "DELETE FROM last_update_table;";
+
+        if (!query.exec(deleteQuery))
+        {
+            qDebug() << "Error deleting rows from last_update_table";
+            closeDatabase();
+            return DATABASE_ERROR;
+        }
+
+        // Build query to update table
+        QString insertQuery = R"(
+            INSERT INTO last_update_table (date)
+            VALUES (:date);
+        )";
+
+        query.prepare(insertQuery);
+        query.bindValue(":date", date.toString("yyyy-MM-dd"));
+
+        // Execute query
+        if (!query.exec())
+        {
+            qDebug() << "Error inserting last update date";
+            closeDatabase();
+            return DATABASE_ERROR;
+        }
+
+        closeDatabase();
+        return DATABASE_SUCCESS;
+    }
+
+    qDebug() << "Error to open database to insert last update date";
+    return DATABASE_ERROR;
 }
