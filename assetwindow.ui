@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1082</width>
+    <width>1149</width>
     <height>642</height>
    </rect>
   </property>
@@ -17,9 +17,9 @@
    <widget class="QLabel" name="label_ticker">
     <property name="geometry">
      <rect>
-      <x>420</x>
+      <x>515</x>
       <y>10</y>
-      <width>181</width>
+      <width>111</width>
       <height>41</height>
      </rect>
     </property>
@@ -39,7 +39,7 @@
      <rect>
       <x>10</x>
       <y>90</y>
-      <width>1061</width>
+      <width>1131</width>
       <height>251</height>
      </rect>
     </property>
@@ -89,7 +89,7 @@
      <rect>
       <x>10</x>
       <y>380</y>
-      <width>1061</width>
+      <width>1131</width>
       <height>251</height>
      </rect>
     </property>

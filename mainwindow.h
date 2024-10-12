@@ -25,13 +25,13 @@ private slots:
     void on_tableWidget_stocks_cellDoubleClicked(int row, int column);
     void on_tableWidget_funds_cellDoubleClicked(int row, int column);
     void on_actionSales_triggered();
+    void on_checkBox_hideAssets_stateChanged(int arg1);
 
 private:
     Ui::MainWindow *ui;
     AssetController assetController;
     Database database;
     void updateSotckAndFundTable();
-    void onSecundaryWindowClosed();
     void addNewLineToTable(QTableWidget *tableWidget, int row, QString ticker, QString distribution, QString quantity, QString totalYield, QString averagePrice, QString currentPriceStr, QString profitPercentage, QString capitalGain);
 };
 #endif // MAINWINDOW_H

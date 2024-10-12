@@ -41,6 +41,7 @@ void configureTableWidget(QStringList headerLabels, QTableWidget *tableWidget)
     tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
     tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
     tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+    tableWidget->horizontalHeader()->setHighlightSections(false);
 
     // Set column width
     for(int i = 0; i < headerLabels.size(); i++)
@@ -122,4 +123,38 @@ std::vector<Event*> mergeAndSortEvents(const std::vector<Transaction>& transacti
     });
 
     return events;
+}
+
+QDate getEarliestTransactionDate(std::vector<Transaction>& transactions, TransactionType transactionType)
+{
+    // Check if the vector is empty
+    if (transactions.empty())
+    {
+        throw std::runtime_error("Transactions vector is empty");
+    }
+
+    // Init the iterator
+    auto it = transactions.end();
+
+    // Use std::min_element to find the transaction with earliest date
+    for (auto transIt = transactions.begin(); transIt != transactions.end(); ++transIt)
+    {
+        if (transIt->getTransactionType() == transactionType)
+        {
+            // Check the transaction
+            if (it == transactions.end() || transIt->getDate() < it->getDate())
+            {
+                it = transIt;
+            }
+        }
+    }
+
+    // Check if we found a transaction of the specified type
+    if (it == transactions.end())
+    {
+        throw std::runtime_error("None of the specified transaction type was found");
+    }
+
+    // Returns the transaction
+    return it->getDate();
 }

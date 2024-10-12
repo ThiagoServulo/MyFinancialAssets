@@ -16,6 +16,9 @@ public:
     explicit SalesWindow(AssetController *assetController, QWidget *parent = nullptr);
     ~SalesWindow();
 
+private slots:
+    void on_tableWidget_sales_cellDoubleClicked(int row, int column);
+
 private:
     Ui::SalesWindow *ui;
     AssetController *assetController;

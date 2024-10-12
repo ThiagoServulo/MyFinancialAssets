@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Análise de investimentos</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QTabWidget" name="tabWidget">
@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tab_general">
      <attribute name="title">
@@ -39,10 +39,31 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>20</y>
+        <y>39</y>
         <width>961</width>
-        <height>510</height>
+        <height>491</height>
        </rect>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBox_hideAssets">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>341</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Ocultar ativos de quantidade zero</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
       </property>
      </widget>
     </widget>
@@ -54,10 +75,31 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>20</y>
+        <y>39</y>
         <width>961</width>
-        <height>510</height>
+        <height>491</height>
        </rect>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBox_hideFounds">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>341</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Ocultar ativos de quantidade zero</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
       </property>
      </widget>
     </widget>

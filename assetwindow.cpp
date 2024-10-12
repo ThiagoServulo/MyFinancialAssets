@@ -8,8 +8,8 @@ AssetWindow::AssetWindow(QString ticker, QWidget *parent) :
     ui(new Ui::AssetWindow)
 {
     ui->setupUi(this);
-    this->setMaximumSize(1082, 642);
-    this->setMinimumSize(1082, 642);
+    this->setMaximumSize(1149, 642);
+    this->setMinimumSize(1149, 642);
 
     // Update transaction table
     updateTransactionTable(ticker);

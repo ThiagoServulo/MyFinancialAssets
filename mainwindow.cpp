@@ -48,12 +48,19 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tab_stocks->setStyleSheet("background-color: rgb(18, 18, 18);");
     ui->tab_general->setStyleSheet("background-color: rgb(18, 18, 18);");
 
+    // Set check boxes style
+    ui->checkBox_hideAssets->setStyleSheet("background-color: rgb(18, 18, 18); color: rgb(255, 255, 255);");
+    ui->checkBox_hideFounds->setStyleSheet("background-color: rgb(18, 18, 18); color: rgb(255, 255, 255);");
+
     // Set tab widget style sheet
     ui->tabWidget->setStyleSheet(
         "QTabWidget::pane { background-color: rgb(18, 18, 18); }"
         "QTabBar::tab { background-color: rgb(28, 28, 28); color: rgb(255, 255, 255); font-size: 14px; font-weight: bold; }"
         "QTabBar::tab:selected { background-color: rgb(18, 18, 18); color: rgb(255, 255, 255); font-size: 14px; font-weight: bold; }"
     );
+
+    // Set initial tab
+    ui->tabWidget->setCurrentIndex(0);
 }
 
 MainWindow::~MainWindow()
@@ -64,6 +71,8 @@ MainWindow::~MainWindow()
 void MainWindow::on_actionTransaction_triggered()
 {
     NewTransactionWindow *newTransactionWindow = new NewTransactionWindow(this);
+    newTransactionWindow->setAttribute(Qt::WA_DeleteOnClose);
+    connect(newTransactionWindow, &QObject::destroyed, this, &MainWindow::updateSotckAndFundTable);
     newTransactionWindow->show();
 }
 
@@ -71,18 +80,15 @@ void MainWindow::on_actionYield_triggered()
 {
     NewYieldWindow *newYieldWindow = new NewYieldWindow(&assetController, this);
     newYieldWindow->setAttribute(Qt::WA_DeleteOnClose);
-    connect(newYieldWindow, &QObject::destroyed, this, &MainWindow::onSecundaryWindowClosed);
+    connect(newYieldWindow, &QObject::destroyed, this, &MainWindow::updateSotckAndFundTable);
     newYieldWindow->show();
-}
-
-void MainWindow::onSecundaryWindowClosed()
-{
-    updateSotckAndFundTable();
 }
 
 void MainWindow::on_actionReorganization_triggered()
 {
     NewReorganizationWindow *newReorganizationWindow = new NewReorganizationWindow(&assetController, this);
+    newReorganizationWindow->setAttribute(Qt::WA_DeleteOnClose);
+    connect(newReorganizationWindow, &QObject::destroyed, this, &MainWindow::updateSotckAndFundTable);
     newReorganizationWindow->show();
 }
 
@@ -91,8 +97,11 @@ void MainWindow::updateSotckAndFundTable()
     // Get assets
     std::vector<std::shared_ptr<Asset>> assets = assetController.getAllAssets();
 
+    // Clear tables
     ui->tableWidget_stocks->clearContents();
     ui->tableWidget_funds->clearContents();
+    ui->tableWidget_stocks->setRowCount(0);
+    ui->tableWidget_funds->setRowCount(0);
 
     // Init variables
     int stockRow = 0;
@@ -130,7 +139,7 @@ void MainWindow::updateSotckAndFundTable()
         if(asset->getAssetType() == AssetType::ACAO)
         {
             // Add new line
-            if(quantity != 0)
+            if(!ui->checkBox_hideAssets->isChecked() || (ui->checkBox_hideAssets->isChecked() && quantity != 0))
             {
                 addNewLineToTable(ui->tableWidget_stocks, stockRow, ticker, QString::number(assetController.getAssetDistribution(ticker), 'f', 2),
                                   QString::number(quantity), QString::number(totalYield, 'f', 2), QString::number(averagePrice, 'f', 2),
@@ -146,7 +155,7 @@ void MainWindow::updateSotckAndFundTable()
         else if(asset->getAssetType() == AssetType::FUNDO)
         {
             // Add new line
-            if(quantity != 0)
+            if(!ui->checkBox_hideFounds->isChecked() || (ui->checkBox_hideFounds->isChecked() && quantity != 0))
             {
                 addNewLineToTable(ui->tableWidget_funds, fundRow, ticker, QString::number(assetController.getAssetDistribution(ticker), 'f', 2),
                                   QString::number(quantity), QString::number(totalYield, 'f', 2), QString::number(averagePrice, 'f', 2),
@@ -213,5 +222,10 @@ void MainWindow::on_actionSales_triggered()
 {
     SalesWindow *salesWindow = new SalesWindow(&assetController, this);
     salesWindow->show();
+}
+
+void MainWindow::on_checkBox_hideAssets_stateChanged(int arg1)
+{
+    updateSotckAndFundTable();
 }
 
