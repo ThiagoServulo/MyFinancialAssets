@@ -34,6 +34,7 @@ QTableWidgetItem* createStyledItem(QString text, int style)
 void configureTableWidget(QStringList headerLabels, QTableWidget *tableWidget)
 {
     // Configure table
+    tableWidget->clear();
     tableWidget->setColumnCount(headerLabels.size());
     tableWidget->setHorizontalHeaderLabels(headerLabels);
     tableWidget->verticalHeader()->setVisible(false);
@@ -45,7 +46,7 @@ void configureTableWidget(QStringList headerLabels, QTableWidget *tableWidget)
     for(int i = 0; i < headerLabels.size(); i++)
     {
         QFontMetrics fontMetrics(tableWidget->font());
-        int width = fontMetrics.horizontalAdvance(headerLabels[i]) + 40;
+        int width = fontMetrics.horizontalAdvance(headerLabels[i]) + 50;
         tableWidget->setColumnWidth(i, width);
     }
 

@@ -64,3 +64,4 @@ std::vector<Yield> EventController::getYieldList()
     // Return yields
     return yieldList;
 }
+

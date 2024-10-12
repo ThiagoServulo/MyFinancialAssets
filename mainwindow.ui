@@ -80,7 +80,14 @@
     <addaction name="actionYield"/>
     <addaction name="actionReorganization"/>
    </widget>
+   <widget class="QMenu" name="menuAnalysis">
+    <property name="title">
+     <string>Análises</string>
+    </property>
+    <addaction name="actionSales"/>
+   </widget>
    <addaction name="menuNew"/>
+   <addaction name="menuAnalysis"/>
   </widget>
   <action name="actionTransaction">
    <property name="text">
@@ -95,6 +102,11 @@
   <action name="actionReorganization">
    <property name="text">
     <string>Reorganização</string>
+   </property>
+  </action>
+  <action name="actionSales">
+   <property name="text">
+    <string>Vendas</string>
    </property>
   </action>
  </widget>

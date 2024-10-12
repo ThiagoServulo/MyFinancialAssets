@@ -11,6 +11,7 @@
 #include "assetapi.h"
 #include "assetwindow.h"
 #include "basics.h"
+#include "saleswindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -60,7 +61,6 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-
 void MainWindow::on_actionTransaction_triggered()
 {
     NewTransactionWindow *newTransactionWindow = new NewTransactionWindow(this);
@@ -70,7 +70,14 @@ void MainWindow::on_actionTransaction_triggered()
 void MainWindow::on_actionYield_triggered()
 {
     NewYieldWindow *newYieldWindow = new NewYieldWindow(&assetController, this);
+    newYieldWindow->setAttribute(Qt::WA_DeleteOnClose);
+    connect(newYieldWindow, &QObject::destroyed, this, &MainWindow::onSecundaryWindowClosed);
     newYieldWindow->show();
+}
+
+void MainWindow::onSecundaryWindowClosed()
+{
+    updateSotckAndFundTable();
 }
 
 void MainWindow::on_actionReorganization_triggered()
@@ -83,6 +90,9 @@ void MainWindow::updateSotckAndFundTable()
 {
     // Get assets
     std::vector<std::shared_ptr<Asset>> assets = assetController.getAllAssets();
+
+    ui->tableWidget_stocks->clearContents();
+    ui->tableWidget_funds->clearContents();
 
     // Init variables
     int stockRow = 0;
@@ -105,10 +115,8 @@ void MainWindow::updateSotckAndFundTable()
         QString ticker = asset->getTicker();
         int quantity = assetController.getAssetQuantity(ticker);
         double totalYield = assetController.getAssetTotalYield(ticker);
-        double averagePrice = assetController.getAveragePrice(ticker);
-        //double currentPrice = assetController.getAssetCurrentPrice(ticker);
-        double currentPrice = asset->getCurrentPrice();
-        //double currentPrice = 0;
+        double averagePrice = (quantity != 0) ? assetController.getAveragePrice(ticker) : 0;
+        double currentPrice = (quantity != 0) ? asset->getCurrentPrice() : 0;
 
         // Show values if is relevant
         if(currentPrice > 0)
@@ -122,10 +130,15 @@ void MainWindow::updateSotckAndFundTable()
         if(asset->getAssetType() == AssetType::ACAO)
         {
             // Add new line
-            addNewLineToTable(ui->tableWidget_stocks, stockRow, ticker, QString::number(assetController.getAssetDistribution(ticker), 'f', 2), QString::number(quantity), QString::number(totalYield, 'f', 2), QString::number(averagePrice, 'f', 2), currentPriceStr, profitPercentage, capitalGain);
+            if(quantity != 0)
+            {
+                addNewLineToTable(ui->tableWidget_stocks, stockRow, ticker, QString::number(assetController.getAssetDistribution(ticker), 'f', 2),
+                                  QString::number(quantity), QString::number(totalYield, 'f', 2), QString::number(averagePrice, 'f', 2),
+                                  currentPriceStr, profitPercentage, capitalGain);
+                ++stockRow;
+            }
 
             // Update variables
-            ++stockRow;
             totalStockQuantity += quantity;
             totalStockYield += totalYield;
             totalStockCapitalGain += (currentPriceStr == "-") ? 0 : std::stod(capitalGain.toUtf8().constData());
@@ -133,10 +146,15 @@ void MainWindow::updateSotckAndFundTable()
         else if(asset->getAssetType() == AssetType::FUNDO)
         {
             // Add new line
-            addNewLineToTable(ui->tableWidget_funds, fundRow, ticker, QString::number(assetController.getAssetDistribution(ticker), 'f', 2), QString::number(quantity), QString::number(totalYield, 'f', 2), QString::number(averagePrice, 'f', 2), currentPriceStr, profitPercentage, capitalGain);
+            if(quantity != 0)
+            {
+                addNewLineToTable(ui->tableWidget_funds, fundRow, ticker, QString::number(assetController.getAssetDistribution(ticker), 'f', 2),
+                                  QString::number(quantity), QString::number(totalYield, 'f', 2), QString::number(averagePrice, 'f', 2),
+                                  currentPriceStr, profitPercentage, capitalGain);
+                ++fundRow;
+            }
 
-            // Update variables
-            ++fundRow;
+            // Update variables 
             totalFundQuantity += quantity;
             totalFundYield += totalYield;
             totalFundCapitalGain += (currentPriceStr == "-") ? 0 : std::stod(capitalGain.toUtf8().constData());
@@ -189,5 +207,11 @@ void MainWindow::on_tableWidget_funds_cellDoubleClicked(int row, int column)
         AssetWindow *assetWindow = new AssetWindow(ticker, this);
         assetWindow->show();
     }
+}
+
+void MainWindow::on_actionSales_triggered()
+{
+    SalesWindow *salesWindow = new SalesWindow(&assetController, this);
+    salesWindow->show();
 }
 
