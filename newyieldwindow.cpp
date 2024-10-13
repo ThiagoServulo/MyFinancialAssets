@@ -32,12 +32,12 @@ NewYieldWindow::NewYieldWindow(AssetController *assetController, QWidget *parent
     // Set line edit style
     ui->lineEdit_value->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); border: 1px solid rgb(50, 50, 50);");
 
-    // Creating value validator
+    // Create value validator
     QRegularExpression regexValue(R"(\d{0,4}([.]\d{0,2})?)");
     QRegularExpressionValidator *validatorValue = new QRegularExpressionValidator(regexValue, ui->lineEdit_value);
     ui->lineEdit_value->setValidator(validatorValue);
 
-    // Setting current date
+    // Set current date
     QDate currentDate = QDate::currentDate();
     ui->dateEdit->setDisplayFormat("dd/MM/yyyy");
     ui->dateEdit->setDate(currentDate);

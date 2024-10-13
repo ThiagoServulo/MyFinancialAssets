@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>3</number>
     </property>
     <widget class="QWidget" name="tab_general">
      <attribute name="title">
@@ -103,6 +103,21 @@
       </property>
      </widget>
     </widget>
+    <widget class="QWidget" name="tab_fixedIncome">
+     <attribute name="title">
+      <string>Renda fixa</string>
+     </attribute>
+     <widget class="QTableWidget" name="tableWidget_fixedIncome">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>961</width>
+        <height>521</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -121,6 +136,8 @@
     <addaction name="actionTransaction"/>
     <addaction name="actionYield"/>
     <addaction name="actionReorganization"/>
+    <addaction name="separator"/>
+    <addaction name="actionFixedIncome"/>
    </widget>
    <widget class="QMenu" name="menuAnalysis">
     <property name="title">
@@ -149,6 +166,11 @@
   <action name="actionSales">
    <property name="text">
     <string>Vendas</string>
+   </property>
+  </action>
+  <action name="actionFixedIncome">
+   <property name="text">
+    <string>Renda Fixa</string>
    </property>
   </action>
  </widget>

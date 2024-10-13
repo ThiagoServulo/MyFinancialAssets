@@ -12,6 +12,7 @@
 #include "assetwindow.h"
 #include "basics.h"
 #include "saleswindow.h"
+#include "newfixedincomewindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -24,12 +25,13 @@ MainWindow::MainWindow(QWidget *parent)
     // Create database
     database.prepareDatabase();
 
-    // Configure stock table
+    // Configure stock and fund tables
     QStringList headerLabels = {"Ticker", "Distribuição", "Quantidade", "Rendimento", "Preço médio", "Preço atual", "Valorização", "Ganho de capital"};
     configureTableWidget(headerLabels, ui->tableWidget_stocks);
-
-    // Configure fund table
     configureTableWidget(headerLabels, ui->tableWidget_funds);
+
+    headerLabels = {"Data da compra", "Descrição do investimento", "Rendimento esperado", "Valor investido", "Valor atual", "Rendimento", "Data limite"};
+    configureTableWidget(headerLabels, ui->tableWidget_fixedIncome);
 
     // Init asset controller
     if(!database.assetControllerInitialization(&assetController))
@@ -47,6 +49,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tab_funds->setStyleSheet("background-color: rgb(18, 18, 18);");
     ui->tab_stocks->setStyleSheet("background-color: rgb(18, 18, 18);");
     ui->tab_general->setStyleSheet("background-color: rgb(18, 18, 18);");
+    ui->tab_fixedIncome->setStyleSheet("background-color: rgb(18, 18, 18);");
 
     // Set check boxes style
     ui->checkBox_hideAssets->setStyleSheet("background-color: rgb(18, 18, 18); color: rgb(255, 255, 255);");
@@ -227,5 +230,22 @@ void MainWindow::on_actionSales_triggered()
 void MainWindow::on_checkBox_hideAssets_stateChanged(int arg1)
 {
     updateSotckAndFundTable();
+}
+
+void MainWindow::on_actionFixedIncome_triggered()
+{
+    NewFixedIncomeWindow *newFixedIncomeWindow = new NewFixedIncomeWindow(this);
+    newFixedIncomeWindow->setAttribute(Qt::WA_DeleteOnClose);
+    //connect(newFixedIncomeWindow, &QObject::destroyed, this, &MainWindow::updateSotckAndFundTable);
+    newFixedIncomeWindow->show();
+    // aqui
+    // data compra
+    // descrição
+    // rendimento esperado
+    // valor total investido
+    //  ** valor atual
+    //  ** rendimento atual
+    // data limite
+    // ** status
 }
 

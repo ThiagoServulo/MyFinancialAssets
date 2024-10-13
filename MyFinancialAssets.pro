@@ -20,6 +20,7 @@ SOURCES += \
     eventcontroller.cpp \
     main.cpp \
     mainwindow.cpp \
+    newfixedincomewindow.cpp \
     newreorganizationwindow.cpp \
     newtransactionwindow.cpp \
     newyieldwindow.cpp \
@@ -39,6 +40,7 @@ HEADERS += \
     event.h \
     eventcontroller.h \
     mainwindow.h \
+    newfixedincomewindow.h \
     newreorganizationwindow.h \
     newtransactionwindow.h \
     newyieldwindow.h \
@@ -50,6 +52,7 @@ HEADERS += \
 FORMS += \
     assetwindow.ui \
     mainwindow.ui \
+    newfixedincomewindow.ui \
     newreorganizationwindow.ui \
     newtransactionwindow.ui \
     newyieldwindow.ui \

@@ -27,6 +27,8 @@ private slots:
     void on_actionSales_triggered();
     void on_checkBox_hideAssets_stateChanged(int arg1);
 
+    void on_actionFixedIncome_triggered();
+
 private:
     Ui::MainWindow *ui;
     AssetController assetController;
