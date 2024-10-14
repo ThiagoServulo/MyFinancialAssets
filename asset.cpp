@@ -1,4 +1,6 @@
 #include "asset.h"
+#include "database.h"
+#include "assetapi.h"
 
 Asset::Asset()
 {
@@ -25,4 +27,22 @@ AssetType Asset::getAssetType()
 double Asset::getCurrentPrice()
 {
     return this->currentPrice;
+}
+
+int Asset::getQuantity()
+{
+    Database database;
+    return database.getTickerQuantity(this->ticker);
+}
+
+double Asset::getTotalYield()
+{
+    Database database;
+    return database.getTickerTotalYield(this->ticker);
+}
+
+double Asset::getAveragePrice()
+{
+    Database database;
+    return database.getTickerAveragePrice(this->ticker);
 }

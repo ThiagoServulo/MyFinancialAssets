@@ -18,6 +18,9 @@ public:
     QString getTicker();
     AssetType getAssetType();
     double getCurrentPrice();
+    int getQuantity();
+    double getTotalYield();
+    double getAveragePrice();
 };
 
 #endif // ASSET_H

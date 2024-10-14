@@ -15,6 +15,10 @@ public:
     explicit NewFixedIncomeWindow(QWidget *parent = nullptr);
     ~NewFixedIncomeWindow();
 
+private slots:
+    void on_pushButton_save_clicked();
+    void on_pushButton_cancel_clicked();
+
 private:
     Ui::NewFixedIncomeWindow *ui;
 };

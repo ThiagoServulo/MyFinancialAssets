@@ -49,3 +49,19 @@ NewFixedIncomeWindow::~NewFixedIncomeWindow()
 {
     delete ui;
 }
+
+void NewFixedIncomeWindow::on_pushButton_save_clicked()
+{
+    if(ui->lineEdit_description->text() != "" && ui->lineEdit_yield->text() != "" &&
+       ui->lineEdit_valueInvested->text().toDouble() > 0 &&
+       ui->dateEdit_limitDate->date() > ui->dateEdit_puchaseDate->date())
+    {
+        qDebug() << "aaaaaa";
+    }
+}
+
+void NewFixedIncomeWindow::on_pushButton_cancel_clicked()
+{
+    this->close();
+}
+

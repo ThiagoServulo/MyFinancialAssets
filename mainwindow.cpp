@@ -125,9 +125,9 @@ void MainWindow::updateSotckAndFundTable()
 
         // Get values
         QString ticker = asset->getTicker();
-        int quantity = investmentcontroller.getAssetQuantity(ticker);
-        double totalYield = investmentcontroller.getAssetTotalYield(ticker);
-        double averagePrice = (quantity != 0) ? investmentcontroller.getAveragePrice(ticker) : 0;
+        int quantity = asset->getQuantity();
+        double totalYield = asset->getTotalYield();
+        double averagePrice = (quantity != 0) ? asset->getAveragePrice() : 0;
         double currentPrice = (quantity != 0) ? asset->getCurrentPrice() : 0;
 
         // Show values if is relevant

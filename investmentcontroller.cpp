@@ -39,18 +39,6 @@ std::shared_ptr<Asset> InvestmentController::getAsset(QString ticker)
     return nullptr;
 }
 
-int InvestmentController::getAssetQuantity(QString ticker)
-{
-    Database database;
-    return database.getTickerQuantity(ticker);
-}
-
-double InvestmentController::getAveragePrice(QString ticker)
-{
-    Database database;
-    return database.getTickerAveragePrice(ticker);
-}
-
 double InvestmentController::getAssetDistribution(QString ticker)
 {
     Database database;
@@ -81,14 +69,3 @@ double InvestmentController::getAssetDistribution(QString ticker)
     return (totalAssetInvested/totalInvested) * 100;
 }
 
-double InvestmentController::getAssetTotalYield(QString ticker)
-{
-    Database database;
-    return database.getTickerTotalYield(ticker);
-}
-
-double InvestmentController::getAssetCurrentPrice(QString ticker)
-{
-    AssetApi assetApi;
-    return assetApi.getAssetCurrentPrice(ticker);
-}
