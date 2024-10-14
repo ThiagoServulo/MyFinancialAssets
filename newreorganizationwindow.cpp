@@ -6,7 +6,7 @@
 #include "database.h"
 #include <QMessageBox>
 
-NewReorganizationWindow::NewReorganizationWindow(AssetController *assetController, QWidget *parent) :
+NewReorganizationWindow::NewReorganizationWindow(InvestmentController *investmentcontroller, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::NewReorganizationWindow)
 {
@@ -50,7 +50,7 @@ NewReorganizationWindow::NewReorganizationWindow(AssetController *assetControlle
     ui->dateEdit->setDate(currentDate);
 
     // Init combo box asset
-    initComboBoxAssets(ui->comboBox_asset, assetController);
+    initComboBoxAssets(ui->comboBox_asset, investmentcontroller);
 }
 
 NewReorganizationWindow::~NewReorganizationWindow()

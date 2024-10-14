@@ -1,18 +1,18 @@
-#include "assetcontroller.h"
+#include "investmentcontroller.h"
 #include "database.h"
 #include "assetapi.h"
 
-AssetController::AssetController()
+InvestmentController::InvestmentController()
 {
 
 }
 
-void AssetController::addAsset(std::shared_ptr<Asset> asset)
+void InvestmentController::addAsset(std::shared_ptr<Asset> asset)
 {
     assetList.push_back(asset);
 }
 
-void AssetController::addAssets(std::vector<Asset>& assets)
+void InvestmentController::addAssets(std::vector<Asset>& assets)
 {
     for (Asset& asset : assets)
     {
@@ -20,12 +20,12 @@ void AssetController::addAssets(std::vector<Asset>& assets)
     }
 }
 
-std::vector<std::shared_ptr<Asset>> AssetController::getAllAssets()
+std::vector<std::shared_ptr<Asset>> InvestmentController::getAllAssets()
 {
     return assetList;
 }
 
-std::shared_ptr<Asset> AssetController::getAsset(QString ticker)
+std::shared_ptr<Asset> InvestmentController::getAsset(QString ticker)
 {
     for(auto asset: assetList)
     {
@@ -39,19 +39,19 @@ std::shared_ptr<Asset> AssetController::getAsset(QString ticker)
     return nullptr;
 }
 
-int AssetController::getAssetQuantity(QString ticker)
+int InvestmentController::getAssetQuantity(QString ticker)
 {
     Database database;
     return database.getTickerQuantity(ticker);
 }
 
-double AssetController::getAveragePrice(QString ticker)
+double InvestmentController::getAveragePrice(QString ticker)
 {
     Database database;
     return database.getTickerAveragePrice(ticker);
 }
 
-double AssetController::getAssetDistribution(QString ticker)
+double InvestmentController::getAssetDistribution(QString ticker)
 {
     Database database;
     double totalInvested = 0;
@@ -81,13 +81,13 @@ double AssetController::getAssetDistribution(QString ticker)
     return (totalAssetInvested/totalInvested) * 100;
 }
 
-double AssetController::getAssetTotalYield(QString ticker)
+double InvestmentController::getAssetTotalYield(QString ticker)
 {
     Database database;
     return database.getTickerTotalYield(ticker);
 }
 
-double AssetController::getAssetCurrentPrice(QString ticker)
+double InvestmentController::getAssetCurrentPrice(QString ticker)
 {
     AssetApi assetApi;
     return assetApi.getAssetCurrentPrice(ticker);

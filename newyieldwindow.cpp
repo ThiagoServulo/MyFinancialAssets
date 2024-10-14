@@ -4,7 +4,7 @@
 #include <QMessageBox>
 #include "basics.h"
 
-NewYieldWindow::NewYieldWindow(AssetController *assetController, QWidget *parent) :
+NewYieldWindow::NewYieldWindow(InvestmentController *investmentcontroller, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::NewYieldWindow)
 {
@@ -43,10 +43,10 @@ NewYieldWindow::NewYieldWindow(AssetController *assetController, QWidget *parent
     ui->dateEdit->setDate(currentDate);
 
     // Get asset controller
-    this->assetController = assetController;
+    this->investmentcontroller = investmentcontroller;
 
     // Init combo box assets
-    initComboBoxAssets(ui->comboBox_asset, assetController);
+    initComboBoxAssets(ui->comboBox_asset, investmentcontroller);
 }
 
 NewYieldWindow::~NewYieldWindow()
@@ -102,7 +102,7 @@ void NewYieldWindow::on_comboBox_asset_textActivated(const QString &arg1)
 {
     ui->comboBox_yieldType->clear();
 
-    AssetType assetType = assetController->getAsset(arg1)->getAssetType();
+    AssetType assetType = investmentcontroller->getAsset(arg1)->getAssetType();
 
     if(assetType == AssetType::ACAO)
     {

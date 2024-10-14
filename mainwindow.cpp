@@ -34,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent)
     configureTableWidget(headerLabels, ui->tableWidget_fixedIncome);
 
     // Init asset controller
-    if(!database.assetControllerInitialization(&assetController))
+    if(!database.investmentcontrollerInitialization(&investmentcontroller))
     {
         qDebug() << "Erro in asset controller Initialization";
     }
@@ -81,7 +81,7 @@ void MainWindow::on_actionTransaction_triggered()
 
 void MainWindow::on_actionYield_triggered()
 {
-    NewYieldWindow *newYieldWindow = new NewYieldWindow(&assetController, this);
+    NewYieldWindow *newYieldWindow = new NewYieldWindow(&investmentcontroller, this);
     newYieldWindow->setAttribute(Qt::WA_DeleteOnClose);
     connect(newYieldWindow, &QObject::destroyed, this, &MainWindow::updateSotckAndFundTable);
     newYieldWindow->show();
@@ -89,7 +89,7 @@ void MainWindow::on_actionYield_triggered()
 
 void MainWindow::on_actionReorganization_triggered()
 {
-    NewReorganizationWindow *newReorganizationWindow = new NewReorganizationWindow(&assetController, this);
+    NewReorganizationWindow *newReorganizationWindow = new NewReorganizationWindow(&investmentcontroller, this);
     newReorganizationWindow->setAttribute(Qt::WA_DeleteOnClose);
     connect(newReorganizationWindow, &QObject::destroyed, this, &MainWindow::updateSotckAndFundTable);
     newReorganizationWindow->show();
@@ -98,7 +98,7 @@ void MainWindow::on_actionReorganization_triggered()
 void MainWindow::updateSotckAndFundTable()
 {
     // Get assets
-    std::vector<std::shared_ptr<Asset>> assets = assetController.getAllAssets();
+    std::vector<std::shared_ptr<Asset>> assets = investmentcontroller.getAllAssets();
 
     // Clear tables
     ui->tableWidget_stocks->clearContents();
@@ -125,9 +125,9 @@ void MainWindow::updateSotckAndFundTable()
 
         // Get values
         QString ticker = asset->getTicker();
-        int quantity = assetController.getAssetQuantity(ticker);
-        double totalYield = assetController.getAssetTotalYield(ticker);
-        double averagePrice = (quantity != 0) ? assetController.getAveragePrice(ticker) : 0;
+        int quantity = investmentcontroller.getAssetQuantity(ticker);
+        double totalYield = investmentcontroller.getAssetTotalYield(ticker);
+        double averagePrice = (quantity != 0) ? investmentcontroller.getAveragePrice(ticker) : 0;
         double currentPrice = (quantity != 0) ? asset->getCurrentPrice() : 0;
 
         // Show values if is relevant
@@ -144,7 +144,7 @@ void MainWindow::updateSotckAndFundTable()
             // Add new line
             if(!ui->checkBox_hideAssets->isChecked() || (ui->checkBox_hideAssets->isChecked() && quantity != 0))
             {
-                addNewLineToTable(ui->tableWidget_stocks, stockRow, ticker, QString::number(assetController.getAssetDistribution(ticker), 'f', 2),
+                addNewLineToTable(ui->tableWidget_stocks, stockRow, ticker, QString::number(investmentcontroller.getAssetDistribution(ticker), 'f', 2),
                                   QString::number(quantity), QString::number(totalYield, 'f', 2), QString::number(averagePrice, 'f', 2),
                                   currentPriceStr, profitPercentage, capitalGain);
                 ++stockRow;
@@ -160,7 +160,7 @@ void MainWindow::updateSotckAndFundTable()
             // Add new line
             if(!ui->checkBox_hideFounds->isChecked() || (ui->checkBox_hideFounds->isChecked() && quantity != 0))
             {
-                addNewLineToTable(ui->tableWidget_funds, fundRow, ticker, QString::number(assetController.getAssetDistribution(ticker), 'f', 2),
+                addNewLineToTable(ui->tableWidget_funds, fundRow, ticker, QString::number(investmentcontroller.getAssetDistribution(ticker), 'f', 2),
                                   QString::number(quantity), QString::number(totalYield, 'f', 2), QString::number(averagePrice, 'f', 2),
                                   currentPriceStr, profitPercentage, capitalGain);
                 ++fundRow;
@@ -223,7 +223,7 @@ void MainWindow::on_tableWidget_funds_cellDoubleClicked(int row, int column)
 
 void MainWindow::on_actionSales_triggered()
 {
-    SalesWindow *salesWindow = new SalesWindow(&assetController, this);
+    SalesWindow *salesWindow = new SalesWindow(&investmentcontroller, this);
     salesWindow->show();
 }
 

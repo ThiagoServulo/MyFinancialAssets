@@ -5,7 +5,7 @@
 #include "constants.h"
 #include "asset.h"
 #include "database.h"
-#include "assetcontroller.h"
+#include "investmentcontroller.h"
 
 namespace Ui {
 class NewYieldWindow;
@@ -16,7 +16,7 @@ class NewYieldWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit NewYieldWindow(AssetController *assetController, QWidget *parent = nullptr);
+    explicit NewYieldWindow(InvestmentController *investmentcontroller, QWidget *parent = nullptr);
     ~NewYieldWindow();
 
 private slots:
@@ -27,7 +27,7 @@ private slots:
 private:
     Ui::NewYieldWindow *ui;
     Database database;
-    AssetController *assetController;
+    InvestmentController *investmentcontroller;
 };
 
 #endif // NEWYIELDWINDOW_H

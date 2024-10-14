@@ -5,7 +5,7 @@
 #include "transaction.h"
 #include "yield.h"
 #include "reorganization.h"
-#include "assetcontroller.h"
+#include "investmentcontroller.h"
 
 #define NOT_FOUND -1
 #define DATABASE_ERROR -2
@@ -21,7 +21,7 @@ public:
     int insertReorganization(QString ticker, Reorganization reorganization);
     int getTickerQuantity(QString ticker);
     bool selectAllAssets(std::vector<Asset>& assets);
-    bool assetControllerInitialization(AssetController* assetController);
+    bool investmentcontrollerInitialization(InvestmentController* investmentcontroller);
     double getTickerAveragePrice(QString ticker);
     double getTickerTotalYield(QString ticker);
     std::vector<Transaction> getTickerTransactions(QString ticker);

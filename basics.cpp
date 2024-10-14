@@ -84,13 +84,13 @@ void addTableWidgetItens(QTableWidget *tableWidget, int row, QStringList itens, 
     }
 }
 
-void initComboBoxAssets(QComboBox *comboBox, AssetController *assetController)
+void initComboBoxAssets(QComboBox *comboBox, InvestmentController *investmentcontroller)
 {
     // Clear combo box
     comboBox->clear();
 
     // Iterate to add each ticker to the combo box
-    for (auto asset : assetController->getAllAssets())
+    for (auto asset : investmentcontroller->getAllAssets())
     {
         // Add ticker to the combo box
         comboBox->addItem(asset->getTicker());

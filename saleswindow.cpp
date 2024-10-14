@@ -4,7 +4,7 @@
 #include "database.h"
 #include "assetwindow.h"
 
-SalesWindow::SalesWindow(AssetController *assetController, QWidget *parent) :
+SalesWindow::SalesWindow(InvestmentController *investmentcontroller, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::SalesWindow)
 {
@@ -21,7 +21,7 @@ SalesWindow::SalesWindow(AssetController *assetController, QWidget *parent) :
     configureTableWidget(headerLabels, ui->tableWidget_sales);
 
     // Save asset controller
-    this->assetController = assetController;
+    this->investmentcontroller = investmentcontroller;
 
     // Update table widget sales
     updateTableWidgetSales();
@@ -37,13 +37,13 @@ void SalesWindow::updateTableWidgetSales()
     Database database;
     int row = 0;
 
-    for(auto asset: this->assetController->getAllAssets())
+    for(auto asset: this->investmentcontroller->getAllAssets())
     {
         if(database.getTickerQuantity(asset->getTicker()) == 0)
         {
             auto transactions = database.getTickerTransactions(asset->getTicker());
             QDate purchaseDate = getEarliestTransactionDate(transactions, TransactionType::COMPRA);
-            QStringList itens = {asset->getTicker(), purchaseDate.toString("dd/MM/yyyy") , "10/09/2024", "R$ " + QString::number(assetController->getAssetTotalYield(asset->getTicker()), 'f', 2),
+            QStringList itens = {asset->getTicker(), purchaseDate.toString("dd/MM/yyyy") , "10/09/2024", "R$ " + QString::number(investmentcontroller->getAssetTotalYield(asset->getTicker()), 'f', 2),
                                  "R$ 10.00" , "R$ 20.00" , + " 10%", "R$ 120.00" };
 
             addTableWidgetItens(ui->tableWidget_sales, row, itens, STANDART_CELL);

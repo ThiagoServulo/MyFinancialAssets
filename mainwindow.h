@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 #include <QTableWidget>
-#include "assetcontroller.h"
+#include "investmentcontroller.h"
 #include "database.h"
 
 QT_BEGIN_NAMESPACE
@@ -31,7 +31,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    AssetController assetController;
+    InvestmentController investmentcontroller;
     Database database;
     void updateSotckAndFundTable();
     void addNewLineToTable(QTableWidget *tableWidget, int row, QString ticker, QString distribution, QString quantity, QString totalYield, QString averagePrice, QString currentPriceStr, QString profitPercentage, QString capitalGain);

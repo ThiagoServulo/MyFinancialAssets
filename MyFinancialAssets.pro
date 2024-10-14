@@ -11,7 +11,6 @@ CONFIG += c++11
 SOURCES += \
     asset.cpp \
     assetapi.cpp \
-    assetcontroller.cpp \
     assetwindow.cpp \
     basics.cpp \
     constants.cpp \
@@ -19,6 +18,7 @@ SOURCES += \
     event.cpp \
     eventcontroller.cpp \
     fixedincome.cpp \
+    investmentcontroller.cpp \
     main.cpp \
     mainwindow.cpp \
     newfixedincomewindow.cpp \
@@ -33,7 +33,6 @@ SOURCES += \
 HEADERS += \
     asset.h \
     assetapi.h \
-    assetcontroller.h \
     assetwindow.h \
     basics.h \
     constants.h \
@@ -41,6 +40,7 @@ HEADERS += \
     event.h \
     eventcontroller.h \
     fixedincome.h \
+    investmentcontroller.h \
     mainwindow.h \
     newfixedincomewindow.h \
     newreorganizationwindow.h \

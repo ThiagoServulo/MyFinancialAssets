@@ -2,7 +2,7 @@
 #define SALESWINDOW_H
 
 #include <QMainWindow>
-#include "assetcontroller.h"
+#include "investmentcontroller.h"
 
 namespace Ui {
 class SalesWindow;
@@ -13,7 +13,7 @@ class SalesWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit SalesWindow(AssetController *assetController, QWidget *parent = nullptr);
+    explicit SalesWindow(InvestmentController *investmentcontroller, QWidget *parent = nullptr);
     ~SalesWindow();
 
 private slots:
@@ -21,7 +21,7 @@ private slots:
 
 private:
     Ui::SalesWindow *ui;
-    AssetController *assetController;
+    InvestmentController *investmentcontroller;
     void updateTableWidgetSales();
 };
 

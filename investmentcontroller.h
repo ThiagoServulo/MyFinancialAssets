@@ -1,15 +1,15 @@
-#ifndef ASSETCONTROLLER_H
-#define ASSETCONTROLLER_H
+#ifndef INVESTMENTCONTROLLER_H
+#define INVESTMENTCONTROLLER_H
 
 #include "asset.h"
 
-class AssetController
+class InvestmentController
 {
 private:
     std::vector<std::shared_ptr<Asset>> assetList;
 
 public:
-    AssetController();
+    InvestmentController();
     void addAsset(std::shared_ptr<Asset> asset);
     std::vector<std::shared_ptr<Asset>> getAllAssets();
     std::shared_ptr<Asset> getAsset(QString ticker);
@@ -21,4 +21,4 @@ public:
     double getAssetCurrentPrice(QString ticker);
 };
 
-#endif // ASSETCONTROLLER_H
+#endif // INVESTMENTCONTROLLER_H
