@@ -33,19 +33,6 @@ private:
     QSqlDatabase database;
     bool openDatabase();
     void closeDatabase();
-    bool createYieldTable();
-    bool createAssetTypeTable();
-    bool createLastUpdateTable();
-    bool populateAssetTypeTable();
-    bool createYieldTypeTable();
-    bool createCurrentPriceTable();
-    bool populateYieldTypeTable();
-    bool createTransactionTypeTable();
-    bool createTickerTable();
-    bool createTransactionTable();
-    bool populateTransactionTypeTable();
-    bool createReorganizationTypeTable();
-    bool createReorganizationTable();
     bool checkIfDatabaseExists();
     int getAssetTypeId(AssetType assetType);
     int getYieldTypeId(YieldType yieldType);
@@ -53,7 +40,6 @@ private:
     int getTickerId(QString ticker);
     int insertTicker(QString ticker, AssetType assetType, double currentPrice);
     int getTransactionTypeId(TransactionType transactionType);
-    bool populateReorganizationTypeTable();
     bool selectEventsForAsset(Asset* asset);
     std::vector<Transaction> getTransactionsByTickerId(int tickerId);
     std::vector<Yield> getYieldsByTickerId(int tickerId);

@@ -15,6 +15,7 @@ SOURCES += \
     basics.cpp \
     constants.cpp \
     database.cpp \
+    databasecreation.cpp \
     event.cpp \
     eventcontroller.cpp \
     fixedincome.cpp \
@@ -37,6 +38,7 @@ HEADERS += \
     basics.h \
     constants.h \
     database.h \
+    databasecreation.h \
     event.h \
     eventcontroller.h \
     fixedincome.h \

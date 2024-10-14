@@ -90,6 +90,10 @@ void NewReorganizationWindow::on_pushButton_save_clicked()
         // Close window
         this->close();
     }
+    else
+    {
+        QMessageBox::information(this, "Inválido", "Um dos campos digitados está inválido");
+    }
 }
 
 void NewReorganizationWindow::on_pushButton_cancel_clicked()
