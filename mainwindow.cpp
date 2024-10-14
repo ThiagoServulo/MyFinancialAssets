@@ -238,14 +238,5 @@ void MainWindow::on_actionFixedIncome_triggered()
     newFixedIncomeWindow->setAttribute(Qt::WA_DeleteOnClose);
     //connect(newFixedIncomeWindow, &QObject::destroyed, this, &MainWindow::updateSotckAndFundTable);
     newFixedIncomeWindow->show();
-    // aqui
-    // data compra
-    // descrição
-    // rendimento esperado
-    // valor total investido
-    //  ** valor atual
-    //  ** rendimento atual
-    // data limite
-    // ** status
 }
 

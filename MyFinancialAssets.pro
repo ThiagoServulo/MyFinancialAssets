@@ -18,6 +18,7 @@ SOURCES += \
     database.cpp \
     event.cpp \
     eventcontroller.cpp \
+    fixedincome.cpp \
     main.cpp \
     mainwindow.cpp \
     newfixedincomewindow.cpp \
@@ -39,6 +40,7 @@ HEADERS += \
     database.h \
     event.h \
     eventcontroller.h \
+    fixedincome.h \
     mainwindow.h \
     newfixedincomewindow.h \
     newreorganizationwindow.h \

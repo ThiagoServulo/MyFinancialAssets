@@ -144,6 +144,9 @@
      <string>Análises</string>
     </property>
     <addaction name="actionSales"/>
+    <addaction name="actionRenda_fixa_encerradas"/>
+    <addaction name="separator"/>
+    <addaction name="actionRelat_rio_a_es_mensais"/>
    </widget>
    <addaction name="menuNew"/>
    <addaction name="menuAnalysis"/>
@@ -165,12 +168,22 @@
   </action>
   <action name="actionSales">
    <property name="text">
-    <string>Vendas</string>
+    <string>Papéis vendidos</string>
    </property>
   </action>
   <action name="actionFixedIncome">
    <property name="text">
     <string>Renda Fixa</string>
+   </property>
+  </action>
+  <action name="actionRenda_fixa_encerradas">
+   <property name="text">
+    <string>Renda fixa encerradas</string>
+   </property>
+  </action>
+  <action name="actionRelat_rio_a_es_mensais">
+   <property name="text">
+    <string>Relatório ações mensais</string>
    </property>
   </action>
  </widget>
