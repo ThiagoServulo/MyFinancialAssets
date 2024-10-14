@@ -44,7 +44,8 @@ void AssetWindow::updateTransactionTable(QString ticker)
     auto events = mergeAndSortEvents(transactions, reorganizations);
 
     // Configure transaction table
-    QStringList headerLabels = {"Tipo de operação", "Data da operação", "Quantidade", "Preço unitário", "Total da operação", "Quantidade acumulado", "Preço médio", "Valor total acumulado"};
+    QStringList headerLabels = {"Tipo de operação", "Data da operação", "Quantidade", "Preço unitário", "Total da operação",
+                                "Quantidade acumulado", "Preço médio", "Valor total acumulado"};
     configureTableWidget(headerLabels, ui->tableWidget_transactions);
 
     // Init variables

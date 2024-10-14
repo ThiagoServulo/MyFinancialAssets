@@ -28,7 +28,8 @@ NewTransactionWindow::NewTransactionWindow(QWidget *parent) :
 
     // Set combo box style
     ui->comboBox_assetType->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); border: 1px solid rgb(50, 50, 50);");
-    ui->comboBox_transactionType->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); border: 1px solid rgb(50, 50, 50);");
+    ui->comboBox_transactionType->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); "
+                                                "border: 1px solid rgb(50, 50, 50);");
 
     // Set line edit style
     ui->lineEdit_quantity->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); border: 1px solid rgb(50, 50, 50);");
@@ -107,7 +108,8 @@ void NewTransactionWindow::on_pushButton_save_clicked()
                 default:
                     if(quantityAvailable < quantity)
                     {
-                        QMessageBox::critical(this, "Erro", "Você tem apenas: " + QString::number(quantityAvailable) + " quantidade de papéis disponíveis");
+                        QMessageBox::critical(this, "Erro", "Você tem apenas: " + QString::number(quantityAvailable) +
+                                              " quantidade de papéis disponíveis");
                         return;
                     }
             }

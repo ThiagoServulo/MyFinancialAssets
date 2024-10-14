@@ -25,7 +25,8 @@ NewReorganizationWindow::NewReorganizationWindow(InvestmentController *investmen
     ui->pushButton_cancel->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255);");
 
     // Set combo box style
-    ui->comboBox_reorganizationType->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); border: 1px solid rgb(50, 50, 50);");
+    ui->comboBox_reorganizationType->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); "
+                                                   "border: 1px solid rgb(50, 50, 50);");
     ui->comboBox_asset->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); border: 1px solid rgb(50, 50, 50);");
 
     // Set line edit style

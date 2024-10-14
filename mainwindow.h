@@ -26,7 +26,6 @@ private slots:
     void on_tableWidget_funds_cellDoubleClicked(int row, int column);
     void on_actionSales_triggered();
     void on_checkBox_hideAssets_stateChanged(int arg1);
-
     void on_actionFixedIncome_triggered();
 
 private:

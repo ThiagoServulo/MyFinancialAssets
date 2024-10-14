@@ -10,7 +10,6 @@ private:
 
 public:
     InvestmentController();
-    void addAsset(std::shared_ptr<Asset> asset);
     std::shared_ptr<Asset> getAsset(QString ticker);
     void addAssets(std::vector<Asset>& assets);
     std::vector<std::shared_ptr<Asset>> getAllAssets();

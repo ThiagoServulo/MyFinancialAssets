@@ -34,34 +34,36 @@ void Database::closeDatabase()
 
 bool Database::checkIfDatabaseExists()
 {
+    // Get database path
     QString appDir = QCoreApplication::applicationDirPath();
     QString dbPath = appDir + "/database.db";
     QFile file(dbPath);
 
+    // Check if exists
     return file.exists();
 }
 
 bool Database::prepareDatabase()
 {
-    bool createStatus = false;
     DatabaseCreation databaseCreation;
 
+    // Check if exists
     if(checkIfDatabaseExists())
     {
         return true;
     }
 
-    // Creating database
+    // Create database
     if(openDatabase())
     {
         qDebug() << "Creating database";
-        createStatus = databaseCreation.createDatabase();
+        bool createStatus = databaseCreation.createDatabase();
         closeDatabase();
         return createStatus;
     }
 
     qDebug() << "Error to create database";
-    return createStatus;
+    return false ;
 }
 
 int Database::getAssetTypeId(AssetType assetType)

@@ -20,6 +20,7 @@ bool DatabaseCreation::createDatabase()
     createStatus |= createReorganizationTypeTable();
     createStatus |= createReorganizationTable();
     createStatus |= createLastUpdateTable();
+    createStatus |= createFixedIncomeTable();
     return createStatus;
 }
 
@@ -376,5 +377,34 @@ bool DatabaseCreation::populateAssetTypeTable()
 
     // Table populate
     qDebug() << "Table asset_type_table populated";
+    return true;
+}
+
+bool DatabaseCreation::createFixedIncomeTable()
+{
+    // Query to create fixed income table
+    QString createTableQuery = R"(
+        CREATE TABLE IF NOT EXISTS fixed_income_table (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            desciption TEXT NOT NULL,
+            yield_expected TEXT NOT NULL,
+            purchase_date DATE NOT NULL,
+            limit_date DATE NOT NULL,
+            invested_value DOUBLE NOT NULL,
+            current_value DOUBLE NOT NULL,
+            status INTEGER NOT NULL
+        );
+    )";
+
+    // Execute query
+    QSqlQuery query;
+    if (!query.exec(createTableQuery))
+    {
+        qDebug() << "Error to create fixed_income_table";
+        return false;
+    }
+
+    // Table created
+    qDebug() << "Table fixed_income_table created";
     return true;
 }
