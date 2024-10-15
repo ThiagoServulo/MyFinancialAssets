@@ -13,7 +13,7 @@ class NewReorganizationWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit NewReorganizationWindow(InvestmentController *investmentcontroller, QWidget *parent = nullptr);
+    explicit NewReorganizationWindow(InvestmentController *investmentController, QWidget *parent = nullptr);
     ~NewReorganizationWindow();
 
 private slots:
@@ -22,6 +22,7 @@ private slots:
 
 private:
     Ui::NewReorganizationWindow *ui;
+    InvestmentController *investmentController;
 };
 
 #endif // NEWREORGANIZATIONWINDOW_H

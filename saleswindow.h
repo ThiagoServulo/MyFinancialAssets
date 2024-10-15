@@ -13,7 +13,7 @@ class SalesWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit SalesWindow(InvestmentController *investmentcontroller, QWidget *parent = nullptr);
+    explicit SalesWindow(InvestmentController *investmentController, QWidget *parent = nullptr);
     ~SalesWindow();
 
 private slots:
@@ -21,7 +21,7 @@ private slots:
 
 private:
     Ui::SalesWindow *ui;
-    InvestmentController *investmentcontroller;
+    InvestmentController *investmentController;
     void updateTableWidgetSales();
 };
 

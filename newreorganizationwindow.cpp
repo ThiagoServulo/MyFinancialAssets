@@ -6,7 +6,7 @@
 #include "database.h"
 #include <QMessageBox>
 
-NewReorganizationWindow::NewReorganizationWindow(InvestmentController *investmentcontroller, QWidget *parent) :
+NewReorganizationWindow::NewReorganizationWindow(InvestmentController *investmentController, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::NewReorganizationWindow)
 {
@@ -50,8 +50,10 @@ NewReorganizationWindow::NewReorganizationWindow(InvestmentController *investmen
     ui->dateEdit->setDisplayFormat("dd/MM/yyyy");
     ui->dateEdit->setDate(currentDate);
 
+    this->investmentController = investmentController;
+
     // Init combo box asset
-    initComboBoxAssets(ui->comboBox_asset, investmentcontroller);
+    initComboBoxAssets(ui->comboBox_asset, this->investmentController);
 }
 
 NewReorganizationWindow::~NewReorganizationWindow()
@@ -76,6 +78,8 @@ void NewReorganizationWindow::on_pushButton_save_clicked()
         switch (status)
         {
             case DATABASE_SUCCESS:
+                this->investmentController->getAsset(ui->comboBox_asset->currentText())->addEvent(
+                                                     std::make_shared<Reorganization>(reorganization));
                 QMessageBox::information(this, "Sucesso", "Reorganização inserido com sucesso");
             break;
 

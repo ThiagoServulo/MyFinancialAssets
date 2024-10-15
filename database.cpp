@@ -689,7 +689,7 @@ bool Database::selectEventsForAsset(Asset* asset)
     return true;
 }
 
-bool Database::investmentcontrollerInitialization(InvestmentController* investmentcontroller)
+bool Database::investmentControllerInitialization(InvestmentController* investmentController)
 {
     std::vector<Asset> assets;
 
@@ -726,7 +726,7 @@ bool Database::investmentcontrollerInitialization(InvestmentController* investme
     }
 
     // Adding assets
-    investmentcontroller->addAssets(assets);
+    investmentController->addAssets(assets);
 
     return true;
 }

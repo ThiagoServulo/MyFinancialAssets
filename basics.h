@@ -15,7 +15,7 @@ QTableWidgetItem* createStyledItem(QString text, int style);
 void configureTableWidget(QStringList headerLabels, QTableWidget *tableWidget);
 void addTableWidgetItem(QTableWidget *tableWidget, int row, int column, QString item, int style);
 void addTableWidgetItens(QTableWidget *tableWidget, int row, QStringList itens, int style);
-void initComboBoxAssets(QComboBox *comboBox, InvestmentController *investmentcontroller);
+void initComboBoxAssets(QComboBox *comboBox, InvestmentController *investmentController);
 std::vector<Event*> mergeAndSortEvents(const std::vector<Transaction>& transactions, const std::vector<Reorganization>& reorganizations);
 QDate getEarliestTransactionDate(std::vector<Transaction>& transactions, TransactionType transactionType);
 

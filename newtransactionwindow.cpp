@@ -3,10 +3,11 @@
 #include "constants.h"
 #include "transaction.h"
 #include "database.h"
+#include "assetapi.h"
 #include <QIntValidator>
 #include <QMessageBox>
 
-NewTransactionWindow::NewTransactionWindow(QWidget *parent) :
+NewTransactionWindow::NewTransactionWindow(InvestmentController *investmentController, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::NewTransactionWindow)
 {
@@ -67,6 +68,9 @@ NewTransactionWindow::NewTransactionWindow(QWidget *parent) :
     QDate currentDate = QDate::currentDate();
     ui->dateEdit->setDisplayFormat("dd/MM/yyyy");
     ui->dateEdit->setDate(currentDate);
+
+    // Get investiment controller
+    this->investmentController = investmentController;
 }
 
 NewTransactionWindow::~NewTransactionWindow()
@@ -119,8 +123,25 @@ void NewTransactionWindow::on_pushButton_save_clicked()
         Transaction transaction(ui->dateEdit->date(), transactionType, quantity, ui->lineEdit_value->text().toDouble());
 
         // Insert transaction into database
-        if(database.insertTransaction(ticker, getAssetTypeFromString(ui->comboBox_assetType->currentText()), transaction))
+        AssetType assetType = getAssetTypeFromString(ui->comboBox_assetType->currentText());
+        if(database.insertTransaction(ticker, assetType, transaction))
         {
+            // Add new asset if is necessary
+            if(investmentController->getAsset(ticker) == nullptr)
+            {
+                AssetApi assetApi;
+                double currentPrice = assetApi.getAssetCurrentPrice(ticker);
+
+                // TODO: Remover isso e colocar o current price na ticker_table
+                Database database;
+                database.updateTickerCurrentPrice(ticker, currentPrice);
+
+                investmentController->addAsset(std::make_shared<Asset>(Asset(ticker, assetType, currentPrice)));
+            }
+
+            // Add transaction
+            investmentController->getAsset(ticker)->addEvent(std::make_shared<Transaction>(transaction));
+
             QMessageBox::information(this, "Sucesso", "Transação inserida com sucesso");
         }
         else

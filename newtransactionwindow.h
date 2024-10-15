@@ -13,7 +13,7 @@ class NewTransactionWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit NewTransactionWindow(QWidget *parent = nullptr);
+    explicit NewTransactionWindow(InvestmentController *investmentController, QWidget *parent = nullptr);
     ~NewTransactionWindow();
 
 private slots:
@@ -22,6 +22,7 @@ private slots:
 
 private:
     Ui::NewTransactionWindow *ui;
+    InvestmentController *investmentController;
 };
 
 #endif // NEWTRANSACTIONWINDOW_H

@@ -7,6 +7,11 @@ InvestmentController::InvestmentController()
 
 }
 
+void InvestmentController::addAsset(std::shared_ptr<Asset> asset)
+{
+    assetList.push_back(asset);
+}
+
 void InvestmentController::addAssets(std::vector<Asset>& assets)
 {
     for (Asset& asset : assets)

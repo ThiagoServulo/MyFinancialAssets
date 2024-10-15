@@ -34,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent)
     configureTableWidget(headerLabels, ui->tableWidget_fixedIncome);
 
     // Init asset controller
-    if(!database.investmentcontrollerInitialization(&investmentcontroller))
+    if(!database.investmentControllerInitialization(&investmentController))
     {
         qDebug() << "Erro in asset controller Initialization";
     }
@@ -73,7 +73,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_actionTransaction_triggered()
 {
-    NewTransactionWindow *newTransactionWindow = new NewTransactionWindow(this);
+    NewTransactionWindow *newTransactionWindow = new NewTransactionWindow(&investmentController, this);
     newTransactionWindow->setAttribute(Qt::WA_DeleteOnClose);
     connect(newTransactionWindow, &QObject::destroyed, this, &MainWindow::updateSotckAndFundTable);
     newTransactionWindow->show();
@@ -81,7 +81,7 @@ void MainWindow::on_actionTransaction_triggered()
 
 void MainWindow::on_actionYield_triggered()
 {
-    NewYieldWindow *newYieldWindow = new NewYieldWindow(&investmentcontroller, this);
+    NewYieldWindow *newYieldWindow = new NewYieldWindow(&investmentController, this);
     newYieldWindow->setAttribute(Qt::WA_DeleteOnClose);
     connect(newYieldWindow, &QObject::destroyed, this, &MainWindow::updateSotckAndFundTable);
     newYieldWindow->show();
@@ -89,7 +89,7 @@ void MainWindow::on_actionYield_triggered()
 
 void MainWindow::on_actionReorganization_triggered()
 {
-    NewReorganizationWindow *newReorganizationWindow = new NewReorganizationWindow(&investmentcontroller, this);
+    NewReorganizationWindow *newReorganizationWindow = new NewReorganizationWindow(&investmentController, this);
     newReorganizationWindow->setAttribute(Qt::WA_DeleteOnClose);
     connect(newReorganizationWindow, &QObject::destroyed, this, &MainWindow::updateSotckAndFundTable);
     newReorganizationWindow->show();
@@ -100,9 +100,9 @@ void MainWindow::updateSotckAndFundTable()
     Database database;
 
     // Get assets
-    //std::vector<std::shared_ptr<Asset>> assets = investmentcontroller.getAllAssets();
-    std::vector<Asset> assets;
-    database.selectAllAssets(assets);
+    std::vector<std::shared_ptr<Asset>> assets = investmentController.getAllAssets();
+    //std::vector<Asset> assets;
+    //database.selectAllAssets(assets);
 
     // Clear tables
     ui->tableWidget_stocks->clearContents();
@@ -128,11 +128,11 @@ void MainWindow::updateSotckAndFundTable()
         QString currentPriceStr = "-";
 
         // Get values
-        QString ticker = asset.getTicker();
-        int quantity = asset.getQuantity();
-        double totalYield = asset.getTotalYield();
-        double averagePrice = (quantity != 0) ? asset.getAveragePrice() : 0;
-        double currentPrice = (quantity != 0) ? asset.getCurrentPrice() : 0;
+        QString ticker = asset->getTicker();
+        int quantity = asset->getQuantity();
+        double totalYield = asset->getTotalYield();
+        double averagePrice = (quantity != 0) ? asset->getAveragePrice() : 0;
+        double currentPrice = (quantity != 0) ? asset->getCurrentPrice() : 0;
 
         // Show values if is relevant
         if(currentPrice > 0)
@@ -143,12 +143,12 @@ void MainWindow::updateSotckAndFundTable()
         }
 
         // Check asset type
-        if(asset.getAssetType() == AssetType::ACAO)
+        if(asset->getAssetType() == AssetType::ACAO)
         {
             // Add new line
             if(!ui->checkBox_hideAssets->isChecked() || (ui->checkBox_hideAssets->isChecked() && quantity != 0))
             {
-                addNewLineToTable(ui->tableWidget_stocks, stockRow, ticker, QString::number(investmentcontroller.getAssetDistribution(ticker), 'f', 2),
+                addNewLineToTable(ui->tableWidget_stocks, stockRow, ticker, QString::number(investmentController.getAssetDistribution(ticker), 'f', 2),
                                   QString::number(quantity), QString::number(totalYield, 'f', 2), QString::number(averagePrice, 'f', 2),
                                   currentPriceStr, profitPercentage, capitalGain);
                 ++stockRow;
@@ -159,12 +159,12 @@ void MainWindow::updateSotckAndFundTable()
             totalStockYield += totalYield;
             totalStockCapitalGain += (currentPriceStr == "-") ? 0 : std::stod(capitalGain.toUtf8().constData());
         }
-        else if(asset.getAssetType() == AssetType::FUNDO)
+        else if(asset->getAssetType() == AssetType::FUNDO)
         {
             // Add new line
             if(!ui->checkBox_hideFounds->isChecked() || (ui->checkBox_hideFounds->isChecked() && quantity != 0))
             {
-                addNewLineToTable(ui->tableWidget_funds, fundRow, ticker, QString::number(investmentcontroller.getAssetDistribution(ticker), 'f', 2),
+                addNewLineToTable(ui->tableWidget_funds, fundRow, ticker, QString::number(investmentController.getAssetDistribution(ticker), 'f', 2),
                                   QString::number(quantity), QString::number(totalYield, 'f', 2), QString::number(averagePrice, 'f', 2),
                                   currentPriceStr, profitPercentage, capitalGain);
                 ++fundRow;
@@ -231,7 +231,7 @@ void MainWindow::on_tableWidget_funds_cellDoubleClicked(int row, int column)
 
 void MainWindow::on_actionSales_triggered()
 {
-    SalesWindow *salesWindow = new SalesWindow(&investmentcontroller, this);
+    SalesWindow *salesWindow = new SalesWindow(&investmentController, this);
     salesWindow->show();
 }
 

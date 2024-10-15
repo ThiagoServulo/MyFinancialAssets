@@ -4,7 +4,7 @@
 #include <QMessageBox>
 #include "basics.h"
 
-NewYieldWindow::NewYieldWindow(InvestmentController *investmentcontroller, QWidget *parent) :
+NewYieldWindow::NewYieldWindow(InvestmentController *investmentController, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::NewYieldWindow)
 {
@@ -43,10 +43,10 @@ NewYieldWindow::NewYieldWindow(InvestmentController *investmentcontroller, QWidg
     ui->dateEdit->setDate(currentDate);
 
     // Get asset controller
-    this->investmentcontroller = investmentcontroller;
+    this->investmentController = investmentController;
 
     // Init combo box assets
-    initComboBoxAssets(ui->comboBox_asset, investmentcontroller);
+    initComboBoxAssets(ui->comboBox_asset, investmentController);
 }
 
 NewYieldWindow::~NewYieldWindow()
@@ -72,6 +72,7 @@ void NewYieldWindow::on_pushButton_save_clicked()
         switch (status)
         {
             case DATABASE_SUCCESS:
+                this->investmentController->getAsset(ui->comboBox_asset->currentText())->addEvent(std::make_shared<Yield>(yield));
                 QMessageBox::information(this, "Sucesso", "Rendimento inserido com sucesso");
             break;
 
@@ -102,7 +103,7 @@ void NewYieldWindow::on_comboBox_asset_textActivated(const QString &arg1)
 {
     ui->comboBox_yieldType->clear();
 
-    AssetType assetType = investmentcontroller->getAsset(arg1)->getAssetType();
+    AssetType assetType = investmentController->getAsset(arg1)->getAssetType();
 
     if(assetType == AssetType::ACAO)
     {

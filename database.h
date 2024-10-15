@@ -22,7 +22,7 @@ public:
     int insertReorganization(QString ticker, Reorganization reorganization);
     int getTickerQuantity(QString ticker);
     bool selectAllAssets(std::vector<Asset>& assets);
-    bool investmentcontrollerInitialization(InvestmentController* investmentcontroller);
+    bool investmentControllerInitialization(InvestmentController* investmentController);
     double getTickerAveragePrice(QString ticker);
     double getTickerTotalYield(QString ticker);
     std::vector<Transaction> getTickerTransactions(QString ticker);
@@ -30,6 +30,7 @@ public:
     std::vector<Reorganization> getTickerReorganizations(QString ticker);
     bool checkLastUpdate();
     int insertFixedIncome(FixedIncome fixedIncome);
+    int updateTickerCurrentPrice(QString ticker, double currentPrice);;
 
 private:
     QSqlDatabase database;
@@ -48,7 +49,6 @@ private:
     std::vector<Reorganization> getReorganizationsByTickerId(int tickerId);
     QDate selectLastUpdateDate();
     bool selectAllTicker(QStringList *tickers);
-    int updateTickerCurrentPrice(QString ticker, double currentPrice);
     int insertLastUpdateDate(QDate date);
 };
 

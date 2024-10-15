@@ -16,7 +16,7 @@ class NewYieldWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit NewYieldWindow(InvestmentController *investmentcontroller, QWidget *parent = nullptr);
+    explicit NewYieldWindow(InvestmentController *investmentController, QWidget *parent = nullptr);
     ~NewYieldWindow();
 
 private slots:
@@ -27,7 +27,7 @@ private slots:
 private:
     Ui::NewYieldWindow *ui;
     Database database;
-    InvestmentController *investmentcontroller;
+    InvestmentController *investmentController;
 };
 
 #endif // NEWYIELDWINDOW_H
