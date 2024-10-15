@@ -1109,3 +1109,40 @@ int Database::insertLastUpdateDate(QDate date)
     qDebug() << "Error to open database to insert last update date";
     return DATABASE_ERROR;
 }
+
+int Database::insertFixedIncome(FixedIncome fixedIncome)
+{
+    QSqlQuery query;
+/*
+    if(openDatabase())
+    {
+        QSqlQuery query;
+
+        // Prepare the SQL insert query
+        query.prepare("INSERT INTO fixed_income_table (desciption, yield_expected, purchase_date, limit_date, "
+                      "invested_value, current_value, status) "
+                      "VALUES (:desciption, :yield_expected, :purchase_date, :limit_date, :invested_value, "
+                      ":current_value ,:status)");
+
+        // Bind values to the query
+        query.bindValue(":desciption", fixedIncome);
+        query.bindValue(":yield_expected", reorganizationTypeId);
+        query.bindValue(":purchase_date", reorganization.getRatio());
+        query.bindValue(":limit_date", reorganization.getDate());
+        query.bindValue(":invested_value", reorganizationTypeId);
+        query.bindValue(":current_value", reorganization.getRatio());
+        query.bindValue(":status", reorganization.getDate())
+
+        // Execute the query and check for success
+        if (!query.exec())
+        {
+            qDebug() << "Erro to insert new reorganization";
+            closeDatabase();
+            return DATABASE_ERROR;
+        }
+
+        closeDatabase();
+        return DATABASE_SUCCESS;
+    }
+    */
+}

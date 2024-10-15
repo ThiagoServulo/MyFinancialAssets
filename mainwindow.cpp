@@ -98,6 +98,7 @@ void MainWindow::on_actionReorganization_triggered()
 void MainWindow::updateSotckAndFundTable()
 {
     Database database;
+
     // Get assets
     //std::vector<std::shared_ptr<Asset>> assets = investmentcontroller.getAllAssets();
     std::vector<Asset> assets;

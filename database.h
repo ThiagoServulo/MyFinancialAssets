@@ -6,6 +6,7 @@
 #include "yield.h"
 #include "reorganization.h"
 #include "investmentcontroller.h"
+#include "fixedincome.h"
 
 #define NOT_FOUND -1
 #define DATABASE_ERROR -2
@@ -28,6 +29,7 @@ public:
     std::vector<Yield> getTickerYields(QString ticker);
     std::vector<Reorganization> getTickerReorganizations(QString ticker);
     bool checkLastUpdate();
+    int insertFixedIncome(FixedIncome fixedIncome);
 
 private:
     QSqlDatabase database;

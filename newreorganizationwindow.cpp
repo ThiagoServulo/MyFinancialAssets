@@ -85,7 +85,6 @@ void NewReorganizationWindow::on_pushButton_save_clicked()
 
             default:
                 QMessageBox::critical(this, "Erro", "Erro ao inserir reorganização");
-
         }
 
         // Close window

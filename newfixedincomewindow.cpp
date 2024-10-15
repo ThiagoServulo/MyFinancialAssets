@@ -1,5 +1,6 @@
 #include "newfixedincomewindow.h"
 #include "ui_newfixedincomewindow.h"
+#include <QMessageBox>
 
 NewFixedIncomeWindow::NewFixedIncomeWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -57,6 +58,10 @@ void NewFixedIncomeWindow::on_pushButton_save_clicked()
        ui->dateEdit_limitDate->date() > ui->dateEdit_puchaseDate->date())
     {
         qDebug() << "aaaaaa";
+    }
+    else
+    {
+        QMessageBox::information(this, "Inválido", "Um dos campos digitados está inválido");
     }
 }
 
