@@ -8,6 +8,14 @@ class FixedIncome
 public:
     FixedIncome(QDate purchaseDate, QString description, QString yieldExpected, double investedValue, QDate limitDate);
     void setCurrentValue(double currentValue);
+    QDate getPurchaseDate();
+    QString getDescription();
+    QString getYieldExpected();
+    double getInvestedValue();
+    double getCurrentValue();
+    QDate getLimitDate();
+    bool getStatus();
+    void setStatus(bool newStatus);
 
 private:
     QDate purchaseDate;
