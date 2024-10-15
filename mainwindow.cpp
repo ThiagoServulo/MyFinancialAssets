@@ -97,8 +97,11 @@ void MainWindow::on_actionReorganization_triggered()
 
 void MainWindow::updateSotckAndFundTable()
 {
+    Database database;
     // Get assets
-    std::vector<std::shared_ptr<Asset>> assets = investmentcontroller.getAllAssets();
+    //std::vector<std::shared_ptr<Asset>> assets = investmentcontroller.getAllAssets();
+    std::vector<Asset> assets;
+    database.selectAllAssets(assets);
 
     // Clear tables
     ui->tableWidget_stocks->clearContents();
@@ -124,11 +127,11 @@ void MainWindow::updateSotckAndFundTable()
         QString currentPriceStr = "-";
 
         // Get values
-        QString ticker = asset->getTicker();
-        int quantity = asset->getQuantity();
-        double totalYield = asset->getTotalYield();
-        double averagePrice = (quantity != 0) ? asset->getAveragePrice() : 0;
-        double currentPrice = (quantity != 0) ? asset->getCurrentPrice() : 0;
+        QString ticker = asset.getTicker();
+        int quantity = asset.getQuantity();
+        double totalYield = asset.getTotalYield();
+        double averagePrice = (quantity != 0) ? asset.getAveragePrice() : 0;
+        double currentPrice = (quantity != 0) ? asset.getCurrentPrice() : 0;
 
         // Show values if is relevant
         if(currentPrice > 0)
@@ -139,7 +142,7 @@ void MainWindow::updateSotckAndFundTable()
         }
 
         // Check asset type
-        if(asset->getAssetType() == AssetType::ACAO)
+        if(asset.getAssetType() == AssetType::ACAO)
         {
             // Add new line
             if(!ui->checkBox_hideAssets->isChecked() || (ui->checkBox_hideAssets->isChecked() && quantity != 0))
@@ -155,7 +158,7 @@ void MainWindow::updateSotckAndFundTable()
             totalStockYield += totalYield;
             totalStockCapitalGain += (currentPriceStr == "-") ? 0 : std::stod(capitalGain.toUtf8().constData());
         }
-        else if(asset->getAssetType() == AssetType::FUNDO)
+        else if(asset.getAssetType() == AssetType::FUNDO)
         {
             // Add new line
             if(!ui->checkBox_hideFounds->isChecked() || (ui->checkBox_hideFounds->isChecked() && quantity != 0))
@@ -178,8 +181,12 @@ void MainWindow::updateSotckAndFundTable()
     }
 
     // Add last line
-    addNewLineToTable(ui->tableWidget_funds, fundRow, "Total", "100", QString::number(totalFundQuantity), QString::number(totalFundYield, 'f', 2), "-", "-", "-", (totalFundCapitalGain == 0) ? "-" : QString::number(totalFundCapitalGain, 'f', 2));
-    addNewLineToTable(ui->tableWidget_stocks, stockRow, "Total", "100", QString::number(totalStockQuantity), QString::number(totalStockYield, 'f', 2), "-", "-", "-", (totalStockCapitalGain == 0) ? "-" : QString::number(totalStockCapitalGain, 'f', 2));
+    addNewLineToTable(ui->tableWidget_funds, fundRow, "Total", "100", QString::number(totalFundQuantity),
+                      QString::number(totalFundYield, 'f', 2), "-", "-", "-",
+                      (totalFundCapitalGain == 0) ? "-" : QString::number(totalFundCapitalGain, 'f', 2));
+    addNewLineToTable(ui->tableWidget_stocks, stockRow, "Total", "100", QString::number(totalStockQuantity),
+                      QString::number(totalStockYield, 'f', 2), "-", "-", "-",
+                      (totalStockCapitalGain == 0) ? "-" : QString::number(totalStockCapitalGain, 'f', 2));
 }
 
 void MainWindow::on_tableWidget_stocks_cellDoubleClicked(int row, int column)
