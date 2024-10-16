@@ -662,9 +662,6 @@ bool Database::selectAllAssets(std::vector<Asset>& assets)
 
 bool Database::selectEventsForAsset(Asset* asset)
 {
-    // Create events vetor
-    std::vector<std::shared_ptr<Event>> events;
-
     // Get ticker id
     int tickerId = getTickerId(asset->getTicker());
 
@@ -680,11 +677,26 @@ bool Database::selectEventsForAsset(Asset* asset)
     // Convert transactions to events
     for (const auto& transaction : transactions)
     {
-        events.push_back(std::make_shared<Transaction>(transaction));
+        asset->addEvent(std::make_shared<Transaction>(transaction));
     }
 
-    // Add events
-    asset->addEvents(events);
+    // Get yields
+    std::vector<Yield> yields = getYieldsByTickerId(tickerId);
+
+    // Convert yields to events
+    for (const auto& yield : yields)
+    {
+        asset->addEvent(std::make_shared<Yield>(yield));
+    }
+
+    // Get reorganizations
+    std::vector<Reorganization> reorganizations = getReorganizationsByTickerId(tickerId);
+
+    // Convert reorganizations to events
+    for (const auto& reorganization : reorganizations)
+    {
+        asset->addEvent(std::make_shared<Reorganization>(reorganization));
+    }
 
     return true;
 }
@@ -723,10 +735,10 @@ bool Database::investmentControllerInitialization(InvestmentController* investme
     {
         // Select events
         selectEventsForAsset(&asset);
-    }
 
-    // Adding assets
-    investmentController->addAssets(assets);
+        // Add asset
+        investmentController->addAsset(std::make_shared<Asset>(asset));
+    }
 
     return true;
 }

@@ -14,6 +14,9 @@ NewReorganizationWindow::NewReorganizationWindow(InvestmentController *investmen
     this->setMaximumSize(384, 215);
     this->setMinimumSize(384, 215);
 
+    // Set investment controller
+    this->investmentController = investmentController;
+
     // Set labels style
     ui->label_asset->setStyleSheet("color: rgb(255, 255, 255);");
     ui->label_data->setStyleSheet("color: rgb(255, 255, 255);");
@@ -49,8 +52,6 @@ NewReorganizationWindow::NewReorganizationWindow(InvestmentController *investmen
     QDate currentDate = QDate::currentDate();
     ui->dateEdit->setDisplayFormat("dd/MM/yyyy");
     ui->dateEdit->setDate(currentDate);
-
-    this->investmentController = investmentController;
 
     // Init combo box asset
     initComboBoxAssets(ui->comboBox_asset, this->investmentController);

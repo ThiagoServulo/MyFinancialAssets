@@ -9,15 +9,7 @@ void EventController::addEvent(std::shared_ptr<Event> event)
     eventList.push_back(event);
 }
 
-void EventController::addEvents(std::vector<std::shared_ptr<Event>>& events)
-{
-    for (auto& event : events)
-    {
-        eventList.push_back(event);
-    }
-}
-
-std::vector<Transaction> EventController::getTransactionList()
+std::vector<Transaction> EventController::getTransactions()
 {
     std::vector<Transaction> transactionList;
 
@@ -41,7 +33,7 @@ std::vector<Transaction> EventController::getTransactionList()
     return transactionList;
 }
 
-std::vector<Yield> EventController::getYieldList()
+std::vector<Yield> EventController::getYields()
 {
     std::vector<Yield> yieldList;
 
@@ -65,3 +57,26 @@ std::vector<Yield> EventController::getYieldList()
     return yieldList;
 }
 
+std::vector<Reorganization> EventController::getReorganizations()
+{
+    std::vector<Reorganization> reorganizations;
+
+    for (const std::shared_ptr<Event>& event : eventList)
+    {
+        if (event->getEventType() == EventType::REORGANIZATION)
+        {
+            // Use cast to convert event
+            const Reorganization* reorganization = dynamic_cast<const Reorganization*>(event.get());
+
+            // Check object
+            if (reorganization)
+            {
+                // Add yield
+                reorganizations.push_back(*reorganization);
+            }
+        }
+    }
+
+    // Return reorganizations
+    return reorganizations;
+}

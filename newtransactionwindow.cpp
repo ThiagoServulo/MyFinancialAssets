@@ -15,6 +15,9 @@ NewTransactionWindow::NewTransactionWindow(InvestmentController *investmentContr
     this->setMaximumSize(365, 274);
     this->setMinimumSize(365, 274);
 
+    // Set investiment controller
+    this->investmentController = investmentController;
+
     // Configure labels style
     ui->label_data->setStyleSheet("color: rgb(255, 255, 255);");
     ui->label_assetType->setStyleSheet("color: rgb(255, 255, 255);");
@@ -68,9 +71,6 @@ NewTransactionWindow::NewTransactionWindow(InvestmentController *investmentContr
     QDate currentDate = QDate::currentDate();
     ui->dateEdit->setDisplayFormat("dd/MM/yyyy");
     ui->dateEdit->setDate(currentDate);
-
-    // Get investiment controller
-    this->investmentController = investmentController;
 }
 
 NewTransactionWindow::~NewTransactionWindow()

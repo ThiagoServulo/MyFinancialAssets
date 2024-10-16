@@ -1,6 +1,7 @@
 #ifndef ASSETWINDOW_H
 #define ASSETWINDOW_H
 
+#include "asset.h"
 #include <QMainWindow>
 
 namespace Ui {
@@ -12,13 +13,14 @@ class AssetWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit AssetWindow(QString ticker, QWidget *parent = nullptr);
+    explicit AssetWindow(Asset *asset, QWidget *parent = nullptr);
     ~AssetWindow();
-    void updateTransactionTable(QString ticker);
-    void updateYieldTable(QString ticker);
+    void updateTransactionTable();
+    void updateYieldTable();
 
 private:
     Ui::AssetWindow *ui;
+    Asset *asset;
 };
 
 #endif // ASSETWINDOW_H

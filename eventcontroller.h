@@ -3,6 +3,7 @@
 
 #include "transaction.h"
 #include "yield.h"
+#include "reorganization.h"
 #include <vector>
 
 class EventController
@@ -13,9 +14,9 @@ private:
 public:
     EventController();
     void addEvent(std::shared_ptr<Event> event);
-    void addEvents(std::vector<std::shared_ptr<Event>>& events);
-    std::vector<Transaction> getTransactionList();
-    std::vector<Yield> getYieldList();
+    std::vector<Transaction> getTransactions();
+    std::vector<Yield> getYields();
+    std::vector<Reorganization> getReorganizations();
 };
 
 #endif // EVENTCONTROLLER_H

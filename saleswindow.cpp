@@ -12,6 +12,9 @@ SalesWindow::SalesWindow(InvestmentController *investmentController, QWidget *pa
     this->setMaximumSize(1090, 591);
     this->setMinimumSize(1090, 591);
 
+    // Set investiment controller
+    this->investmentController = investmentController;
+
     // Configure label assets
     ui->label_assets->setStyleSheet("color: rgb(255, 255, 255);");
 
@@ -19,9 +22,6 @@ SalesWindow::SalesWindow(InvestmentController *investmentController, QWidget *pa
     QStringList headerLabels = {"Ticker", "Data de entrada", "Data de saída", "Rendimento total", "Preço médio de compra",
                                 "Preço médio de venda", "Valorização", "Ganho de capital"};
     configureTableWidget(headerLabels, ui->tableWidget_sales);
-
-    // Save asset controller
-    this->investmentController = investmentController;
 
     // Update table widget sales
     updateTableWidgetSales();
@@ -62,7 +62,7 @@ void SalesWindow::on_tableWidget_sales_cellDoubleClicked(int row, int column)
     // Check ticker
     if(ticker != "Total")
     {
-        AssetWindow *assetWindow = new AssetWindow(ticker, this);
+        AssetWindow *assetWindow = new AssetWindow(investmentController->getAsset(ticker).get(), this);
         assetWindow->show();
     }
 }

@@ -13,7 +13,6 @@ bool DatabaseCreation::createDatabase()
     createStatus |= createYieldTable();
     createStatus |= createAssetTypeTable();
     createStatus |= createYieldTypeTable();
-    createStatus |= createCurrentPriceTable();
     createStatus |= createTransactionTypeTable();
     createStatus |= createTickerTable();
     createStatus |= createTransactionTable();
@@ -120,30 +119,6 @@ bool DatabaseCreation::createYieldTypeTable()
 
     // Populate table
     return populateYieldTypeTable();
-}
-
-bool DatabaseCreation::createCurrentPriceTable()
-{
-    // Query to create current price table
-    QString createTableQuery = R"(
-        CREATE TABLE IF NOT EXISTS current_price_table (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            id_ticker INTEGER NOT NULL,
-            current_price DOUBLE NOT NULL
-        );
-    )";
-
-    // Execute query
-    QSqlQuery query;
-    if (!query.exec(createTableQuery))
-    {
-        qDebug() << "Error to create current_price_table";
-        return false;
-    }
-
-    // Table created
-    qDebug() << "Table current_price_table created";
-    return true;
 }
 
 bool DatabaseCreation::populateYieldTypeTable()

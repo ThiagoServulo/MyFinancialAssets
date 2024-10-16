@@ -1,9 +1,8 @@
 #include "assetwindow.h"
 #include "ui_assetwindow.h"
-#include "database.h"
 #include "basics.h"
 
-AssetWindow::AssetWindow(QString ticker, QWidget *parent) :
+AssetWindow::AssetWindow(Asset *asset, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::AssetWindow)
 {
@@ -11,14 +10,16 @@ AssetWindow::AssetWindow(QString ticker, QWidget *parent) :
     this->setMaximumSize(1149, 642);
     this->setMinimumSize(1149, 642);
 
+        this->asset = asset;
+
     // Update transaction table
-    updateTransactionTable(ticker);
+    updateTransactionTable();
 
     // Update yield table
-    updateYieldTable(ticker);
+    updateYieldTable();
 
     // Update labels
-    ui->label_ticker->setText(ticker);
+    ui->label_ticker->setText(asset->getTicker());
 
     // Configure label styles
     ui->label_ticker->setStyleSheet("color: rgb(255, 255, 255);");
@@ -34,13 +35,11 @@ AssetWindow::~AssetWindow()
     delete ui;
 }
 
-void AssetWindow::updateTransactionTable(QString ticker)
+void AssetWindow::updateTransactionTable()
 {
-    Database database;
-
     // Get events
-    auto transactions = database.getTickerTransactions(ticker);
-    auto reorganizations = database.getTickerReorganizations(ticker);
+    auto transactions = asset->getTransactions();
+    auto reorganizations = asset->getReorganizations();
     auto events = mergeAndSortEvents(transactions, reorganizations);
 
     // Configure transaction table
@@ -62,7 +61,7 @@ void AssetWindow::updateTransactionTable(QString ticker)
         if(event->getEventType() == EventType::REORGANIZATION)
         {
             // Cast to reorganization
-            Reorganization* reorganization = dynamic_cast<Reorganization*>(event);
+            Reorganization *reorganization = dynamic_cast<Reorganization*>(event);
 
             // Check cast
             if (!reorganization)
@@ -102,7 +101,7 @@ void AssetWindow::updateTransactionTable(QString ticker)
         else if(event->getEventType() == EventType::TRANSACTION)
         {
             // Cast to transaction
-            Transaction* transaction = dynamic_cast<Transaction*>(event);
+            Transaction *transaction = dynamic_cast<Transaction*>(event);
 
             // Check cast
             if (!transaction)
@@ -116,6 +115,7 @@ void AssetWindow::updateTransactionTable(QString ticker)
             int quantity = transaction->getQuantity();
             double unitaryPrice = transaction->getUnitaryPrice();
             double totalOperation = quantity * unitaryPrice;
+            QDate date = transaction->getDate();
 
             // Check transaction type
             if(transactionType == TransactionType::COMPRA)
@@ -139,7 +139,7 @@ void AssetWindow::updateTransactionTable(QString ticker)
             }
 
             // Populate string list
-            itens = {getTransactionTypeString(transactionType), transaction->getDate().toString("dd/MM/yyyy"), QString::number(quantity),
+            itens = {getTransactionTypeString(transactionType), date.toString("dd/MM/yyyy"), QString::number(quantity),
                     "R$ " + QString::number(unitaryPrice, 'f', 2), "R$ " + QString::number(totalOperation, 'f', 2),
                     QString::number(accumulatedQuantity), "R$ " + QString::number(averagePrice, 'f', 2),
                     "R$ " + QString::number(accumulatedTotal, 'f', 2)};
@@ -158,12 +158,10 @@ void AssetWindow::updateTransactionTable(QString ticker)
     }
 }
 
-void AssetWindow::updateYieldTable(QString ticker)
+void AssetWindow::updateYieldTable()
 {
-    Database database;
-
     // Get Yield
-    auto yields = database.getTickerYields(ticker);
+    auto yields = asset->getYields();
 
     // Configure yield table
     QStringList headerLabels = {"Tipo de rendimento", "Data do rendimento", "Valor recebido", "Valor agregado"};

@@ -198,7 +198,7 @@ void MainWindow::on_tableWidget_stocks_cellDoubleClicked(int row, int column)
     // Check ticker
     if(ticker != "Total")
     {
-        AssetWindow *assetWindow = new AssetWindow(ticker, this);
+        AssetWindow *assetWindow = new AssetWindow(investmentController.getAsset(ticker).get(), this);
         assetWindow->show();
     }
 }
@@ -224,7 +224,7 @@ void MainWindow::on_tableWidget_funds_cellDoubleClicked(int row, int column)
     // Check ticker
     if(ticker != "Total")
     {
-        AssetWindow *assetWindow = new AssetWindow(ticker, this);
+        AssetWindow *assetWindow = new AssetWindow(investmentController.getAsset(ticker).get(), this);
         assetWindow->show();
     }
 }

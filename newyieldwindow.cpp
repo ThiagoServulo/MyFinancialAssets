@@ -12,6 +12,9 @@ NewYieldWindow::NewYieldWindow(InvestmentController *investmentController, QWidg
     this->setMaximumSize(362, 214);
     this->setMinimumSize(362, 214);
 
+    // Set investiment controller
+    this->investmentController = investmentController;
+
     // Set labels style
     ui->label_asset->setStyleSheet("color: rgb(255, 255, 255);");
     ui->label_data->setStyleSheet("color: rgb(255, 255, 255);");
@@ -41,9 +44,6 @@ NewYieldWindow::NewYieldWindow(InvestmentController *investmentController, QWidg
     QDate currentDate = QDate::currentDate();
     ui->dateEdit->setDisplayFormat("dd/MM/yyyy");
     ui->dateEdit->setDate(currentDate);
-
-    // Get asset controller
-    this->investmentController = investmentController;
 
     // Init combo box assets
     initComboBoxAssets(ui->comboBox_asset, investmentController);
