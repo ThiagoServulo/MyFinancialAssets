@@ -373,15 +373,6 @@ bool Database::selectAllAssets(std::vector<Asset>& assets)
 
 bool Database::selectEventsForAsset(Asset* asset)
 {
-    // Get ticker id
-    int tickerId = getTickerId(asset->getTicker());
-
-    // Check ticker id
-    if(tickerId == DATABASE_ERROR || tickerId == NOT_FOUND)
-    {
-        return false;
-    }
-
     // Get transactions
     std::vector<Transaction> transactions = getTransactionsByTicker(asset->getTicker());
 
@@ -392,7 +383,7 @@ bool Database::selectEventsForAsset(Asset* asset)
     }
 
     // Get yields
-    std::vector<Yield> yields = getYieldsByTickerId(tickerId);
+    std::vector<Yield> yields = getYieldsByTicker(asset->getTicker());
 
     // Convert yields to events
     for (const auto& yield : yields)
@@ -401,7 +392,7 @@ bool Database::selectEventsForAsset(Asset* asset)
     }
 
     // Get reorganizations
-    std::vector<Reorganization> reorganizations = getReorganizationsByTickerId(tickerId);
+    std::vector<Reorganization> reorganizations = getReorganizationsByTicker(asset->getTicker());
 
     // Convert reorganizations to events
     for (const auto& reorganization : reorganizations)
@@ -453,7 +444,7 @@ bool Database::investmentControllerInitialization(InvestmentController* investme
     return true;
 }
 
-std::vector<Yield> Database::getYieldsByTickerId(int tickerId)
+std::vector<Yield> Database::getYieldsByTicker(QString ticker)
 {
     std::vector<Yield> yields;
 
@@ -466,16 +457,16 @@ std::vector<Yield> Database::getYieldsByTickerId(int tickerId)
             SELECT yt.yield_type, y.value, y.date
             FROM yield_table y
             JOIN yield_type_table yt ON y.id_yield_type = yt.id
-            WHERE y.id_ticker = :id_ticker;
+            WHERE y.id_ticker = (SELECT id FROM ticker_table WHERE ticker = :ticker);
         )");
 
-        // Bind the tickerId to the query
-        query.bindValue(":id_ticker", tickerId);
+        // Bind the ticker to the query
+        query.bindValue(":ticker", ticker);
 
         // Execute the query
         if (!query.exec())
         {
-            qDebug() << "Error retrieving yields for tickerId:" << tickerId;
+            qDebug() << "Error retrieving yields for ticker: " << ticker;
             closeDatabase();
 
               // Returning an empty vector in case of error
@@ -509,7 +500,7 @@ std::vector<Yield> Database::getYieldsByTickerId(int tickerId)
     return yields;
 }
 
-std::vector<Reorganization> Database::getReorganizationsByTickerId(int tickerId)
+std::vector<Reorganization> Database::getReorganizationsByTicker(QString ticker)
 {
     std::vector<Reorganization> reorganizations;
 
@@ -522,16 +513,16 @@ std::vector<Reorganization> Database::getReorganizationsByTickerId(int tickerId)
             SELECT rt.reorganization_type, r.ratio, r.date
             FROM reorganization_table r
             JOIN reorganization_type_table rt ON r.id_reorganization = rt.id
-            WHERE r.id_ticker = :id_ticker;
+            WHERE r.id_ticker =  (SELECT id FROM ticker_table WHERE ticker = :ticker);
         )");
 
-        // Bind the tickerId to the query
-        query.bindValue(":id_ticker", tickerId);
+        // Bind the ticker to the query
+        query.bindValue(":ticker", ticker);
 
         // Execute the query
         if (!query.exec())
         {
-            qDebug() << "Error retrieving reorganizations for tickerId:" << tickerId;
+            qDebug() << "Error retrieving reorganizations for ticker: " << ticker;
             closeDatabase();
 
               // Returning an empty vector in case of error

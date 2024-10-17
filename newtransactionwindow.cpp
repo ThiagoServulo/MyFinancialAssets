@@ -98,24 +98,11 @@ void NewTransactionWindow::on_pushButton_save_clicked()
         {
             int quantityAvailable = investmentController->getAsset(ticker)->getQuantity();
 
-            switch (quantityAvailable)
+            if(quantityAvailable < quantity)
             {
-                case NOT_FOUND:
-                    QMessageBox::critical(this, "Erro", "Você não tem esse ativo cadastrado, portanto não pode vendê-lo");
-                    return;
-
-                case DATABASE_ERROR:
-                    QMessageBox::critical(this, "Erro", "Erro ao inserir transação");
-                    this->close();
-                    return;
-
-                default:
-                    if(quantityAvailable < quantity)
-                    {
-                        QMessageBox::critical(this, "Erro", "Você tem apenas: " + QString::number(quantityAvailable) +
-                                              " quantidade de papéis disponíveis");
-                        return;
-                    }
+                QMessageBox::critical(this, "Erro", "Você tem apenas: " + QString::number(quantityAvailable) +
+                                      " quantidade de papéis disponíveis");
+                return;
             }
         }
 

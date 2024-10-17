@@ -35,8 +35,8 @@ private:
     bool insertTicker(QString ticker, AssetType assetType, double currentPrice);
     bool selectEventsForAsset(Asset* asset);
     std::vector<Transaction> getTransactionsByTicker(QString ticker);
-    std::vector<Yield> getYieldsByTickerId(int tickerId);
-    std::vector<Reorganization> getReorganizationsByTickerId(int tickerId);
+    std::vector<Yield> getYieldsByTicker(QString ticker);
+    std::vector<Reorganization> getReorganizationsByTicker(QString ticker);
     QDate selectLastUpdateDate();
     bool selectAllTicker(QStringList *tickers);
     int insertLastUpdateDate(QDate date);
