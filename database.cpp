@@ -66,44 +66,7 @@ bool Database::prepareDatabase()
     return false ;
 }
 
-int Database::getTickerId(QString ticker)
-{
-    // Convert to upper case
-    ticker = ticker.toUpper();
-
-    if(openDatabase())
-    {
-        QString queryStr = R"(
-            SELECT id FROM ticker_table WHERE ticker = :ticker;
-        )";
-
-        QSqlQuery query;
-        query.prepare(queryStr);
-        query.bindValue(":ticker", ticker);
-
-        if (!query.exec())
-        {
-            qDebug() << "Error fetching ticker id";
-            closeDatabase();
-            return DATABASE_ERROR;
-        }
-
-        if (query.next())
-        {
-            // Return the ticker id
-            closeDatabase();
-            return query.value(0).toInt();
-        }
-
-        closeDatabase();
-        return NOT_FOUND;
-    }
-
-    qDebug() << "Error to open database to get ticker id";
-    return DATABASE_ERROR;
-}
-
-bool Database::insertTicker(QString ticker, AssetType assetType, double currentPrice)
+bool Database::insertAsset(Asset asset)
 {
     if(openDatabase())
     {
@@ -114,9 +77,9 @@ bool Database::insertTicker(QString ticker, AssetType assetType, double currentP
 
         QSqlQuery query;
         query.prepare(insertQuery);
-        query.bindValue(":ticker", ticker.toUpper());
-        query.bindValue(":asset_type", getAssetTypeString(assetType));
-        query.bindValue(":current_price", currentPrice);
+        query.bindValue(":ticker", asset.getTicker());
+        query.bindValue(":asset_type", getAssetTypeString(asset.getAssetType()));
+        query.bindValue(":current_price", asset.getCurrentPrice());
 
         // Execute query
         if (!query.exec())
@@ -134,53 +97,20 @@ bool Database::insertTicker(QString ticker, AssetType assetType, double currentP
     return false;
 }
 
-bool Database::insertTransaction(QString ticker, AssetType assetType, Transaction transaction)
+bool Database::insertTransaction(QString ticker, Transaction transaction)
 {
-    // Convert to upper case
-    ticker = ticker.toUpper();
-
-    int tickerId = getTickerId(ticker);
-
-    // Check ticker status
-    if(tickerId == DATABASE_ERROR)
-    {
-        return false;
-    }
-
-    // Check ticker id
-    if(tickerId == NOT_FOUND)
-    {
-        // Get current price from API
-        AssetApi assetApi;
-        double currentPrice = assetApi.getAssetCurrentPrice(ticker);
-
-        // Inser new ticker
-        if(!insertTicker(ticker, assetType, currentPrice))
-        {
-            return false;
-        }
-
-        // Get ticker id
-        tickerId = getTickerId(ticker);
-
-        // Check ticker status
-        if(tickerId == DATABASE_ERROR || tickerId == NOT_FOUND)
-        {
-            return false;
-        }
-    }
-
     if(openDatabase())
     {
         QSqlQuery query;
 
         // Prepare the SQL insert query
         query.prepare("INSERT INTO transaction_table (id_ticker, id_transaction_type, quantity, unitary_price, date) "
-                      "VALUES (:id_ticker, (SELECT id FROM transaction_type_table WHERE transaction_type = :transaction_type), "
+                      "VALUES ((SELECT id FROM ticker_table WHERE ticker = :ticker), "
+                      "(SELECT id FROM transaction_type_table WHERE transaction_type = :transaction_type), "
                       ":quantity, :unitary_price, :date)");
 
         // Bind values to the query
-        query.bindValue(":id_ticker", tickerId);
+        query.bindValue(":ticker", ticker);
         query.bindValue(":transaction_type", getTransactionTypeString(transaction.getTransactionType()));
         query.bindValue(":quantity", transaction.getQuantity());
         query.bindValue(":unitary_price", transaction.getUnitaryPrice());

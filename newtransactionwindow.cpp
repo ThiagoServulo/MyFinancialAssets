@@ -87,12 +87,14 @@ void NewTransactionWindow::on_pushButton_save_clicked()
        ui->lineEdit_ticker->text() != "" &&
        ui->lineEdit_value->text() != "")
     {
-        // Check transaction type
-        TransactionType transactionType = getTransactionTypeFromString(ui->comboBox_transactionType->currentText());
-
+        // Create variables
         Database database;
+        TransactionType transactionType = getTransactionTypeFromString(ui->comboBox_transactionType->currentText());
         QString ticker = ui->lineEdit_ticker->text();
         int quantity = ui->lineEdit_quantity->text().toInt();
+        AssetType assetType = getAssetTypeFromString(ui->comboBox_assetType->currentText());
+        QDate date = ui->dateEdit->date();
+        double value = ui->lineEdit_value->text().toDouble();
 
         if(transactionType == TransactionType::VENDA)
         {
@@ -100,39 +102,42 @@ void NewTransactionWindow::on_pushButton_save_clicked()
 
             if(quantityAvailable < quantity)
             {
-                QMessageBox::critical(this, "Erro", "Você tem apenas: " + QString::number(quantityAvailable) +
+                QMessageBox::critical(this, "Erro", "Você tem : " + QString::number(quantityAvailable) +
                                       " quantidade de papéis disponíveis");
                 return;
             }
         }
 
-        // Create transaction
-        Transaction transaction(ui->dateEdit->date(), transactionType, quantity, ui->lineEdit_value->text().toDouble());
-
-        // Insert transaction into database
-        AssetType assetType = getAssetTypeFromString(ui->comboBox_assetType->currentText());
-        if(database.insertTransaction(ticker, assetType, transaction))
+        // Add new asset if is necessary
+        if(investmentController->getAsset(ticker) == nullptr)
         {
-            // Add new asset if is necessary
-            if(investmentController->getAsset(ticker) == nullptr)
+            // Create asset
+            AssetApi assetApi;
+            Asset asset(ticker, assetType, assetApi.getAssetCurrentPrice(ticker));
+
+            // Insert asset
+            if(!database.insertAsset(asset))
             {
-                AssetApi assetApi;
-                double currentPrice = assetApi.getAssetCurrentPrice(ticker);
-
-                Database database;
-                database.updateTickerCurrentPrice(ticker, currentPrice);
-
-                investmentController->addAsset(std::make_shared<Asset>(Asset(ticker, assetType, currentPrice)));
+                QMessageBox::critical(this, "Erro", "Erro ao inserir novo ativo");
+                return;
             }
 
-            // Add transaction
-            investmentController->getAsset(ticker)->addEvent(std::make_shared<Transaction>(transaction));
+            // Add asset to investment controller
+            investmentController->addAsset(std::make_shared<Asset>(asset));
+        }
 
+        // Create transaction
+        Transaction transaction(date, transactionType, quantity, value);
+
+        // Insert transaction
+        if(database.insertTransaction(ticker, transaction))
+        {
+            investmentController->getAsset(ticker)->addEvent(std::make_shared<Transaction>(transaction));
             QMessageBox::information(this, "Sucesso", "Transação inserida com sucesso");
         }
         else
         {
-            QMessageBox::critical(this, "Erro", "Erro ao inserir transação");
+             QMessageBox::critical(this, "Erro", "Erro ao inserir transação");
         }
 
         this->close();

@@ -17,7 +17,8 @@ class Database
 public:
     Database();
     bool prepareDatabase();
-    bool insertTransaction(QString ticker, AssetType assetType, Transaction transaction);
+    bool insertAsset(Asset asset);
+    bool insertTransaction(QString ticker, Transaction transaction);
     bool insertYield(QString ticker, Yield yield);
     bool insertReorganization(QString ticker, Reorganization reorganization);
     bool selectAllAssets(std::vector<Asset>& assets);
@@ -31,8 +32,6 @@ private:
     bool openDatabase();
     void closeDatabase();
     bool checkIfDatabaseExists();
-    int getTickerId(QString ticker);
-    bool insertTicker(QString ticker, AssetType assetType, double currentPrice);
     bool selectEventsForAsset(Asset* asset);
     std::vector<Transaction> getTransactionsByTicker(QString ticker);
     std::vector<Yield> getYieldsByTicker(QString ticker);
