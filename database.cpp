@@ -559,7 +559,7 @@ bool Database::selectAllTicker(QStringList *tickers)
     return false;
 }
 
-int Database::updateTickerCurrentPrice(QString ticker, double currentPrice)
+bool Database::updateTickerCurrentPrice(QString ticker, double currentPrice)
 {
     // Convert to upper case
     ticker = ticker.toUpper();
@@ -580,18 +580,18 @@ int Database::updateTickerCurrentPrice(QString ticker, double currentPrice)
         {
             qDebug() << "Error updating current price into ticker_table";
             closeDatabase();
-            return DATABASE_ERROR;
+            return false;
         }
 
         closeDatabase();
-        return DATABASE_SUCCESS;
+        return true;
     }
 
     qDebug() << "Error to open database to update current price";
-    return DATABASE_ERROR;
+    return false;
 }
 
-int Database::insertLastUpdateDate(QDate date)
+bool Database::insertLastUpdateDate(QDate date)
 {
     QSqlQuery query;
 
@@ -604,7 +604,7 @@ int Database::insertLastUpdateDate(QDate date)
         {
             qDebug() << "Error deleting rows from last_update_table";
             closeDatabase();
-            return DATABASE_ERROR;
+            return false;
         }
 
         // Build query to update table
@@ -621,21 +621,19 @@ int Database::insertLastUpdateDate(QDate date)
         {
             qDebug() << "Error inserting last update date";
             closeDatabase();
-            return DATABASE_ERROR;
+            return false;
         }
 
         closeDatabase();
-        return DATABASE_SUCCESS;
+        return true;
     }
 
     qDebug() << "Error to open database to insert last update date";
-    return DATABASE_ERROR;
+    return false;
 }
 
-int Database::insertFixedIncome(FixedIncome fixedIncome)
+bool Database::insertFixedIncome(FixedIncome fixedIncome)
 {
-    QSqlQuery query;
-/*
     if(openDatabase())
     {
         QSqlQuery query;
@@ -647,24 +645,26 @@ int Database::insertFixedIncome(FixedIncome fixedIncome)
                       ":current_value ,:status)");
 
         // Bind values to the query
-        query.bindValue(":desciption", fixedIncome);
-        query.bindValue(":yield_expected", reorganizationTypeId);
-        query.bindValue(":purchase_date", reorganization.getRatio());
-        query.bindValue(":limit_date", reorganization.getDate());
-        query.bindValue(":invested_value", reorganizationTypeId);
-        query.bindValue(":current_value", reorganization.getRatio());
-        query.bindValue(":status", reorganization.getDate())
+        query.bindValue(":desciption", fixedIncome.getDescription());
+        query.bindValue(":yield_expected", fixedIncome.getYieldExpected());
+        query.bindValue(":purchase_date", fixedIncome.getPurchaseDate());
+        query.bindValue(":limit_date", fixedIncome.getLimitDate());
+        query.bindValue(":invested_value", fixedIncome.getInvestedValue());
+        query.bindValue(":current_value", fixedIncome.getCurrentValue());
+        query.bindValue(":status", fixedIncome.getStatus());
 
         // Execute the query and check for success
         if (!query.exec())
         {
-            qDebug() << "Erro to insert new reorganization";
+            qDebug() << "Erro to insert new fixed income";
             closeDatabase();
-            return DATABASE_ERROR;
+            return false;
         }
 
         closeDatabase();
-        return DATABASE_SUCCESS;
+        return true;
     }
-    */
+
+    qDebug() << "Error to open database to insert fixed income";
+    return false;
 }

@@ -8,10 +8,6 @@
 #include "investmentcontroller.h"
 #include "fixedincome.h"
 
-#define NOT_FOUND -1
-#define DATABASE_ERROR -2
-#define DATABASE_SUCCESS 1
-
 class Database
 {
 public:
@@ -24,8 +20,8 @@ public:
     bool selectAllAssets(std::vector<Asset>& assets);
     bool investmentControllerInitialization(InvestmentController* investmentController);
     bool checkLastUpdate();
-    int insertFixedIncome(FixedIncome fixedIncome);
-    int updateTickerCurrentPrice(QString ticker, double currentPrice);
+    bool insertFixedIncome(FixedIncome fixedIncome);
+    bool updateTickerCurrentPrice(QString ticker, double currentPrice);
 
 private:
     QSqlDatabase database;
@@ -38,7 +34,7 @@ private:
     std::vector<Reorganization> getReorganizationsByTicker(QString ticker);
     QDate selectLastUpdateDate();
     bool selectAllTicker(QStringList *tickers);
-    int insertLastUpdateDate(QDate date);
+    bool insertLastUpdateDate(QDate date);
 };
 
 #endif // DATABASE_H

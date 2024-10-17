@@ -9,25 +9,17 @@ InvestmentController::InvestmentController()
 
 void InvestmentController::addAsset(std::shared_ptr<Asset> asset)
 {
-    assetList.push_back(asset);
-}
-
-void InvestmentController::addAssets(std::vector<Asset>& assets)
-{
-    for (Asset& asset : assets)
-    {
-        assetList.push_back(std::make_shared<Asset>(asset));
-    }
+    assets.push_back(asset);
 }
 
 std::vector<std::shared_ptr<Asset>> InvestmentController::getAllAssets()
 {
-    return assetList;
+    return assets;
 }
 
 std::shared_ptr<Asset> InvestmentController::getAsset(QString ticker)
 {
-    for(auto asset: assetList)
+    for(auto asset: assets)
     {
         if(asset->getTicker() == ticker)
         {
@@ -55,7 +47,7 @@ double InvestmentController::getAssetDistribution(QString ticker)
         return 0;
     }
 
-    for(auto asset: assetList)
+    for(auto asset: assets)
     {
         // Check asset type
         if(assetRequired->getAssetType() == asset->getAssetType())
