@@ -91,12 +91,41 @@ int Asset::getQuantity()
 
 double Asset::getTotalYield()
 {
-    Database database;
-    return database.getTickerTotalYield(this->ticker);
+    // Init total
+    double total = 0;
+
+    // Get yields
+    auto yields = getYields();
+
+    for(auto yield: yields)
+    {
+        // Increase total
+        total += yield.getValue();
+    }
+
+    // Return total
+    return total;
 }
 
 double Asset::getAveragePrice()
 {
-    Database database;
-    return database.getTickerAveragePrice(this->ticker);
+    // Init variables
+    double total = 0;
+    int quantity = 0;
+
+    // Get transactions
+    std::vector<Transaction> transactions = getTransactions();
+
+    for(auto transaction: transactions)
+    {
+        // Check transaction type
+        if(transaction.getTransactionType() == TransactionType::COMPRA)
+        {
+            total += (transaction.getUnitaryPrice() * transaction.getQuantity());
+            quantity += transaction.getQuantity();
+        }
+    }
+
+    // Return average price
+    return total/quantity;
 }

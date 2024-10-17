@@ -66,76 +66,6 @@ bool Database::prepareDatabase()
     return false ;
 }
 
-int Database::getAssetTypeId(AssetType assetType)
-{
-    if(openDatabase())
-    {
-        QString queryStr = R"(
-            SELECT id FROM asset_type_table WHERE asset_type = :type;
-        )";
-
-        QSqlQuery query;
-        query.prepare(queryStr);
-        query.bindValue(":type", getAssetTypeString(assetType));
-
-        if (!query.exec())
-        {
-            qDebug() << "Error fetching asset type id";
-            closeDatabase();
-            return DATABASE_ERROR;
-        }
-
-        if (query.next())
-        {
-            // Return the id
-            closeDatabase();
-            return query.value(0).toInt();
-        }
-
-        qDebug() << "Asset type not found";
-        closeDatabase();
-        return NOT_FOUND;
-    }
-
-    qDebug() << "Error to open database to get asset type id";
-    return DATABASE_ERROR;
-}
-
-int Database::getYieldTypeId(YieldType yieldType)
-{
-    if(openDatabase())
-    {
-        QString queryStr = R"(
-            SELECT id FROM yield_type_table WHERE yield_type = :type;
-        )";
-
-        QSqlQuery query;
-        query.prepare(queryStr);
-        query.bindValue(":type", getYieldTypeString(yieldType));
-
-        if (!query.exec())
-        {
-            qDebug() << "Error fetching yield type id";
-            closeDatabase();
-            return DATABASE_ERROR;
-        }
-
-        if (query.next())
-        {
-            // Return the id
-            closeDatabase();
-            return query.value(0).toInt();
-        }
-
-        qDebug() << "Yield type not found";
-        closeDatabase();
-        return NOT_FOUND;
-    }
-
-    qDebug() << "Error to open database to get yield type id";
-    return DATABASE_ERROR;
-}
-
 int Database::getTickerId(QString ticker)
 {
     // Convert to upper case
@@ -173,66 +103,19 @@ int Database::getTickerId(QString ticker)
     return DATABASE_ERROR;
 }
 
-int Database::getTransactionTypeId(TransactionType transactionType)
+bool Database::insertTicker(QString ticker, AssetType assetType, double currentPrice)
 {
-    if(openDatabase())
-    {
-        QString queryStr = R"(
-            SELECT id FROM transaction_type_table WHERE transaction_type = :type;
-        )";
-
-        QSqlQuery query;
-        query.prepare(queryStr);
-        query.bindValue(":type", getTransactionTypeString(transactionType));
-
-        if (!query.exec())
-        {
-            qDebug() << "Error fetching transaction type id";
-            closeDatabase();
-            return DATABASE_ERROR;
-        }
-
-        if (query.next())
-        {
-            // Return the id
-            closeDatabase();
-            return query.value(0).toInt();
-        }
-
-        closeDatabase();
-        return NOT_FOUND;
-    }
-
-    qDebug() << "Error to open database to get transaction type id";
-    return DATABASE_ERROR;
-}
-
-int Database::insertTicker(QString ticker, AssetType assetType, double currentPrice)
-{
-    // Convert to upper case
-    ticker = ticker.toUpper();
-
-    // Get asset id
-    int assetTypeId = getAssetTypeId(assetType);
-
-    // Check asset id
-    if (assetTypeId == NOT_FOUND || assetTypeId == DATABASE_ERROR)
-    {
-        qDebug() << "Invalid asset type id, the database was loaded incorrect";
-        return DATABASE_ERROR;
-    }
-
     if(openDatabase())
     {
         QString insertQuery = R"(
             INSERT INTO ticker_table (ticker, id_asset_type, current_price)
-            VALUES (:ticker, :id_asset_type, :current_price);
+            VALUES (:ticker, (SELECT id FROM asset_type_table WHERE asset_type = :asset_type), :current_price);
         )";
 
         QSqlQuery query;
         query.prepare(insertQuery);
-        query.bindValue(":ticker", ticker);
-        query.bindValue(":id_asset_type", assetTypeId);
+        query.bindValue(":ticker", ticker.toUpper());
+        query.bindValue(":asset_type", getAssetTypeString(assetType));
         query.bindValue(":current_price", currentPrice);
 
         // Execute query
@@ -240,31 +123,21 @@ int Database::insertTicker(QString ticker, AssetType assetType, double currentPr
         {
             qDebug() << "Error inserting ticker into ticker_table";
             closeDatabase();
-            return DATABASE_ERROR;
+            return false;
         }
 
         closeDatabase();
-        return DATABASE_SUCCESS;
+        return true;
     }
 
     qDebug() << "Error to open database to insert ticker";
-    return DATABASE_ERROR;
+    return false;
 }
 
 bool Database::insertTransaction(QString ticker, AssetType assetType, Transaction transaction)
 {
     // Convert to upper case
     ticker = ticker.toUpper();
-
-    // Get transaction type id
-    int transactionTypeId = getTransactionTypeId(transaction.getTransactionType());
-
-    // Check transaction type id
-    if (transactionTypeId == NOT_FOUND || transactionTypeId == DATABASE_ERROR)
-    {
-        qDebug() << "Invalid transaction type id, the database was loaded incorrect";
-        return false;
-    }
 
     int tickerId = getTickerId(ticker);
 
@@ -282,10 +155,7 @@ bool Database::insertTransaction(QString ticker, AssetType assetType, Transactio
         double currentPrice = assetApi.getAssetCurrentPrice(ticker);
 
         // Inser new ticker
-        int status = insertTicker(ticker, assetType, currentPrice);
-
-        // Check status
-        if(status == DATABASE_ERROR)
+        if(!insertTicker(ticker, assetType, currentPrice))
         {
             return false;
         }
@@ -306,11 +176,12 @@ bool Database::insertTransaction(QString ticker, AssetType assetType, Transactio
 
         // Prepare the SQL insert query
         query.prepare("INSERT INTO transaction_table (id_ticker, id_transaction_type, quantity, unitary_price, date) "
-                      "VALUES (:id_ticker, :id_transaction_type, :quantity, :unitary_price, :date)");
+                      "VALUES (:id_ticker, (SELECT id FROM transaction_type_table WHERE transaction_type = :transaction_type), "
+                      ":quantity, :unitary_price, :date)");
 
         // Bind values to the query
         query.bindValue(":id_ticker", tickerId);
-        query.bindValue(":id_transaction_type", transactionTypeId);
+        query.bindValue(":transaction_type", getTransactionTypeString(transaction.getTransactionType()));
         query.bindValue(":quantity", transaction.getQuantity());
         query.bindValue(":unitary_price", transaction.getUnitaryPrice());
         query.bindValue(":date", transaction.getDate());
@@ -399,80 +270,7 @@ bool Database::insertReorganization(QString ticker, Reorganization reorganizatio
     return false;
 }
 
-int Database::getTickerQuantity(QString ticker)
-{
-    // Get ticker id
-    int tickerId = getTickerId(ticker);
-
-    // Check ticker id
-    if(tickerId == NOT_FOUND || tickerId == DATABASE_ERROR)
-    {
-        return tickerId;
-    }
-
-    // Init quantity
-    int quantity = 0;
-
-    // Get events
-    auto transactions = getTransactionsByTickerId(tickerId);
-    auto reorganizations = getReorganizationsByTickerId(tickerId);
-    auto events = mergeAndSortEvents(transactions, reorganizations);
-
-    for(auto event: events)
-    {
-        if(event->getEventType() == EventType::REORGANIZATION)
-        {
-            // Cast to reorganization
-            Reorganization* reorganization = dynamic_cast<Reorganization*>(event);
-
-            // Check cast
-            if (reorganization)
-            {
-                // Check reorganization type
-                if(reorganization->getReorganizationType() == ReorganizationType::GRUPAMENTO)
-                {
-                    quantity = (quantity == 0) ? 0 : (quantity / reorganization->getRatio());
-                }
-                else if (reorganization->getReorganizationType() == ReorganizationType::DESDOBRAMENTO)
-                {
-                    quantity = static_cast<int>(quantity * reorganization->getRatio());
-                }
-                else
-                {
-                    throw std::invalid_argument("Reorganization type invalid");
-                }
-            }
-        }
-        else if(event->getEventType() == EventType::TRANSACTION)
-        {
-            // Cast to transaction
-            Transaction* transaction = dynamic_cast<Transaction*>(event);
-
-            // Check cast
-            if (transaction)
-            {
-                // Check transaction type
-                if(transaction->getTransactionType() == TransactionType::COMPRA)
-                {
-                    quantity += transaction->getQuantity();
-                }
-                else if(transaction->getTransactionType() == TransactionType::VENDA)
-                {
-                    quantity -= transaction->getQuantity();
-                }
-                else
-                {
-                    throw std::invalid_argument("Transaction type invalid");
-                }
-            }
-        }
-    }
-
-    // Return quantity
-    return quantity;
-}
-
-std::vector<Transaction> Database::getTransactionsByTickerId(int tickerId)
+std::vector<Transaction> Database::getTransactionsByTicker(QString ticker)
 {
     std::vector<Transaction> transactions;
 
@@ -485,16 +283,16 @@ std::vector<Transaction> Database::getTransactionsByTickerId(int tickerId)
             SELECT tt.transaction_type, t.quantity, t.unitary_price, t.date
             FROM transaction_table t
             JOIN transaction_type_table tt ON t.id_transaction_type = tt.id
-            WHERE t.id_ticker = :id_ticker;
+            WHERE t.id_ticker = (SELECT id FROM ticker_table WHERE ticker = :ticker);
         )");
 
         // Bind the tickerId to the query
-        query.bindValue(":id_ticker", tickerId);
+        query.bindValue(":ticker", ticker);
 
         // Execute the query
         if (!query.exec())
         {
-            qDebug() << "Error retrieving transactions for tickerId:" << tickerId;
+            qDebug() << "Error retrieving transactions for ticker: " << ticker;
             closeDatabase();
 
              // Returning an empty vector in case of error
@@ -513,7 +311,7 @@ std::vector<Transaction> Database::getTransactionsByTickerId(int tickerId)
             TransactionType transactionType = getTransactionTypeFromString(transactionTypeStr);
 
             // Create a Transaction object
-            Transaction transaction( QDate::fromString(date, "yyyy-MM-dd"), transactionType, quantity, unitaryPrice);
+            Transaction transaction(QDate::fromString(date, "yyyy-MM-dd"), transactionType, quantity, unitaryPrice);
 
             // Add the transaction to the vector
             transactions.push_back(transaction);
@@ -585,7 +383,7 @@ bool Database::selectEventsForAsset(Asset* asset)
     }
 
     // Get transactions
-    std::vector<Transaction> transactions = getTransactionsByTickerId(tickerId);
+    std::vector<Transaction> transactions = getTransactionsByTicker(asset->getTicker());
 
     // Convert transactions to events
     for (const auto& transaction : transactions)
@@ -653,38 +451,6 @@ bool Database::investmentControllerInitialization(InvestmentController* investme
     }
 
     return true;
-}
-
-double Database::getTickerAveragePrice(QString ticker)
-{
-    // Get ticker id
-    int tickerId = getTickerId(ticker);
-
-    // Check ticker id
-    if(tickerId == NOT_FOUND || tickerId == DATABASE_ERROR)
-    {
-        return tickerId;
-    }
-
-    // Init variables
-    double total = 0;
-    int quantity = 0;
-
-    // Get transactions
-    std::vector<Transaction> transactions = getTransactionsByTickerId(tickerId);
-
-    for(auto transaction: transactions)
-    {
-        // Check transaction type
-        if(transaction.getTransactionType() == TransactionType::COMPRA)
-        {
-            total += (transaction.getUnitaryPrice() * transaction.getQuantity());
-            quantity += transaction.getQuantity();
-        }
-    }
-
-    // Return average price
-    return total/quantity;
 }
 
 std::vector<Yield> Database::getYieldsByTickerId(int tickerId)
@@ -796,74 +562,6 @@ std::vector<Reorganization> Database::getReorganizationsByTickerId(int tickerId)
         qDebug() << "Error opening database to retrieve yields";
     }
 
-    return reorganizations;
-}
-
-double Database::getTickerTotalYield(QString ticker)
-{
-    // Get ticker id
-    int tickerId = getTickerId(ticker);
-
-    // Check ticker id
-    if(tickerId == NOT_FOUND || tickerId == DATABASE_ERROR)
-    {
-        return tickerId;
-    }
-
-    // Init variables
-    double total = 0;
-
-    // Get yields
-    std::vector<Yield> yields = getYieldsByTickerId(tickerId);
-
-    for(auto yield: yields)
-    {
-        total += yield.getValue();
-    }
-
-    // Return total
-    return total;
-}
-
-std::vector<Yield> Database::getTickerYields(QString ticker)
-{
-    // Init yields
-    std::vector<Yield> yields;
-
-    // Get ticker id
-    int tickerId = getTickerId(ticker);
-
-    // Check ticker id
-    if(tickerId == NOT_FOUND || tickerId == DATABASE_ERROR)
-    {
-        return yields;
-    }
-
-    // Get yields
-    yields = getYieldsByTickerId(tickerId);
-
-    // Return yields
-    return yields;
-}
-
-std::vector<Reorganization> Database::getTickerReorganizations(QString ticker)
-{
-    // Init reorganizations
-    std::vector<Reorganization> reorganizations;
-
-    // Get ticker id
-    int tickerId = getTickerId(ticker);
-
-    // Check ticker id
-    if(tickerId == NOT_FOUND || tickerId == DATABASE_ERROR)
-    {
-        return reorganizations;
-    }
-
-    // Get reorganizations
-    reorganizations = getReorganizationsByTickerId(tickerId);
-
-    // Return reorganizations
     return reorganizations;
 }
 

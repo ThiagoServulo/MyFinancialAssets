@@ -96,7 +96,7 @@ void NewTransactionWindow::on_pushButton_save_clicked()
 
         if(transactionType == TransactionType::VENDA)
         {
-            int quantityAvailable = database.getTickerQuantity(ticker);
+            int quantityAvailable = investmentController->getAsset(ticker)->getQuantity();
 
             switch (quantityAvailable)
             {
@@ -132,7 +132,6 @@ void NewTransactionWindow::on_pushButton_save_clicked()
                 AssetApi assetApi;
                 double currentPrice = assetApi.getAssetCurrentPrice(ticker);
 
-                // TODO: Remover isso e colocar o current price na ticker_table
                 Database database;
                 database.updateTickerCurrentPrice(ticker, currentPrice);
 
