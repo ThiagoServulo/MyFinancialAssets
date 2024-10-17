@@ -39,9 +39,9 @@ void SalesWindow::updateTableWidgetSales()
 
     for(auto asset: this->investmentController->getAllAssets())
     {
-        if(database.getTickerQuantity(asset->getTicker()) == 0)
+        if(investmentController->getAsset(asset->getTicker())->getQuantity() == 0)
         {
-            auto transactions = database.getTickerTransactions(asset->getTicker());
+            auto transactions = asset->getTransactions();
             QDate purchaseDate = getEarliestTransactionDate(transactions, TransactionType::COMPRA);
             QStringList itens = {asset->getTicker(), purchaseDate.toString("dd/MM/yyyy") , "10/09/2024", "R$ " +
                                  QString::number(asset->getTotalYield(), 'f', 2),

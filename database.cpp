@@ -136,41 +136,6 @@ int Database::getYieldTypeId(YieldType yieldType)
     return DATABASE_ERROR;
 }
 
-int Database::getReorganizationTypeId(ReorganizationType reorganizationType)
-{
-    if(openDatabase())
-    {
-        QString queryStr = R"(
-            SELECT id FROM reorganization_type_table WHERE reorganization_type = :type;
-        )";
-
-        QSqlQuery query;
-        query.prepare(queryStr);
-        query.bindValue(":type", getReorganizationTypeString(reorganizationType));
-
-        if (!query.exec())
-        {
-            qDebug() << "Error fetching reorganization type id";
-            closeDatabase();
-            return DATABASE_ERROR;
-        }
-
-        if (query.next())
-        {
-            // Return the id
-            closeDatabase();
-            return query.value(0).toInt();
-        }
-
-        qDebug() << "Reorganization type not found";
-        closeDatabase();
-        return NOT_FOUND;
-    }
-
-    qDebug() << "Error to open database to get reorganization type id";
-    return DATABASE_ERROR;
-}
-
 int Database::getTickerId(QString ticker)
 {
     // Convert to upper case
@@ -366,47 +331,20 @@ bool Database::insertTransaction(QString ticker, AssetType assetType, Transactio
     return false;
 }
 
-int Database::insertYield(QString ticker, Yield yield)
+bool Database::insertYield(QString ticker, Yield yield)
 {
-    // Convert to upper case
-    ticker = ticker.toUpper();
-
-    // Get yield type id
-    int yieldTypeId = getYieldTypeId(yield.getYieldType());
-
-    // Check yield type id
-    if (yieldTypeId == NOT_FOUND || yieldTypeId == DATABASE_ERROR)
-    {
-        qDebug() << "Invalid yield type id, the database was loaded incorrect";
-        return DATABASE_ERROR;
-    }
-
-    int tickerId = getTickerId(ticker);
-
-    // Check ticker status
-    if(tickerId == DATABASE_ERROR || tickerId == NOT_FOUND)
-    {
-        // Ticker should exists to insert the yield
-        if(tickerId == NOT_FOUND)
-        {
-            qDebug() << "Ticker not found";
-            return NOT_FOUND;
-        }
-
-        return DATABASE_ERROR;
-    }
-
     if(openDatabase())
     {
         QSqlQuery query;
 
         // Prepare the SQL insert query
         query.prepare("INSERT INTO yield_table (id_ticker, id_yield_type, value, date) "
-                      "VALUES (:id_ticker, :id_yield_type, :value, :date)");
+                      "VALUES ((SELECT id FROM ticker_table WHERE ticker = :ticker), "
+                      "(SELECT id FROM yield_type_table WHERE yield_type = :yield_type), :value, :date)");
 
         // Bind values to the query
-        query.bindValue(":id_ticker", tickerId);
-        query.bindValue(":id_yield_type", yieldTypeId);
+        query.bindValue(":ticker", ticker.toUpper());
+        query.bindValue(":yield_type", getYieldTypeString(yield.getYieldType()));
         query.bindValue(":value", yield.getValue());
         query.bindValue(":date", yield.getDate());
 
@@ -415,58 +353,33 @@ int Database::insertYield(QString ticker, Yield yield)
         {
             qDebug() << "Erro to insert new yield";
             closeDatabase();
-            return DATABASE_ERROR;
+            return false;
         }
 
         closeDatabase();
-        return DATABASE_SUCCESS;
+        return true;
     }
 
     qDebug() << "Error to open database to insert yield";
-    return DATABASE_ERROR;
+    return false;
 }
 
-int Database::insertReorganization(QString ticker, Reorganization reorganization)
+bool Database::insertReorganization(QString ticker, Reorganization reorganization)
 {
-    // Convert to upper case
-    ticker = ticker.toUpper();
-
-    // Get reorganization type id
-    int reorganizationTypeId = getReorganizationTypeId(reorganization.getReorganizationType());
-
-    // Check reorganization type id
-    if (reorganizationTypeId == NOT_FOUND || reorganizationTypeId == DATABASE_ERROR)
-    {
-        qDebug() << "Invalid reorganization type id, the database was loaded incorrect";
-        return DATABASE_ERROR;
-    }
-
-    int tickerId = getTickerId(ticker);
-
-    // Check ticker status
-    if(tickerId == DATABASE_ERROR || tickerId == NOT_FOUND)
-    {
-        // Ticker should exists to insert the yield
-        if(tickerId == NOT_FOUND)
-        {
-            qDebug() << "Ticker not found";
-            return NOT_FOUND;
-        }
-
-        return DATABASE_ERROR;
-    }
-
     if(openDatabase())
     {
         QSqlQuery query;
 
         // Prepare the SQL insert query
-        query.prepare("INSERT INTO reorganization_table (id_ticker, id_reorganization, ratio, date) "
-                      "VALUES (:id_ticker, :id_reorganization, :ratio, :date)");
+        query.prepare(
+            "INSERT INTO reorganization_table (id_ticker, id_reorganization, ratio, date) "
+            "VALUES ((SELECT id FROM ticker_table WHERE ticker = :ticker), "
+            "(SELECT id FROM reorganization_type_table WHERE reorganization_type = :reorganization_type), :ratio, :date)"
+        );
 
         // Bind values to the query
-        query.bindValue(":id_ticker", tickerId);
-        query.bindValue(":id_reorganization", reorganizationTypeId);
+        query.bindValue(":ticker", ticker.toUpper());
+        query.bindValue(":reorganization_type", getReorganizationTypeString(reorganization.getReorganizationType()));
         query.bindValue(":ratio", reorganization.getRatio());
         query.bindValue(":date", reorganization.getDate());
 
@@ -475,15 +388,15 @@ int Database::insertReorganization(QString ticker, Reorganization reorganization
         {
             qDebug() << "Erro to insert new reorganization";
             closeDatabase();
-            return DATABASE_ERROR;
+            return false;
         }
 
         closeDatabase();
-        return DATABASE_SUCCESS;
+        return true;
     }
 
     qDebug() << "Error to open database to insert reorganization";
-    return DATABASE_ERROR;
+    return false;
 }
 
 int Database::getTickerQuantity(QString ticker)
@@ -714,8 +627,7 @@ bool Database::investmentControllerInitialization(InvestmentController* investme
             for(const QString &ticker: tickers)
             {
                 AssetApi assetApi;
-                double currentPrice = assetApi.getAssetCurrentPrice(ticker);
-                updateTickerCurrentPrice(ticker, currentPrice);
+                updateTickerCurrentPrice(ticker, assetApi.getAssetCurrentPrice(ticker));
             }
 
             // Update last update date
@@ -911,27 +823,6 @@ double Database::getTickerTotalYield(QString ticker)
 
     // Return total
     return total;
-}
-
-std::vector<Transaction> Database::getTickerTransactions(QString ticker)
-{
-    // Init transactions
-    std::vector<Transaction> transactions;
-
-    // Get ticker id
-    int tickerId = getTickerId(ticker);
-
-    // Check ticker id
-    if(tickerId == NOT_FOUND || tickerId == DATABASE_ERROR)
-    {
-        return transactions;
-    }
-
-    // Get transactions
-    transactions = getTransactionsByTickerId(tickerId);
-
-    // Return transactions
-    return transactions;
 }
 
 std::vector<Yield> Database::getTickerYields(QString ticker)

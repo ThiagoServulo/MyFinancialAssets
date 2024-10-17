@@ -73,23 +73,15 @@ void NewReorganizationWindow::on_pushButton_save_clicked()
 
         // Insert reorganization into database
         Database database;
-        int status = database.insertReorganization(ui->comboBox_asset->currentText(), reorganization);
-
-        // Check status
-        switch (status)
+        if(database.insertReorganization(ui->comboBox_asset->currentText(), reorganization))
         {
-            case DATABASE_SUCCESS:
-                this->investmentController->getAsset(ui->comboBox_asset->currentText())->addEvent(
-                                                     std::make_shared<Reorganization>(reorganization));
-                QMessageBox::information(this, "Sucesso", "Reorganização inserido com sucesso");
-            break;
-
-            case NOT_FOUND:
-                QMessageBox::information(this, "Erro", "Esse ativo não está cadastrado no banco");
-            break;
-
-            default:
-                QMessageBox::critical(this, "Erro", "Erro ao inserir reorganização");
+            this->investmentController->getAsset(ui->comboBox_asset->currentText())->addEvent(
+                                                 std::make_shared<Reorganization>(reorganization));
+            QMessageBox::information(this, "Sucesso", "Reorganização inserido com sucesso");
+        }
+        else
+        {
+            QMessageBox::critical(this, "Erro", "Erro ao inserir reorganização");
         }
 
         // Close window

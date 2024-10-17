@@ -66,23 +66,14 @@ void NewYieldWindow::on_pushButton_save_clicked()
 
         // Insert yield into database
         Database database;
-        int status = database.insertYield(ui->comboBox_asset->currentText(), yield);
-
-        // Check status
-        switch (status)
+        if(database.insertYield(ui->comboBox_asset->currentText(), yield))
         {
-            case DATABASE_SUCCESS:
-                this->investmentController->getAsset(ui->comboBox_asset->currentText())->addEvent(std::make_shared<Yield>(yield));
-                QMessageBox::information(this, "Sucesso", "Rendimento inserido com sucesso");
-            break;
-
-            case NOT_FOUND:
-                QMessageBox::information(this, "Erro", "Esse ativo não está cadastrado no banco");
-            break;
-
-            default:
-                QMessageBox::critical(this, "Erro", "Erro ao inserir rendimento");
-
+            this->investmentController->getAsset(ui->comboBox_asset->currentText())->addEvent(std::make_shared<Yield>(yield));
+            QMessageBox::information(this, "Sucesso", "Rendimento inserido com sucesso");
+        }
+        else
+        {
+            QMessageBox::critical(this, "Erro", "Erro ao inserir rendimento");
         }
 
         // Close window

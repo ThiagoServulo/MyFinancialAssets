@@ -45,7 +45,7 @@ double InvestmentController::getAssetDistribution(QString ticker)
     double totalInvested = 0;
 
     // Get total asset invested
-    double totalAssetInvested = (database.getTickerQuantity(ticker) * database.getTickerAveragePrice(ticker));
+    double totalAssetInvested = (this->getAsset(ticker)->getQuantity() * database.getTickerAveragePrice(ticker));
 
     // Get asset required
     auto assetRequired = getAsset(ticker);
@@ -61,7 +61,7 @@ double InvestmentController::getAssetDistribution(QString ticker)
         // Check asset type
         if(assetRequired->getAssetType() == asset->getAssetType())
         {
-            totalInvested += (database.getTickerQuantity(asset->getTicker()) * database.getTickerAveragePrice(asset->getTicker()));
+            totalInvested += (this->getAsset(ticker)->getQuantity() * database.getTickerAveragePrice(asset->getTicker()));
         }
     }
 
