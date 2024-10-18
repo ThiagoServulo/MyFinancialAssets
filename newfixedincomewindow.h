@@ -2,6 +2,7 @@
 #define NEWFIXEDINCOMEWINDOW_H
 
 #include <QMainWindow>
+#include "investmentcontroller.h"
 
 namespace Ui {
 class NewFixedIncomeWindow;
@@ -12,7 +13,7 @@ class NewFixedIncomeWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit NewFixedIncomeWindow(QWidget *parent = nullptr);
+    explicit NewFixedIncomeWindow(InvestmentController *investmentController, QWidget *parent = nullptr);
     ~NewFixedIncomeWindow();
 
 private slots:
@@ -21,6 +22,7 @@ private slots:
 
 private:
     Ui::NewFixedIncomeWindow *ui;
+    InvestmentController *investmentController;
 };
 
 #endif // NEWFIXEDINCOMEWINDOW_H

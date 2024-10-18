@@ -34,9 +34,6 @@ private:
     Database database;
     void updateSotckAndFundTable();
     void updateFixedIncomeTable();
-    void addNewLineToTable(QTableWidget *tableWidget, int row, QString ticker, QString distribution,
-                           QString quantity, QString totalYield, QString averagePrice, QString currentPriceStr,
-                           QString profitPercentage, QString capitalGain);
 
 };
 #endif // MAINWINDOW_H

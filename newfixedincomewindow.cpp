@@ -1,14 +1,19 @@
 #include "newfixedincomewindow.h"
 #include "ui_newfixedincomewindow.h"
+#include "fixedincome.h"
+#include "database.h"
 #include <QMessageBox>
 
-NewFixedIncomeWindow::NewFixedIncomeWindow(QWidget *parent) :
+NewFixedIncomeWindow::NewFixedIncomeWindow(InvestmentController *investmentController, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::NewFixedIncomeWindow)
 {
     ui->setupUi(this);
     this->setMaximumSize(367, 257);
     this->setMinimumSize(367, 257);
+
+    // Set investment controller
+    this->investmentController = investmentController;
 
     // Set labels style
     ui->label_description->setStyleSheet("color: rgb(255, 255, 255);");
@@ -53,11 +58,32 @@ NewFixedIncomeWindow::~NewFixedIncomeWindow()
 
 void NewFixedIncomeWindow::on_pushButton_save_clicked()
 {
-    if(ui->lineEdit_description->text() != "" && ui->lineEdit_yield->text() != "" &&
-       ui->lineEdit_valueInvested->text().toDouble() > 0 &&
-       ui->dateEdit_limitDate->date() > ui->dateEdit_puchaseDate->date())
+    // Set variables
+    QString description = ui->lineEdit_description->text();
+    QString yieldExpected = ui->lineEdit_yield->text();
+    double valueInvested = ui->lineEdit_valueInvested->text().toDouble();
+    QDate limitDate = ui->dateEdit_limitDate->date();
+    QDate puchaseDate = ui->dateEdit_puchaseDate->date();
+
+    // Check fields
+    if(description != "" && yieldExpected != "" && valueInvested > 0 && limitDate > puchaseDate)
     {
-        qDebug() << "aaaaaa";
+        FixedIncome fixedIncome(puchaseDate, description, yieldExpected, valueInvested, limitDate, 0, FixedIncome::VALID);
+
+        // Insert fixed income into database
+        Database database;
+        if(database.insertFixedIncome(fixedIncome))
+        {
+            investmentController->addFixedIncome(std::make_shared<FixedIncome>(fixedIncome));
+            QMessageBox::information(this, "Sucesso", "Renda fixa inserida com sucesso");
+        }
+        else
+        {
+            QMessageBox::critical(this, "Erro", "Erro ao inserir renda fixa");
+        }
+
+        // Close window
+        this->close();
     }
     else
     {
