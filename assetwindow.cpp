@@ -10,12 +10,11 @@ AssetWindow::AssetWindow(Asset *asset, QWidget *parent) :
     this->setMaximumSize(1149, 642);
     this->setMinimumSize(1149, 642);
 
-        this->asset = asset;
+    // Set asset
+    this->asset = asset;
 
-    // Update transaction table
+    // Update tables
     updateTransactionTable();
-
-    // Update yield table
     updateYieldTable();
 
     // Update labels

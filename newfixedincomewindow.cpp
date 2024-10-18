@@ -46,6 +46,7 @@ NewFixedIncomeWindow::NewFixedIncomeWindow(InvestmentController *investmentContr
     ui->lineEdit_description->setMaxLength(24);
     ui->lineEdit_yield->setMaxLength(10);
 
+    // Set regex to field
     QRegularExpression regexValue(R"(\d{0,8}([.]\d{0,2})?)");
     QRegularExpressionValidator *validatorValue = new QRegularExpressionValidator(regexValue, ui->lineEdit_valueInvested);
     ui->lineEdit_valueInvested->setValidator(validatorValue);
@@ -68,7 +69,7 @@ void NewFixedIncomeWindow::on_pushButton_save_clicked()
     // Check fields
     if(description != "" && yieldExpected != "" && valueInvested > 0 && limitDate > puchaseDate)
     {
-        FixedIncome fixedIncome(puchaseDate, description, yieldExpected, valueInvested, limitDate, 0, FixedIncome::VALID);
+        FixedIncome fixedIncome(puchaseDate, description, yieldExpected, valueInvested, limitDate, valueInvested, FixedIncome::VALID);
 
         // Insert fixed income into database
         Database database;

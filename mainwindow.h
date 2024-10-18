@@ -27,6 +27,7 @@ private slots:
     void on_actionSales_triggered();
     void on_checkBox_hideAssets_stateChanged(int arg1);
     void on_actionFixedIncome_triggered();
+    void on_tableWidget_fixedIncome_cellDoubleClicked(int row, int column);
 
 private:
     Ui::MainWindow *ui;

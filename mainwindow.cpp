@@ -13,6 +13,7 @@
 #include "basics.h"
 #include "saleswindow.h"
 #include "newfixedincomewindow.h"
+#include "updatefixedincomewindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -241,6 +242,7 @@ void MainWindow::on_actionFixedIncome_triggered()
 
 void MainWindow::updateFixedIncomeTable()
 {
+    // Set fixed incomes
     auto fixedIncomes = investmentController.getFixedIncomes(true);
 
     // Clear table
@@ -250,20 +252,55 @@ void MainWindow::updateFixedIncomeTable()
     // Set variables
     QStringList itens;
     int row = 0;
+    double totalInvested = 0;
+    double totalCurrent = 0;
 
     for(auto fixedIncome: fixedIncomes)
     {
         if(fixedIncome->getStatus() == FixedIncome::VALID)
         {
             // Set itens
-            itens = {fixedIncome->getPurchaseDate().toString("dd/MM/yy"), fixedIncome->getDescription(), fixedIncome->getYieldExpected(),
-                    QString::number(fixedIncome->getInvestedValue(), 'f', 2), QString::number(fixedIncome->getCurrentValue(), 'f', 2),
-                    QString::number(fixedIncome->getYield(), 'f', 2) + " [" + QString::number(fixedIncome->getYieldPercentage(), 'f', 2) +
-                    "%]", fixedIncome->getLimitDate().toString("dd/MM/yy")};
+            itens = {fixedIncome->getPurchaseDate().toString("dd/MM/yyyy"), fixedIncome->getDescription(), fixedIncome->getYieldExpected(),
+                    "R$ " + QString::number(fixedIncome->getInvestedValue(), 'f', 2), "R$ " +
+                    QString::number(fixedIncome->getCurrentValue(), 'f', 2), "R$ " +
+                    QString::number(fixedIncome->getYield(), 'f', 2), fixedIncome->getLimitDate().toString("dd/MM/yyyy")};
+
+            // Set status
+            int style = (fixedIncome->getLimitDate() < QDate::currentDate()) ? HIGHLIGHT_CELL : STANDART_CELL;
 
             // Insert itens
-            addTableWidgetItens(ui->tableWidget_fixedIncome, row, itens, STANDART_CELL);
+            addTableWidgetItens(ui->tableWidget_fixedIncome, row, itens, style);
+
+            // Update variables
+            totalInvested += fixedIncome->getInvestedValue();
+            totalCurrent += fixedIncome->getCurrentValue();
             ++row;
         }
     }
+
+    // Set itens
+    itens = {"-", "Total", "-", "R$ " + QString::number(totalInvested, 'f', 2), "R$ " + QString::number(totalCurrent, 'f', 2),
+            "R$ " + QString::number(totalCurrent - totalInvested, 'f', 2),
+            QString::number(((totalCurrent - totalInvested) / totalCurrent) * 100, 'f', 2) + "%"};
+
+    // Insert itens
+    addTableWidgetItens(ui->tableWidget_fixedIncome, row, itens, (HIGHLIGHT_CELL | FONT_BOLD | FONT_SIZE));
 }
+
+void MainWindow::on_tableWidget_fixedIncome_cellDoubleClicked(int row, int column)
+{
+    // Get fixed income informations
+    QString description = ui->tableWidget_fixedIncome->item(row , 1)->text();
+    QDate purchaseDate =  QDate::fromString(ui->tableWidget_fixedIncome->item(row , 0)->text(), "dd/MM/yyyy");
+
+    // Check description
+    if(description != "Total")
+    {
+        UpdateFixedIncomeWindow *fixedIncomeWindow =
+                new UpdateFixedIncomeWindow(investmentController.getFixedIncome(purchaseDate, description).get(), this);
+        fixedIncomeWindow->setAttribute(Qt::WA_DeleteOnClose);
+        connect(fixedIncomeWindow, &QObject::destroyed, this, &MainWindow::updateFixedIncomeTable);
+        fixedIncomeWindow->show();
+    }
+}
+

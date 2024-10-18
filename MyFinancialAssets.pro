@@ -29,6 +29,7 @@ SOURCES += \
     reorganization.cpp \
     saleswindow.cpp \
     transaction.cpp \
+    updatefixedincomewindow.cpp \
     yield.cpp
 
 HEADERS += \
@@ -51,6 +52,7 @@ HEADERS += \
     reorganization.h \
     saleswindow.h \
     transaction.h \
+    updatefixedincomewindow.h \
     yield.h
 
 FORMS += \
@@ -60,7 +62,8 @@ FORMS += \
     newreorganizationwindow.ui \
     newtransactionwindow.ui \
     newyieldwindow.ui \
-    saleswindow.ui
+    saleswindow.ui \
+    updatefixedincomewindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

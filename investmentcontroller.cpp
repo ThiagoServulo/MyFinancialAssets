@@ -69,3 +69,17 @@ std::vector<std::shared_ptr<FixedIncome>> InvestmentController::getFixedIncomes(
 {
     return fixedIncomes;
 }
+
+std::shared_ptr<FixedIncome> InvestmentController::getFixedIncome(QDate purchaseDate, QString description)
+{
+    for(auto fixedIncome: fixedIncomes)
+    {
+        if(fixedIncome->getPurchaseDate() == purchaseDate && fixedIncome->getDescription() == description)
+        {
+            return fixedIncome;
+        }
+    }
+
+    qDebug() << "Error to get fixed income";
+    return nullptr;
+}
