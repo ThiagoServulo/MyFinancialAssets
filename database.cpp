@@ -371,6 +371,12 @@ bool Database::investmentControllerInitialization(InvestmentController* investme
         investmentController->addAsset(std::make_shared<Asset>(asset));
     }
 
+    // Get fixed incomes
+    for(auto fixedIncome : selectAllFixedIncomes())
+    {
+        investmentController->addFixedIncome(std::make_shared<FixedIncome>(fixedIncome));
+    }
+
     return true;
 }
 
@@ -455,7 +461,7 @@ std::vector<Reorganization> Database::getReorganizationsByTicker(QString ticker)
             qDebug() << "Error retrieving reorganizations for ticker: " << ticker;
             closeDatabase();
 
-              // Returning an empty vector in case of error
+            // Returning an empty vector in case of error
             return reorganizations;
         }
 
@@ -667,4 +673,54 @@ bool Database::insertFixedIncome(FixedIncome fixedIncome)
 
     qDebug() << "Error to open database to insert fixed income";
     return false;
+}
+
+std::vector<FixedIncome> Database::selectAllFixedIncomes()
+{
+    std::vector<FixedIncome> fixedIncomes;
+
+    if (openDatabase())
+    {
+        QString selectQuery = R"(
+            SELECT desciption, yield_expected, purchase_date, limit_date, invested_value, current_value, status
+            FROM fixed_income_table;
+        )";
+
+        QSqlQuery query;
+        query.prepare(selectQuery);
+
+        // Execute query
+        if (!query.exec())
+        {
+            qDebug() << "Error selecting tickers from fixed_income_table";
+            closeDatabase();
+            return fixedIncomes;
+        }
+
+        // Clear the vector
+        fixedIncomes.clear();
+
+        // Process the results
+        while (query.next())
+        {
+            QString desciption = query.value(0).toString();
+            QString yieldExpected = query.value(1).toString();
+            QDate purchaseDate = QDate::fromString(query.value(2).toString(), "yyyy-MM-dd");
+            QDate limitDate = QDate::fromString(query.value(3).toString(), "yyyy-MM-dd");
+            double investedValue = query.value(4).toDouble();
+            double currentValue = query.value(5).toDouble();
+            bool status = query.value(6).toBool();
+
+            fixedIncomes.push_back(FixedIncome(purchaseDate, desciption, yieldExpected, investedValue, limitDate, currentValue, status));
+        }
+
+        closeDatabase();
+        return fixedIncomes;
+    }
+    else
+    {
+        qDebug() << "Error opening database to select fixed incomes";
+    }
+
+    return fixedIncomes;
 }

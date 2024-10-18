@@ -16,6 +16,8 @@ public:
     void addAsset(std::shared_ptr<Asset> asset);
     std::vector<std::shared_ptr<Asset>> getAllAssets();
     double getAssetDistribution(QString ticker);
+    void addFixedIncome(std::shared_ptr<FixedIncome> fixedIncome);
+    std::vector<std::shared_ptr<FixedIncome>> getFixedIncomes(bool status);
 };
 
 #endif // INVESTMENTCONTROLLER_H

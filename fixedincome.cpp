@@ -1,14 +1,14 @@
 #include "fixedincome.h"
 
-FixedIncome::FixedIncome(QDate purchaseDate, QString description, QString yieldExpected, double investedValue, QDate limitDate)
+FixedIncome::FixedIncome(QDate purchaseDate, QString description, QString yieldExpected, double investedValue, QDate limitDate,  double currentValue, bool status)
 {
     this->purchaseDate = purchaseDate;
     this->description = description;
     this->yieldExpected = yieldExpected;
     this->investedValue = investedValue;
-    this->currentValue = 0;
+    this->currentValue = currentValue;
     this->limitDate = limitDate;
-    this->status = VALID;
+    this->status = status;
 }
 
 void FixedIncome::setCurrentValue(double currentValue)

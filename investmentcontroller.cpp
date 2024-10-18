@@ -60,3 +60,12 @@ double InvestmentController::getAssetDistribution(QString ticker)
     return (totalAssetInvested/totalInvested) * 100;
 }
 
+void InvestmentController::addFixedIncome(std::shared_ptr<FixedIncome> fixedIncome)
+{
+    fixedIncomes.push_back(fixedIncome);
+}
+
+std::vector<std::shared_ptr<FixedIncome>> InvestmentController::getFixedIncomes(bool status)
+{
+    return fixedIncomes;
+}

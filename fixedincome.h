@@ -6,7 +6,8 @@
 class FixedIncome
 {
 public:
-    FixedIncome(QDate purchaseDate, QString description, QString yieldExpected, double investedValue, QDate limitDate);
+    FixedIncome(QDate purchaseDate, QString description, QString yieldExpected, double investedValue,
+                QDate limitDate, double currentValue, bool status);
     void setCurrentValue(double currentValue);
     QDate getPurchaseDate();
     QString getDescription();

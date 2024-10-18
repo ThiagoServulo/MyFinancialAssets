@@ -26,11 +26,13 @@ MainWindow::MainWindow(QWidget *parent)
     database.prepareDatabase();
 
     // Configure stock and fund tables
-    QStringList headerLabels = {"Ticker", "Distribuição", "Quantidade", "Rendimento", "Preço médio", "Preço atual", "Valorização", "Ganho de capital"};
+    QStringList headerLabels = {"Ticker", "Distribuição", "Quantidade", "Rendimento", "Preço médio", "Preço atual",
+                                "Valorização", "Ganho de capital"};
     configureTableWidget(headerLabels, ui->tableWidget_stocks);
     configureTableWidget(headerLabels, ui->tableWidget_funds);
 
-    headerLabels = {"Data da compra", "Descrição do investimento", "Rendimento esperado", "Valor investido", "Valor atual", "Rendimento", "Data limite"};
+    headerLabels = {"Data da compra", "Descrição do investimento", "Rendimento esperado", "Valor investido",
+                    "Valor atual", "Rendimento", "Data limite"};
     configureTableWidget(headerLabels, ui->tableWidget_fixedIncome);
 
     // Init asset controller
@@ -39,8 +41,9 @@ MainWindow::MainWindow(QWidget *parent)
         qDebug() << "Erro in asset controller Initialization";
     }
 
-    // Init stocks table
+    // Init tables
     updateSotckAndFundTable();
+    updateFixedIncomeTable();
 
     // Set main window background color
     this->setStyleSheet("QMainWindow { background-color: rgb(18, 18, 18); }");
@@ -97,12 +100,8 @@ void MainWindow::on_actionReorganization_triggered()
 
 void MainWindow::updateSotckAndFundTable()
 {
-    Database database;
-
     // Get assets
     std::vector<std::shared_ptr<Asset>> assets = investmentController.getAllAssets();
-    //std::vector<Asset> assets;
-    //database.selectAllAssets(assets);
 
     // Clear tables
     ui->tableWidget_stocks->clearContents();
@@ -248,3 +247,23 @@ void MainWindow::on_actionFixedIncome_triggered()
     newFixedIncomeWindow->show();
 }
 
+void MainWindow::updateFixedIncomeTable()
+{
+    auto fixedIncomes = investmentController.getFixedIncomes(true);
+
+    // Clear table
+    ui->tableWidget_fixedIncome->clearContents();
+    ui->tableWidget_fixedIncome->setRowCount(0);
+
+    // Set style
+    int style = STANDART_CELL;
+
+    for(auto fixedIncome: fixedIncomes)
+    {
+        // Get itens
+        QStringList itens = {fixedIncome->getDescription()};
+
+        // Insert itens
+        addTableWidgetItens(ui->tableWidget_fixedIncome, 0, itens, style);
+    }
+}

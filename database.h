@@ -35,6 +35,7 @@ private:
     QDate selectLastUpdateDate();
     bool selectAllTicker(QStringList *tickers);
     bool insertLastUpdateDate(QDate date);
+    std::vector<FixedIncome> selectAllFixedIncomes();
 };
 
 #endif // DATABASE_H

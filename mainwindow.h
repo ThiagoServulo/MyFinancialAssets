@@ -33,6 +33,10 @@ private:
     InvestmentController investmentController;
     Database database;
     void updateSotckAndFundTable();
-    void addNewLineToTable(QTableWidget *tableWidget, int row, QString ticker, QString distribution, QString quantity, QString totalYield, QString averagePrice, QString currentPriceStr, QString profitPercentage, QString capitalGain);
+    void updateFixedIncomeTable();
+    void addNewLineToTable(QTableWidget *tableWidget, int row, QString ticker, QString distribution,
+                           QString quantity, QString totalYield, QString averagePrice, QString currentPriceStr,
+                           QString profitPercentage, QString capitalGain);
+
 };
 #endif // MAINWINDOW_H
