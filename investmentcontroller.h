@@ -14,6 +14,9 @@ public:
     InvestmentController();
     std::shared_ptr<Asset> getAsset(QString ticker);
     void addAsset(std::shared_ptr<Asset> asset);
+    int getTotalQuantityOfAssets(AssetType assetType);
+    double getTotalYieldOfAssets(AssetType assetType);
+    double getTotalInvestedOfAssets(AssetType assetType);
     std::vector<std::shared_ptr<Asset>> getAllAssets();
     double getAssetDistribution(QString ticker);
     void addFixedIncome(std::shared_ptr<FixedIncome> fixedIncome);

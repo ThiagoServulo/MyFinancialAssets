@@ -27,13 +27,18 @@ NewFixedIncomeWindow::NewFixedIncomeWindow(InvestmentController *investmentContr
     ui->pushButton_cancel->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255);");
 
     // Set data edit style
-    ui->dateEdit_limitDate->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); border: 1px solid rgb(50, 50, 50);");
-    ui->dateEdit_puchaseDate->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); border: 1px solid rgb(50, 50, 50);");
+    ui->dateEdit_limitDate->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255);"
+                                          "border: 1px solid rgb(50, 50, 50);");
+    ui->dateEdit_puchaseDate->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255);"
+                                            "border: 1px solid rgb(50, 50, 50);");
 
     // Set line edit style
-    ui->lineEdit_description->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); border: 1px solid rgb(50, 50, 50);");
-    ui->lineEdit_valueInvested->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); border: 1px solid rgb(50, 50, 50);");
-    ui->lineEdit_yield->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); border: 1px solid rgb(50, 50, 50);");
+    ui->lineEdit_description->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255);"
+                                            "border: 1px solid rgb(50, 50, 50);");
+    ui->lineEdit_valueInvested->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255);"
+                                              "border: 1px solid rgb(50, 50, 50);");
+    ui->lineEdit_yield->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); border:"
+                                      "1px solid rgb(50, 50, 50);");
 
     // Set current date
     QDate currentDate = QDate::currentDate();
@@ -96,4 +101,3 @@ void NewFixedIncomeWindow::on_pushButton_cancel_clicked()
 {
     this->close();
 }
-

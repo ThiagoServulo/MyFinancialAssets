@@ -28,13 +28,18 @@ UpdateFixedIncomeWindow::UpdateFixedIncomeWindow(FixedIncome *fixedIncome, QWidg
     ui->pushButton_update->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255);");
 
     // Set data edit style
-    ui->dateEdit_limitDate->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); border: 1px solid rgb(50, 50, 50);");
-    ui->dateEdit_puchaseDate->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); border: 1px solid rgb(50, 50, 50);");
+    ui->dateEdit_limitDate->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255);"
+                                          "border: 1px solid rgb(50, 50, 50);");
+    ui->dateEdit_puchaseDate->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255);"
+                                            "border: 1px solid rgb(50, 50, 50);");
 
     // Set line edit style
-    ui->lineEdit_description->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); border: 1px solid rgb(50, 50, 50);");
-    ui->lineEdit_valueInvested->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); border: 1px solid rgb(50, 50, 50);");
-    ui->lineEdit_currentValue->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); border: 1px solid rgb(50, 50, 50);");
+    ui->lineEdit_description->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255);"
+                                            "border: 1px solid rgb(50, 50, 50);");
+    ui->lineEdit_valueInvested->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255);"
+                                              "border: 1px solid rgb(50, 50, 50);");
+    ui->lineEdit_currentValue->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255);"
+                                             "border: 1px solid rgb(50, 50, 50);");
 
     // Set read only fields
     ui->lineEdit_description->setReadOnly(true);
@@ -72,11 +77,20 @@ void UpdateFixedIncomeWindow::on_pushButton_update_clicked()
     }
     else
     {
-        Database database;
-
-        // TODO: Fazer a rotina de atualizar o fixed income no database;
-
+        // Set current value
+        double oldValue = fixedIncome->getCurrentValue();
         fixedIncome->setCurrentValue(currentValue);
+
+        // Update fixed income into database
+        Database database;
+        if(!database.updateFixedIncome(fixedIncome))
+        {
+            // Restore Value
+            fixedIncome->setCurrentValue(oldValue);
+            QMessageBox::information(this, "Erro", "Erro ao atualizar a renda fixa");
+            return;
+        }
+
         QMessageBox::information(this, "Sucesso", "Valor atual atualizado com sucesso");
         this->close();
     }
@@ -84,12 +98,44 @@ void UpdateFixedIncomeWindow::on_pushButton_update_clicked()
 
 void UpdateFixedIncomeWindow::on_pushButton_conclude_clicked()
 {
-    // TODO: aproveitar a função de atualizar pra mudar o status do fixed income
+    // Get current value
+    double currentValue = ui->lineEdit_currentValue->text().toDouble();
+
+    // Check current value
+    if(currentValue < 0)
+    {
+        QMessageBox::information(this, "Inválido", "Insira um valor atual válido");
+    }
+    else
+    {
+        // Set current value
+        double oldValue = fixedIncome->getCurrentValue();
+        fixedIncome->setCurrentValue(currentValue);
+
+        // Change status to closed
+        fixedIncome->setStatus(FixedIncome::CLOSED);
+
+        // Update fixed income into database
+        Database database;
+        if(!database.updateFixedIncome(fixedIncome))
+        {
+            // TODO: Ao concluir renda fixa colocar MessageBox de SIM ou NÃO
+
+            // Restore Values
+            fixedIncome->setCurrentValue(oldValue);
+            fixedIncome->setStatus(FixedIncome::VALID);
+            QMessageBox::information(this, "Erro", "Erro ao concluir a renda fixa");
+            return;
+        }
+
+        QMessageBox::information(this, "Sucesso", "Renda fixa concluída com sucesso");
+        this->close();
+    }
 }
 
 void UpdateFixedIncomeWindow::on_pushButton_remove_clicked()
 {
-
+    // TODO: Será implementado na versão 2
 }
 
 void UpdateFixedIncomeWindow::on_pushButton_cancel_clicked()

@@ -114,10 +114,10 @@ void MainWindow::updateSotckAndFundTable()
     QStringList itens;
     int stockRow = 0;
     int fundRow = 0;
-    int totalStockQuantity = 0;
-    int totalFundQuantity = 0;
-    double totalStockYield = 0;
-    double totalFundYield = 0;
+    //int totalStockQuantity = 0;
+    //int totalFundQuantity = 0;
+    //double totalStockYield = 0;
+    //double totalFundYield = 0;
     double totalFundCapitalGain = 0;
     double totalStockCapitalGain = 0;
 
@@ -132,8 +132,8 @@ void MainWindow::updateSotckAndFundTable()
         QString ticker = asset->getTicker();
         int quantity = asset->getQuantity();
         double totalYield = asset->getTotalYield();
-        double averagePrice = (quantity != 0) ? asset->getAveragePrice() : 0;
-        double currentPrice = (quantity != 0) ? asset->getCurrentPrice() : 0;
+        double averagePrice = asset->getAveragePrice();
+        double currentPrice = asset->getCurrentPrice();
 
         // Show values if is relevant
         if(currentPrice > 0)
@@ -157,8 +157,8 @@ void MainWindow::updateSotckAndFundTable()
             }
 
             // Update variables
-            totalStockQuantity += quantity;
-            totalStockYield += totalYield;
+            //totalStockQuantity += quantity;
+            //totalStockYield += totalYield;
             totalStockCapitalGain += (currentPriceStr == "-") ? 0 : std::stod(capitalGain.toUtf8().constData());
         }
         else if(asset->getAssetType() == AssetType::FUNDO)
@@ -169,14 +169,14 @@ void MainWindow::updateSotckAndFundTable()
                 itens = {ticker, QString::number(investmentController.getAssetDistribution(ticker)) + "%", QString::number(quantity),
                          "R$ " + QString::number(totalYield, 'f', 2), "R$ " + QString::number(averagePrice, 'f', 2),
                          "R$ " + currentPriceStr, profitPercentage + "%", "R$ " + capitalGain};
-                addTableWidgetItens(ui->tableWidget_funds, stockRow, itens, STANDART_CELL);
+                addTableWidgetItens(ui->tableWidget_funds, fundRow, itens, STANDART_CELL);
 
                 ++fundRow;
             }
 
             // Update variables 
-            totalFundQuantity += quantity;
-            totalFundYield += totalYield;
+            //totalFundQuantity += quantity;
+            //totalFundYield += totalYield;
             totalFundCapitalGain += (currentPriceStr == "-") ? 0 : std::stod(capitalGain.toUtf8().constData());
         }
         else
@@ -186,12 +186,16 @@ void MainWindow::updateSotckAndFundTable()
     }
 
     // Add total line
-    itens = {"Total", "100", QString::number(totalFundQuantity), QString::number(totalFundYield, 'f', 2), "-", "-", "-",
-            (totalFundCapitalGain == 0) ? "-" : QString::number(totalFundCapitalGain, 'f', 2)};
-    addTableWidgetItens(ui->tableWidget_funds, stockRow, itens, (HIGHLIGHT_CELL | FONT_BOLD | FONT_SIZE));
+    int totalQuantity = investmentController.getTotalQuantityOfAssets(AssetType::FUNDO);
+    double totalYield = investmentController.getTotalYieldOfAssets(AssetType::FUNDO);
+    itens = {"Total", "100%", QString::number(totalQuantity), "R$ " + QString::number(totalYield, 'f', 2), "-", "-", "-",
+            (totalFundCapitalGain == 0) ? "-" : "R$ " + QString::number(totalFundCapitalGain, 'f', 2)};
+    addTableWidgetItens(ui->tableWidget_funds, fundRow, itens, (HIGHLIGHT_CELL | FONT_BOLD | FONT_SIZE));
 
-    itens = {"Total", "100", QString::number(totalStockQuantity), QString::number(totalStockYield, 'f', 2), "-", "-", "-",
-            (totalStockCapitalGain == 0) ? "-" : QString::number(totalStockCapitalGain, 'f', 2)};
+    totalQuantity = investmentController.getTotalQuantityOfAssets(AssetType::ACAO);
+    totalYield = investmentController.getTotalYieldOfAssets(AssetType::ACAO);
+    itens = {"Total", "100%", QString::number(totalQuantity), "R$ " + QString::number(totalYield, 'f', 2), "-", "-", "-",
+            (totalStockCapitalGain == 0) ? "-" : "R$ " + QString::number(totalStockCapitalGain, 'f', 2)};
     addTableWidgetItens(ui->tableWidget_stocks, stockRow, itens, (HIGHLIGHT_CELL | FONT_BOLD | FONT_SIZE));
 }
 

@@ -21,6 +21,7 @@ public:
     int getQuantity();
     double getTotalYield();
     double getAveragePrice();
+    double getTotalInvested();
 };
 
 #endif // ASSET_H

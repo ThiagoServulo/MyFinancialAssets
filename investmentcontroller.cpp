@@ -31,6 +31,58 @@ std::shared_ptr<Asset> InvestmentController::getAsset(QString ticker)
     return nullptr;
 }
 
+int InvestmentController::getTotalQuantityOfAssets(AssetType assetType)
+{
+    // Init quantity
+    int quantity = 0;
+
+    // Check assets
+    for(auto asset: assets)
+    {
+        if(asset->getAssetType() == assetType)
+        {
+            quantity += asset->getQuantity();
+        }
+    }
+
+    return quantity;
+}
+
+double InvestmentController::getTotalYieldOfAssets(AssetType assetType)
+{
+    // Init total
+    double total = 0;
+
+    // Check assets
+    for(auto asset: assets)
+    {
+        if(asset->getAssetType() == assetType)
+        {
+            total += asset->getTotalYield();
+        }
+    }
+
+    return total;
+}
+
+double InvestmentController::getTotalInvestedOfAssets(AssetType assetType)
+{
+    // Init total
+    double total = 0;
+
+    // Check assets
+    for(auto asset: assets)
+    {
+        if(asset->getAssetType() == assetType)
+        {
+            // TODO: Implementar aqui uam função pra pegar o valor total investido em uma ação
+            //total += asset->getTotalInvested();
+        }
+    }
+
+    return total;
+}
+
 double InvestmentController::getAssetDistribution(QString ticker)
 {
     double totalInvested = 0;

@@ -27,7 +27,7 @@ AssetType Asset::getAssetType()
 
 double Asset::getCurrentPrice()
 {
-    return this->currentPrice;
+    return (getQuantity() == 0) ? 0 : this->currentPrice;
 }
 
 int Asset::getQuantity()
@@ -127,5 +127,30 @@ double Asset::getAveragePrice()
     }
 
     // Return average price
-    return total/quantity;
+    return (quantity == 0) ? 0 : total/quantity;
+}
+
+double Asset::getTotalInvested()
+{
+    // TODO: Implementar essa função
+    /*
+    // Init total
+    double total = 0;
+
+    // Get transactions
+    std::vector<Transaction> transactions = getTransactions();
+
+    for(auto transaction: transactions)
+    {
+        // Check transaction type
+        if(transaction.getTransactionType() == TransactionType::COMPRA)
+        {
+            total += (transaction.getUnitaryPrice() * transaction.getQuantity());
+        }
+    }
+
+    // Return total invested
+    return total;
+    */
+    return 0;
 }

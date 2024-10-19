@@ -644,6 +644,8 @@ bool Database::insertFixedIncome(FixedIncome fixedIncome)
     {
         QSqlQuery query;
 
+        // TODO: Renomear a coluna desciption para descRiption
+
         // Prepare the SQL insert query
         query.prepare("INSERT INTO fixed_income_table (desciption, yield_expected, purchase_date, limit_date, "
                       "invested_value, current_value, status) "
@@ -723,4 +725,44 @@ std::vector<FixedIncome> Database::selectAllFixedIncomes()
     }
 
     return fixedIncomes;
+}
+
+bool Database::updateFixedIncome(FixedIncome *fixedIncome)
+{
+    if(openDatabase())
+    {
+        // Prepare the SQL update query
+        QString updateQuery = R"(
+            UPDATE fixed_income_table
+            SET status = :status, current_value = :current_value
+            WHERE purchase_date = :purchase_date
+              AND desciption = :description
+              AND limit_date = :limit_date;
+        )";
+
+        // Create query
+        QSqlQuery query;
+        query.prepare(updateQuery);
+
+        // Bind values to the query
+        query.bindValue(":status", fixedIncome->getStatus());
+        query.bindValue(":current_value", fixedIncome->getCurrentValue());
+        query.bindValue(":purchase_date", fixedIncome->getPurchaseDate());
+        query.bindValue(":description", fixedIncome->getDescription());
+        query.bindValue(":limit_date", fixedIncome->getLimitDate());
+
+        // Execute the query and check for success
+        if (!query.exec())
+        {
+            qDebug() << "Erro to update fixed income";
+            closeDatabase();
+            return false;
+        }
+
+        closeDatabase();
+        return true;
+    }
+
+    qDebug() << "Error to open database to update fixed income";
+    return false;
 }

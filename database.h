@@ -22,6 +22,7 @@ public:
     bool checkLastUpdate();
     bool insertFixedIncome(FixedIncome fixedIncome);
     bool updateTickerCurrentPrice(QString ticker, double currentPrice);
+    bool updateFixedIncome(FixedIncome *fixedIncome);
 
 private:
     QSqlDatabase database;
