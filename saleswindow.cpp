@@ -37,6 +37,8 @@ void SalesWindow::updateTableWidgetSales()
     Database database;
     int row = 0;
 
+    // TODO: Implementar a tabela papeis vendidos
+
     for(auto asset: this->investmentController->getAllAssets())
     {
         if(investmentController->getAsset(asset->getTicker())->getQuantity() == 0)

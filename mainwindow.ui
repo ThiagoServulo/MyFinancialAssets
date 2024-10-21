@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1010</width>
+    <width>1082</width>
     <height>600</height>
    </rect>
   </property>
@@ -19,12 +19,12 @@
      <rect>
       <x>10</x>
       <y>0</y>
-      <width>990</width>
+      <width>1061</width>
       <height>571</height>
      </rect>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="tab_general">
      <attribute name="title">
@@ -40,7 +40,7 @@
        <rect>
         <x>10</x>
         <y>39</y>
-        <width>961</width>
+        <width>1031</width>
         <height>491</height>
        </rect>
       </property>
@@ -76,7 +76,7 @@
        <rect>
         <x>10</x>
         <y>39</y>
-        <width>961</width>
+        <width>1031</width>
         <height>491</height>
        </rect>
       </property>
@@ -112,7 +112,7 @@
        <rect>
         <x>10</x>
         <y>10</y>
-        <width>961</width>
+        <width>1031</width>
         <height>521</height>
        </rect>
       </property>
@@ -125,7 +125,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1010</width>
+     <width>1082</width>
      <height>21</height>
     </rect>
    </property>
@@ -146,7 +146,6 @@
     <addaction name="actionSales"/>
     <addaction name="actionRenda_fixa_encerradas"/>
     <addaction name="separator"/>
-    <addaction name="actionRelat_rio_a_es_mensais"/>
    </widget>
    <addaction name="menuNew"/>
    <addaction name="menuAnalysis"/>
@@ -179,11 +178,6 @@
   <action name="actionRenda_fixa_encerradas">
    <property name="text">
     <string>Renda fixa encerradas</string>
-   </property>
-  </action>
-  <action name="actionRelat_rio_a_es_mensais">
-   <property name="text">
-    <string>Relatório ações mensais</string>
    </property>
   </action>
  </widget>

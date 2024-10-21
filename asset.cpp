@@ -109,31 +109,12 @@ double Asset::getTotalYield()
 
 double Asset::getAveragePrice()
 {
-    // Init variables
-    double total = 0;
-    int quantity = 0;
-
-    // Get transactions
-    std::vector<Transaction> transactions = getTransactions();
-
-    for(auto transaction: transactions)
-    {
-        // Check transaction type
-        if(transaction.getTransactionType() == TransactionType::COMPRA)
-        {
-            total += (transaction.getUnitaryPrice() * transaction.getQuantity());
-            quantity += transaction.getQuantity();
-        }
-    }
-
-    // Return average price
-    return (quantity == 0) ? 0 : total/quantity;
+    // Calculate average price
+    return (getQuantity() == 0) ? 0 : (getTotalInvested() / getQuantity());
 }
 
 double Asset::getTotalInvested()
 {
-    // TODO: Implementar essa função
-    /*
     // Init total
     double total = 0;
 
@@ -147,10 +128,16 @@ double Asset::getTotalInvested()
         {
             total += (transaction.getUnitaryPrice() * transaction.getQuantity());
         }
+        else if(transaction.getTransactionType() == TransactionType::VENDA)
+        {
+            total -= (transaction.getUnitaryPrice() * transaction.getQuantity());
+        }
+        else
+        {
+            throw std::invalid_argument("Transaction type invalid");
+        }
     }
 
     // Return total invested
-    return total;
-    */
-    return 0;
+    return (getQuantity() == 0) ? 0 : total;
 }

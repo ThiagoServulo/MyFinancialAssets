@@ -20,14 +20,14 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    this->setMaximumSize(1010, 600);
-    this->setMinimumSize(1010, 600);
+    this->setMaximumSize(1082, 600);
+    this->setMinimumSize(1082, 600);
 
     // Create database
     database.prepareDatabase();
 
     // Configure stock and fund tables
-    QStringList headerLabels = {"Ticker", "Distribuição", "Quantidade", "Rendimento", "Preço médio", "Preço atual",
+    QStringList headerLabels = {"Ticker", "Distribuição", "Quantidade", "Total investido", "Rendimento", "Preço médio", "Preço atual",
                                 "Valorização", "Ganho de capital"};
     configureTableWidget(headerLabels, ui->tableWidget_stocks);
     configureTableWidget(headerLabels, ui->tableWidget_funds);
@@ -114,10 +114,6 @@ void MainWindow::updateSotckAndFundTable()
     QStringList itens;
     int stockRow = 0;
     int fundRow = 0;
-    //int totalStockQuantity = 0;
-    //int totalFundQuantity = 0;
-    //double totalStockYield = 0;
-    //double totalFundYield = 0;
     double totalFundCapitalGain = 0;
     double totalStockCapitalGain = 0;
 
@@ -134,6 +130,7 @@ void MainWindow::updateSotckAndFundTable()
         double totalYield = asset->getTotalYield();
         double averagePrice = asset->getAveragePrice();
         double currentPrice = asset->getCurrentPrice();
+        double totalInvested = asset->getTotalInvested();
 
         // Show values if is relevant
         if(currentPrice > 0)
@@ -149,9 +146,10 @@ void MainWindow::updateSotckAndFundTable()
             // Add new line
             if(!ui->checkBox_hideAssets->isChecked() || (ui->checkBox_hideAssets->isChecked() && quantity != 0))
             {
-                itens = {ticker, QString::number(investmentController.getAssetDistribution(ticker)) + "%", QString::number(quantity),
-                         "R$ " + QString::number(totalYield, 'f', 2), "R$ " + QString::number(averagePrice, 'f', 2),
-                         "R$ " + currentPriceStr, profitPercentage + "%", "R$ " + capitalGain};
+                itens = {ticker, QString::number(investmentController.getAssetDistribution(ticker), 'f', 2) + "%", QString::number(quantity),
+                        "R$ " + QString::number(totalInvested, 'f', 2),
+                        "R$ " + QString::number(totalYield, 'f', 2), "R$ " + QString::number(averagePrice, 'f', 2),
+                        "R$ " + currentPriceStr, profitPercentage + "%", "R$ " + capitalGain};
                 addTableWidgetItens(ui->tableWidget_stocks, stockRow, itens, STANDART_CELL);
                 ++stockRow;
             }
@@ -166,7 +164,8 @@ void MainWindow::updateSotckAndFundTable()
             // Add new line
             if(!ui->checkBox_hideFounds->isChecked() || (ui->checkBox_hideFounds->isChecked() && quantity != 0))
             {
-                itens = {ticker, QString::number(investmentController.getAssetDistribution(ticker)) + "%", QString::number(quantity),
+                itens = {ticker, QString::number(investmentController.getAssetDistribution(ticker), 'f', 2) + "%", QString::number(quantity),
+                         "R$ " + QString::number(totalInvested, 'f', 2),
                          "R$ " + QString::number(totalYield, 'f', 2), "R$ " + QString::number(averagePrice, 'f', 2),
                          "R$ " + currentPriceStr, profitPercentage + "%", "R$ " + capitalGain};
                 addTableWidgetItens(ui->tableWidget_funds, fundRow, itens, STANDART_CELL);
@@ -188,13 +187,18 @@ void MainWindow::updateSotckAndFundTable()
     // Add total line
     int totalQuantity = investmentController.getTotalQuantityOfAssets(AssetType::FUNDO);
     double totalYield = investmentController.getTotalYieldOfAssets(AssetType::FUNDO);
-    itens = {"Total", "100%", QString::number(totalQuantity), "R$ " + QString::number(totalYield, 'f', 2), "-", "-", "-",
+    double totalInvested = investmentController.getTotalInvestedOfAssets(AssetType::FUNDO);
+    itens = {"Total", "100%", QString::number(totalQuantity), "R$ " + QString::number(totalInvested, 'f', 2),
+             "R$ " + QString::number(totalYield, 'f', 2),
+            "-", "-", "-",
             (totalFundCapitalGain == 0) ? "-" : "R$ " + QString::number(totalFundCapitalGain, 'f', 2)};
     addTableWidgetItens(ui->tableWidget_funds, fundRow, itens, (HIGHLIGHT_CELL | FONT_BOLD | FONT_SIZE));
 
     totalQuantity = investmentController.getTotalQuantityOfAssets(AssetType::ACAO);
     totalYield = investmentController.getTotalYieldOfAssets(AssetType::ACAO);
-    itens = {"Total", "100%", QString::number(totalQuantity), "R$ " + QString::number(totalYield, 'f', 2), "-", "-", "-",
+    totalInvested = investmentController.getTotalInvestedOfAssets(AssetType::ACAO);
+    itens = {"Total", "100%", QString::number(totalQuantity), "R$ " + QString::number(totalInvested, 'f', 2),
+             "R$ " + QString::number(totalYield, 'f', 2), "-", "-", "-",
             (totalStockCapitalGain == 0) ? "-" : "R$ " + QString::number(totalStockCapitalGain, 'f', 2)};
     addTableWidgetItens(ui->tableWidget_stocks, stockRow, itens, (HIGHLIGHT_CELL | FONT_BOLD | FONT_SIZE));
 }
@@ -306,5 +310,15 @@ void MainWindow::on_tableWidget_fixedIncome_cellDoubleClicked(int row, int colum
         connect(fixedIncomeWindow, &QObject::destroyed, this, &MainWindow::updateFixedIncomeTable);
         fixedIncomeWindow->show();
     }
+}
+
+void MainWindow::on_checkBox_hideFounds_stateChanged(int arg1)
+{
+    updateSotckAndFundTable();
+}
+
+void MainWindow::on_actionRenda_fixa_encerradas_triggered()
+{
+    // TODO: Implementar uma nova janela pra mostrar as renda fixas encerradas
 }
 

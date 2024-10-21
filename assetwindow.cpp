@@ -116,6 +116,8 @@ void AssetWindow::updateTransactionTable()
             double totalOperation = quantity * unitaryPrice;
             QDate date = transaction->getDate();
 
+            // TODO: Tem algum problema com o preço médio nesta tabela
+
             // Check transaction type
             if(transactionType == TransactionType::COMPRA)
             {
