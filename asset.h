@@ -22,6 +22,8 @@ public:
     double getTotalYield();
     double getAveragePrice();
     double getTotalInvested();
+    double getProfitPercentage();
+    double getCapitalGain();
 };
 
 #endif // ASSET_H

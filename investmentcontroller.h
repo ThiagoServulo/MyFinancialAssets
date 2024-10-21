@@ -18,6 +18,7 @@ public:
     double getTotalYieldOfAssets(AssetType assetType);
     double getTotalInvestedOfAssets(AssetType assetType);
     std::vector<std::shared_ptr<Asset>> getAllAssets();
+    double getTotalCapitalGainOfAssets(AssetType assetType);
     double getAssetDistribution(QString ticker);
     void addFixedIncome(std::shared_ptr<FixedIncome> fixedIncome);
     std::vector<std::shared_ptr<FixedIncome>> getFixedIncomes();

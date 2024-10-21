@@ -83,16 +83,34 @@ double InvestmentController::getTotalInvestedOfAssets(AssetType assetType)
     return total;
 }
 
+double InvestmentController::getTotalCapitalGainOfAssets(AssetType assetType)
+{
+    // Init total
+    double total = 0;
+
+    // Check assets
+    for(auto asset: assets)
+    {
+        if(asset->getAssetType() == assetType)
+        {
+            total += asset->getCapitalGain();
+        }
+    }
+
+    // Return total
+    return total;
+}
+
 double InvestmentController::getAssetDistribution(QString ticker)
 {
     // Get total asset invested
-    double totalAssetInvested = (this->getAsset(ticker)->getTotalInvested());
+    double totalAssetInvested = (getAsset(ticker)->getTotalInvested());
 
     // Get total invested according to asset type
-    double totalInvested = getTotalInvestedOfAssets(this->getAsset(ticker)->getAssetType());
+    double totalInvested = getTotalInvestedOfAssets(getAsset(ticker)->getAssetType());
 
     // Return asset distribution in percentage
-    return (this->getAsset(ticker)->getQuantity() == 0) ? 0 : (totalAssetInvested / totalInvested) * 100;
+    return (getAsset(ticker)->getQuantity() == 0) ? 0 : (totalAssetInvested / totalInvested) * 100;
 }
 
 void InvestmentController::addFixedIncome(std::shared_ptr<FixedIncome> fixedIncome)

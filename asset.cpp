@@ -17,17 +17,17 @@ Asset::Asset(QString ticker, AssetType assetType, double currentPrice)
 
 QString Asset::getTicker()
 {
-    return this->ticker;
+    return ticker;
 }
 
 AssetType Asset::getAssetType()
 {
-    return this->assetType;
+    return assetType;
 }
 
 double Asset::getCurrentPrice()
 {
-    return (getQuantity() == 0) ? 0 : this->currentPrice;
+    return (getQuantity() == 0) ? 0 : currentPrice;
 }
 
 int Asset::getQuantity()
@@ -140,4 +140,16 @@ double Asset::getTotalInvested()
 
     // Return total invested
     return (getQuantity() == 0) ? 0 : total;
+}
+
+double Asset::getProfitPercentage()
+{
+    // Return profit percentage
+    return ((getCurrentPrice() - getAveragePrice()) / getAveragePrice()) * 100;
+}
+
+double Asset::getCapitalGain()
+{
+    // Return capital gain
+    return ((getCurrentPrice() - getAveragePrice()) * getQuantity()) + getTotalYield();
 }

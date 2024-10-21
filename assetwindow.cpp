@@ -43,7 +43,7 @@ void AssetWindow::updateTransactionTable()
 
     // Configure transaction table
     QStringList headerLabels = {"Tipo de operação", "Data da operação", "Quantidade", "Preço unitário", "Total da operação",
-                                "Quantidade acumulado", "Preço médio", "Valor total acumulado"};
+                                "Quantidade acumulado", "Preço médio", "Valor total investido"};
     configureTableWidget(headerLabels, ui->tableWidget_transactions);
 
     // Init variables
@@ -116,8 +116,6 @@ void AssetWindow::updateTransactionTable()
             double totalOperation = quantity * unitaryPrice;
             QDate date = transaction->getDate();
 
-            // TODO: Tem algum problema com o preço médio nesta tabela
-
             // Check transaction type
             if(transactionType == TransactionType::COMPRA)
             {
@@ -131,7 +129,7 @@ void AssetWindow::updateTransactionTable()
             {
                 // Calculate values
                 accumulatedQuantity -= quantity;
-                accumulatedTotal =  accumulatedQuantity * averagePrice;
+                accumulatedTotal = accumulatedQuantity * averagePrice;
                 style = HIGHLIGHT_CELL;
             }
             else
@@ -143,7 +141,7 @@ void AssetWindow::updateTransactionTable()
             itens = {getTransactionTypeString(transactionType), date.toString("dd/MM/yyyy"), QString::number(quantity),
                     "R$ " + QString::number(unitaryPrice, 'f', 2), "R$ " + QString::number(totalOperation, 'f', 2),
                     QString::number(accumulatedQuantity), "R$ " + QString::number(averagePrice, 'f', 2),
-                    "R$ " + QString::number(accumulatedTotal, 'f', 2)};
+                    "R$ " + QString::number(accumulatedQuantity * averagePrice, 'f', 2)};
         }
         else
         {
