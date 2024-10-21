@@ -13,6 +13,7 @@ SOURCES += \
     assetapi.cpp \
     assetwindow.cpp \
     basics.cpp \
+    closedfixedincomeswindow.cpp \
     constants.cpp \
     database.cpp \
     databasecreation.cpp \
@@ -37,6 +38,7 @@ HEADERS += \
     assetapi.h \
     assetwindow.h \
     basics.h \
+    closedfixedincomeswindow.h \
     constants.h \
     database.h \
     databasecreation.h \
@@ -57,6 +59,7 @@ HEADERS += \
 
 FORMS += \
     assetwindow.ui \
+    closedfixedincomeswindow.ui \
     mainwindow.ui \
     newfixedincomewindow.ui \
     newreorganizationwindow.ui \

@@ -144,7 +144,7 @@
      <string>Análises</string>
     </property>
     <addaction name="actionSales"/>
-    <addaction name="actionRenda_fixa_encerradas"/>
+    <addaction name="actionClosedFixedIncomes"/>
     <addaction name="separator"/>
    </widget>
    <addaction name="menuNew"/>
@@ -175,7 +175,7 @@
     <string>Renda Fixa</string>
    </property>
   </action>
-  <action name="actionRenda_fixa_encerradas">
+  <action name="actionClosedFixedIncomes">
    <property name="text">
     <string>Renda fixa encerradas</string>
    </property>

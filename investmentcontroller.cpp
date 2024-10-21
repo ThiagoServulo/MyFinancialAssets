@@ -100,7 +100,7 @@ void InvestmentController::addFixedIncome(std::shared_ptr<FixedIncome> fixedInco
     fixedIncomes.push_back(fixedIncome);
 }
 
-std::vector<std::shared_ptr<FixedIncome>> InvestmentController::getFixedIncomes(bool status)
+std::vector<std::shared_ptr<FixedIncome>> InvestmentController::getFixedIncomes()
 {
     return fixedIncomes;
 }
@@ -117,4 +117,51 @@ std::shared_ptr<FixedIncome> InvestmentController::getFixedIncome(QDate purchase
 
     qDebug() << "Error to get fixed income";
     return nullptr;
+}
+
+double InvestmentController::getFixedIncomeTotalInvested(bool status)
+{
+    // Init total
+    double total = 0;
+
+    for(auto fixedIncome: fixedIncomes)
+    {
+        if(fixedIncome->getStatus() == status)
+        {
+            total += fixedIncome->getInvestedValue();
+        }
+    }
+
+    // Return total
+    return total;
+}
+
+double InvestmentController::getFixedIncomeCurrentTotal(bool status)
+{
+    // Init total
+    double total = 0;
+
+    for(auto fixedIncome: fixedIncomes)
+    {
+        if(fixedIncome->getStatus() == status)
+        {
+            total += fixedIncome->getCurrentValue();
+        }
+    }
+
+    // Return total
+    return total;
+}
+
+double InvestmentController::getFixedIncomeTotalYield(bool status)
+{
+    // Return total yield
+    return getFixedIncomeCurrentTotal(status) - getFixedIncomeTotalInvested(status);
+}
+
+double InvestmentController::getFixedIncomeTotalYieldPercentage(bool status)
+{
+    // Return total yield percentage
+    return ((getFixedIncomeCurrentTotal(status) - getFixedIncomeTotalInvested(status)) /
+            getFixedIncomeCurrentTotal(status)) * 100;
 }

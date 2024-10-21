@@ -20,8 +20,12 @@ public:
     std::vector<std::shared_ptr<Asset>> getAllAssets();
     double getAssetDistribution(QString ticker);
     void addFixedIncome(std::shared_ptr<FixedIncome> fixedIncome);
-    std::vector<std::shared_ptr<FixedIncome>> getFixedIncomes(bool status);
+    std::vector<std::shared_ptr<FixedIncome>> getFixedIncomes();
     std::shared_ptr<FixedIncome> getFixedIncome(QDate purchaseDate, QString description);
+    double getFixedIncomeTotalInvested(bool status);
+    double getFixedIncomeCurrentTotal(bool status);
+    double getFixedIncomeTotalYield(bool status);
+    double getFixedIncomeTotalYieldPercentage(bool status);
 };
 
 #endif // INVESTMENTCONTROLLER_H

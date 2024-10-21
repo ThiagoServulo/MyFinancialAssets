@@ -14,6 +14,7 @@
 #include "saleswindow.h"
 #include "newfixedincomewindow.h"
 #include "updatefixedincomewindow.h"
+#include "closedfixedincomeswindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -251,7 +252,7 @@ void MainWindow::on_actionFixedIncome_triggered()
 void MainWindow::updateFixedIncomeTable()
 {
     // Set fixed incomes
-    auto fixedIncomes = investmentController.getFixedIncomes(true);
+    auto fixedIncomes = investmentController.getFixedIncomes();
 
     // Clear table
     ui->tableWidget_fixedIncome->clearContents();
@@ -317,8 +318,8 @@ void MainWindow::on_checkBox_hideFounds_stateChanged(int arg1)
     updateSotckAndFundTable();
 }
 
-void MainWindow::on_actionRenda_fixa_encerradas_triggered()
+void MainWindow::on_actionClosedFixedIncomes_triggered()
 {
-    // TODO: Implementar uma nova janela pra mostrar as renda fixas encerradas
+    ClosedFixedIncomesWindow *fixedIncomeWindow = new ClosedFixedIncomesWindow(&investmentController, this);
+    fixedIncomeWindow->show();
 }
-
