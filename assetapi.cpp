@@ -12,14 +12,12 @@
 
 AssetApi::AssetApi()
 {
-
+    // Init api key
+    apiKey = "SAFNHJO46M4G14SI";
 }
 
 double AssetApi::getAssetCurrentPrice(QString ticker)
 {
-    // Init API key
-    QString apiKey = "SAFNHJO46M4G14SI";
-
     // Create the correct symbol for API
     QString symbol = ticker + ".SA";
 
@@ -47,6 +45,7 @@ double AssetApi::getAssetCurrentPrice(QString ticker)
     if(reply->error() != QNetworkReply::NoError)
     {
         qDebug() << "API requisition error:" << reply->errorString();
+        changeApiKey();
         return API_ERROR;
     }
 
@@ -59,6 +58,7 @@ double AssetApi::getAssetCurrentPrice(QString ticker)
     if(jsonDoc.isNull())
     {
         qDebug() << "Parse JSON error";
+        changeApiKey();
         return API_ERROR;
     }
 
@@ -69,6 +69,7 @@ double AssetApi::getAssetCurrentPrice(QString ticker)
     if(!jsonObj.contains("Global Quote"))
     {
         qDebug() << "JSON received is invalid. 'Global Quote' is missing";
+        changeApiKey();
         return API_ERROR;
     }
 
@@ -78,6 +79,7 @@ double AssetApi::getAssetCurrentPrice(QString ticker)
     if(!globalQuote.contains("05. price"))
     {
         qDebug() << "JSON received is invalid. '05. price' is missing";
+        changeApiKey();
         return API_ERROR;
     }
 
@@ -85,5 +87,11 @@ double AssetApi::getAssetCurrentPrice(QString ticker)
     QString priceStr = globalQuote["05. price"].toString();
 
     // Return the price
+    changeApiKey();
     return priceStr.toDouble();
+}
+
+void AssetApi::changeApiKey()
+{
+    apiKey = (apiKey == "SAFNHJO46M4G14SI") ? "66O5L9PCQ9BFSEL4" : "SAFNHJO46M4G14SI";
 }

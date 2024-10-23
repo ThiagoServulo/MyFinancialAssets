@@ -9,6 +9,10 @@ public:
     static const int API_ERROR = 0;
     AssetApi();
     double getAssetCurrentPrice(QString ticker);
+
+private:
+    QString apiKey;
+    void changeApiKey();
 };
 
 #endif // ASSETAPI_H
