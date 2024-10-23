@@ -44,6 +44,7 @@ void SalesWindow::updateTableWidgetSales()
             // Get values
             QDate purchaseDate = asset->getEspecifiedTransactionDate(TransactionType::COMPRA, true);
             QDate limitDate = asset->getEspecifiedTransactionDate(TransactionType::VENDA, false);
+            double totalYield = asset->getTotalYield();
             double purchaseTotal = asset->getTransactionsTotal(TransactionType::COMPRA);
             double saleTotal = asset->getTransactionsTotal(TransactionType::VENDA);
             double profitPercentage = asset->getProfitPercentageTotal();
@@ -52,7 +53,7 @@ void SalesWindow::updateTableWidgetSales()
             // Get itens
             QStringList itens = {asset->getTicker(), purchaseDate.toString("dd/MM/yyyy"),
                                  limitDate.toString("dd/MM/yyyy"),
-                                 "R$ " + QString::number(asset->getTotalYield(), 'f', 2),
+                                 "R$ " + QString::number(totalYield, 'f', 2),
                                  "R$ " + QString::number(purchaseTotal, 'f', 2),
                                  "R$ " + QString::number(saleTotal, 'f', 2),
                                  QString::number(profitPercentage, 'f', 2) + "%",
@@ -62,9 +63,25 @@ void SalesWindow::updateTableWidgetSales()
             addTableWidgetItens(ui->tableWidget_sales, row, itens, STANDART_CELL);
             ++row;
         }
-
-        // TODO: Fazer a linha de total
     }
+
+    // Get total values
+    double capitalGain = investmentController->getTotalCapitalGainOfAssetsSold();
+    double totalYield = investmentController->getTotalYieldOfAssetsSold();
+    double saleTotal = investmentController->getSaleTotalOfAssetsSold();
+    double purchaseTotal = investmentController->getPurchaseTotalOfAssetsSold();
+    double profitPercentage = investmentController->getProfitPercentageTotalOfAssetsSold();
+
+    // Get itens
+    QStringList itens = {"Total", "-", "-",
+                         "R$ " + QString::number(totalYield, 'f', 2),
+                         "R$ " + QString::number(purchaseTotal, 'f', 2),
+                         "R$ " + QString::number(saleTotal, 'f', 2),
+                         QString::number(profitPercentage, 'f', 2) + "%",
+                         "R$ " + QString::number(capitalGain, 'f', 2)};
+
+    // Insert total row
+    addTableWidgetItens(ui->tableWidget_sales, row, itens, (HIGHLIGHT_CELL | FONT_BOLD | FONT_SIZE));
 }
 
 void SalesWindow::on_tableWidget_sales_cellDoubleClicked(int row, int column)

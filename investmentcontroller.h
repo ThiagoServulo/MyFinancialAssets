@@ -27,6 +27,11 @@ public:
     double getFixedIncomeCurrentTotal(bool status);
     double getFixedIncomeTotalYield(bool status);
     double getFixedIncomeTotalYieldPercentage(bool status);
+    double getTotalCapitalGainOfAssetsSold();
+    double getTotalYieldOfAssetsSold();
+    double getPurchaseTotalOfAssetsSold();
+    double getSaleTotalOfAssetsSold();
+    double getProfitPercentageTotalOfAssetsSold();
 };
 
 #endif // INVESTMENTCONTROLLER_H

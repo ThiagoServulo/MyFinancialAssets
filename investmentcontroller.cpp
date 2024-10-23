@@ -183,3 +183,69 @@ double InvestmentController::getFixedIncomeTotalYieldPercentage(bool status)
     return ((getFixedIncomeCurrentTotal(status) - getFixedIncomeTotalInvested(status)) /
             getFixedIncomeCurrentTotal(status)) * 100;
 }
+
+double InvestmentController::getTotalCapitalGainOfAssetsSold()
+{
+    // Return total cpital gain
+    return (getTotalYieldOfAssetsSold() + (getSaleTotalOfAssetsSold() - getPurchaseTotalOfAssetsSold()));
+}
+
+double InvestmentController::getTotalYieldOfAssetsSold()
+{
+    // Init total
+    double total = 0;
+
+    // Check assets
+    for(auto asset: assets)
+    {
+        if(asset->getQuantity() == 0)
+        {
+            total += asset->getTotalYield();
+        }
+    }
+
+    // Return total
+    return total;
+}
+
+double InvestmentController::getPurchaseTotalOfAssetsSold()
+{
+    // Init total
+    double total = 0;
+
+    // Check assets
+    for(auto asset: assets)
+    {
+        if(asset->getQuantity() == 0)
+        {
+            total += asset->getTransactionsTotal(TransactionType::COMPRA);
+        }
+    }
+
+    // Return total
+    return total;
+}
+
+double InvestmentController::getSaleTotalOfAssetsSold()
+{
+    // Init total
+    double total = 0;
+
+    // Check assets
+    for(auto asset: assets)
+    {
+        if(asset->getQuantity() == 0)
+        {
+            total += asset->getTransactionsTotal(TransactionType::VENDA);
+        }
+    }
+
+    // Return total
+    return total;
+}
+
+double InvestmentController::getProfitPercentageTotalOfAssetsSold()
+{
+    // Return profit percentage
+    return ((getSaleTotalOfAssetsSold() - getPurchaseTotalOfAssetsSold()) / getPurchaseTotalOfAssetsSold()) * 100;
+}
