@@ -19,8 +19,8 @@ SalesWindow::SalesWindow(InvestmentController *investmentController, QWidget *pa
     ui->label_assets->setStyleSheet("color: rgb(255, 255, 255);");
 
     // Configure stock table
-    QStringList headerLabels = {"Ticker", "Data de entrada", "Data de saída", "Rendimento total", "Preço médio de compra",
-                                "Preço médio de venda", "Valorização", "Ganho de capital"};
+    QStringList headerLabels = {"Ticker", "Data de entrada", "Data de saída", "Rendimento total", "Total em compras",
+                                "Total em vendas", "Valorização", "Ganho de capital"};
     configureTableWidget(headerLabels, ui->tableWidget_sales);
 
     // Update table widget sales
@@ -34,25 +34,36 @@ SalesWindow::~SalesWindow()
 
 void SalesWindow::updateTableWidgetSales()
 {
-    Database database;
+    // Init rows
     int row = 0;
-
-    // TODO: Implementar a tabela papeis vendidos
 
     for(auto asset: this->investmentController->getAllAssets())
     {
         if(investmentController->getAsset(asset->getTicker())->getQuantity() == 0)
         {
-            auto transactions = asset->getTransactions();
-            QDate purchaseDate = getEarliestTransactionDate(transactions, TransactionType::COMPRA);
-            QStringList itens = {asset->getTicker(), purchaseDate.toString("dd/MM/yyyy") , "10/09/2024", "R$ " +
-                                 QString::number(asset->getTotalYield(), 'f', 2),
-                                 "R$ 10.00" , "R$ 20.00" , + " 10%", "R$ 120.00" };
+            // Get values
+            QDate purchaseDate = asset->getEspecifiedTransactionDate(TransactionType::COMPRA, true);
+            QDate limitDate = asset->getEspecifiedTransactionDate(TransactionType::VENDA, false);
+            double purchaseTotal = asset->getTransactionsTotal(TransactionType::COMPRA);
+            double saleTotal = asset->getTransactionsTotal(TransactionType::VENDA);
+            double profitPercentage = asset->getProfitPercentageTotal();
+            double capitalGain = asset->getCapitalGainTotal();
 
+            // Get itens
+            QStringList itens = {asset->getTicker(), purchaseDate.toString("dd/MM/yyyy"),
+                                 limitDate.toString("dd/MM/yyyy"),
+                                 "R$ " + QString::number(asset->getTotalYield(), 'f', 2),
+                                 "R$ " + QString::number(purchaseTotal, 'f', 2),
+                                 "R$ " + QString::number(saleTotal, 'f', 2),
+                                 QString::number(profitPercentage, 'f', 2) + "%",
+                                 "R$ " + QString::number(capitalGain, 'f', 2)};
+
+            // Insert new row
             addTableWidgetItens(ui->tableWidget_sales, row, itens, STANDART_CELL);
-
             ++row;
         }
+
+        // TODO: Fazer a linha de total
     }
 }
 

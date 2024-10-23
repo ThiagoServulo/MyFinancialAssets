@@ -11,7 +11,7 @@ void EventController::addEvent(std::shared_ptr<Event> event)
 
 std::vector<Transaction> EventController::getTransactions()
 {
-    std::vector<Transaction> transactionList;
+    std::vector<Transaction> transactions;
 
     for (const std::shared_ptr<Event>& event : eventList)
     {
@@ -24,18 +24,18 @@ std::vector<Transaction> EventController::getTransactions()
             if (transaction)
             {
                 // Add transaction
-                transactionList.push_back(*transaction);
+                transactions.push_back(*transaction);
             }
         }
     }
 
     // Return transactions
-    return transactionList;
+    return transactions;
 }
 
 std::vector<Yield> EventController::getYields()
 {
-    std::vector<Yield> yieldList;
+    std::vector<Yield> yields;
 
     for (const std::shared_ptr<Event>& event : eventList)
     {
@@ -48,13 +48,13 @@ std::vector<Yield> EventController::getYields()
             if (yield)
             {
                 // Add yield
-                yieldList.push_back(*yield);
+                yields.push_back(*yield);
             }
         }
     }
 
     // Return yields
-    return yieldList;
+    return yields;
 }
 
 std::vector<Reorganization> EventController::getReorganizations()
@@ -79,4 +79,44 @@ std::vector<Reorganization> EventController::getReorganizations()
 
     // Return reorganizations
     return reorganizations;
+}
+
+QDate EventController::getEspecifiedTransactionDate(TransactionType transactionType, bool type)
+{
+    // Get transactions
+    auto transactions = getTransactions();
+
+    // Check if the vector is empty
+    if (transactions.empty())
+    {
+        throw std::runtime_error("Transactions vector is empty");
+    }
+
+    // Init the iterator
+    auto it = transactions.end();
+
+    // Find the transaction with earliest date
+    for (auto transIt = transactions.begin(); transIt != transactions.end(); ++transIt)
+    {
+        if (transIt->getTransactionType() == transactionType)
+        {
+            if (type && transIt->getDate() < it->getDate())
+            {
+                it = transIt;
+            }
+            else if (transIt->getDate() > it->getDate())
+            {
+                it = transIt;
+            }
+        }
+    }
+
+    // Check if we found a transaction of the specified type
+    if (it == transactions.end())
+    {
+        throw std::runtime_error("None of the specified transaction type was found");
+    }
+
+    // Return the transaction
+    return it->getDate();
 }

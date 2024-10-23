@@ -24,6 +24,9 @@ public:
     double getTotalInvested();
     double getProfitPercentage();
     double getCapitalGain();
+    double getTransactionsTotal(TransactionType transactionType);
+    double getProfitPercentageTotal();
+    double getCapitalGainTotal();
 };
 
 #endif // ASSET_H
