@@ -644,16 +644,14 @@ bool Database::insertFixedIncome(FixedIncome fixedIncome)
     {
         QSqlQuery query;
 
-        // TODO: Renomear a coluna desciption para descRiption
-
         // Prepare the SQL insert query
-        query.prepare("INSERT INTO fixed_income_table (desciption, yield_expected, purchase_date, limit_date, "
+        query.prepare("INSERT INTO fixed_income_table (description, yield_expected, purchase_date, limit_date, "
                       "invested_value, current_value, status) "
-                      "VALUES (:desciption, :yield_expected, :purchase_date, :limit_date, :invested_value, "
+                      "VALUES (:description, :yield_expected, :purchase_date, :limit_date, :invested_value, "
                       ":current_value ,:status)");
 
         // Bind values to the query
-        query.bindValue(":desciption", fixedIncome.getDescription());
+        query.bindValue(":description", fixedIncome.getDescription());
         query.bindValue(":yield_expected", fixedIncome.getYieldExpected());
         query.bindValue(":purchase_date", fixedIncome.getPurchaseDate());
         query.bindValue(":limit_date", fixedIncome.getLimitDate());
@@ -684,7 +682,7 @@ std::vector<FixedIncome> Database::selectAllFixedIncomes()
     if (openDatabase())
     {
         QString selectQuery = R"(
-            SELECT desciption, yield_expected, purchase_date, limit_date, invested_value, current_value, status
+            SELECT description, yield_expected, purchase_date, limit_date, invested_value, current_value, status
             FROM fixed_income_table;
         )";
 
@@ -705,7 +703,7 @@ std::vector<FixedIncome> Database::selectAllFixedIncomes()
         // Process the results
         while (query.next())
         {
-            QString desciption = query.value(0).toString();
+            QString description = query.value(0).toString();
             QString yieldExpected = query.value(1).toString();
             QDate purchaseDate = QDate::fromString(query.value(2).toString(), "yyyy-MM-dd");
             QDate limitDate = QDate::fromString(query.value(3).toString(), "yyyy-MM-dd");
@@ -713,7 +711,7 @@ std::vector<FixedIncome> Database::selectAllFixedIncomes()
             double currentValue = query.value(5).toDouble();
             bool status = query.value(6).toBool();
 
-            fixedIncomes.push_back(FixedIncome(purchaseDate, desciption, yieldExpected, investedValue, limitDate, currentValue, status));
+            fixedIncomes.push_back(FixedIncome(purchaseDate, description, yieldExpected, investedValue, limitDate, currentValue, status));
         }
 
         closeDatabase();
@@ -736,7 +734,7 @@ bool Database::updateFixedIncome(FixedIncome *fixedIncome)
             UPDATE fixed_income_table
             SET status = :status, current_value = :current_value
             WHERE purchase_date = :purchase_date
-              AND desciption = :description
+              AND description = :description
               AND limit_date = :limit_date;
         )";
 

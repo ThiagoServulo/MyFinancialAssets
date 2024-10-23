@@ -108,28 +108,32 @@ void UpdateFixedIncomeWindow::on_pushButton_conclude_clicked()
     }
     else
     {
-        // Set current value
-        double oldValue = fixedIncome->getCurrentValue();
-        fixedIncome->setCurrentValue(currentValue);
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "Atenção", "Deseja encerrar renda fixa?", QMessageBox::Yes | QMessageBox::No);
 
-        // Change status to closed
-        fixedIncome->setStatus(FixedIncome::CLOSED);
-
-        // Update fixed income into database
-        Database database;
-        if(!database.updateFixedIncome(fixedIncome))
+        if(reply == QMessageBox::Yes)
         {
-            // TODO: Ao concluir renda fixa colocar MessageBox de SIM ou NÃO
+            // Set current value
+            double oldValue = fixedIncome->getCurrentValue();
+            fixedIncome->setCurrentValue(currentValue);
 
-            // Restore Values
-            fixedIncome->setCurrentValue(oldValue);
-            fixedIncome->setStatus(FixedIncome::VALID);
-            QMessageBox::information(this, "Erro", "Erro ao concluir a renda fixa");
-            return;
+            // Change status to closed
+            fixedIncome->setStatus(FixedIncome::CLOSED);
+
+            // Update fixed income into database
+            Database database;
+            if(!database.updateFixedIncome(fixedIncome))
+            {
+                // Restore Values
+                fixedIncome->setCurrentValue(oldValue);
+                fixedIncome->setStatus(FixedIncome::VALID);
+                QMessageBox::information(this, "Erro", "Erro ao concluir a renda fixa");
+                return;
+            }
+
+            QMessageBox::information(this, "Sucesso", "Renda fixa concluída com sucesso");
+            this->close();
         }
-
-        QMessageBox::information(this, "Sucesso", "Renda fixa concluída com sucesso");
-        this->close();
     }
 }
 

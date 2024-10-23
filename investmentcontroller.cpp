@@ -247,5 +247,6 @@ double InvestmentController::getSaleTotalOfAssetsSold()
 double InvestmentController::getProfitPercentageTotalOfAssetsSold()
 {
     // Return profit percentage
-    return ((getSaleTotalOfAssetsSold() - getPurchaseTotalOfAssetsSold()) / getPurchaseTotalOfAssetsSold()) * 100;
+    return (getPurchaseTotalOfAssetsSold() == 0) ? 0 :
+           ((getSaleTotalOfAssetsSold() - getPurchaseTotalOfAssetsSold()) / getPurchaseTotalOfAssetsSold()) * 100;
 }

@@ -100,7 +100,7 @@ void initComboBoxAssets(QComboBox *comboBox, InvestmentController *investmentCon
     comboBox->setCurrentIndex(-1);
 }
 
-// TODO: Mover essa função pra eventos
+// TODO: Na versão 2 mover essa função pra eventos
 
 std::vector<Event*> mergeAndSortEvents(const std::vector<Transaction>& transactions, const std::vector<Reorganization>& reorganizations)
 {

@@ -361,7 +361,7 @@ bool DatabaseCreation::createFixedIncomeTable()
     QString createTableQuery = R"(
         CREATE TABLE IF NOT EXISTS fixed_income_table (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            desciption TEXT NOT NULL,
+            description TEXT NOT NULL,
             yield_expected TEXT NOT NULL,
             purchase_date DATE NOT NULL,
             limit_date DATE NOT NULL,

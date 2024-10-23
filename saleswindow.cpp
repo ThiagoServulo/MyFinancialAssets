@@ -15,6 +15,9 @@ SalesWindow::SalesWindow(InvestmentController *investmentController, QWidget *pa
     // Set investiment controller
     this->investmentController = investmentController;
 
+    // Set window background color
+    ui->centralwidget->setStyleSheet("background-color: rgb(18, 18, 18);");
+
     // Configure label assets
     ui->label_assets->setStyleSheet("color: rgb(255, 255, 255);");
 
