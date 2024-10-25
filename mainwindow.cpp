@@ -21,20 +21,20 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    this->setMaximumSize(1082, 600);
-    this->setMinimumSize(1082, 600);
+    this->setMaximumSize(1151, 654);
+    this->setMinimumSize(1151, 654);
 
     // Create database
     database.prepareDatabase();
 
     // Configure stock and fund tables
-    QStringList headerLabels = {"Ticker", "Distribuição", "Quantidade", "Total investido", "Rendimento", "Preço médio", "Preço atual",
-                                "Valorização", "Ganho de capital"};
+    QStringList headerLabels = {"Ticker", "Distribuição", "Quantidade", "Total investido", "Rendimento",
+                                "Preço médio", "Preço atual", "Valorização", "Ganho de capital"};
     configureTableWidget(headerLabels, ui->tableWidget_stocks);
     configureTableWidget(headerLabels, ui->tableWidget_funds);
 
-    headerLabels = {"Data da compra", "Descrição do investimento", "Rendimento esperado", "Valor investido",
-                    "Valor atual", "Rendimento", "Data limite"};
+    headerLabels = {"Data da compra", "\tDescrição do investimento\t", "Rendimento esperado", " Valor investido ",
+                    "   Valor atual   ", "Rendimento", "Data limite"};
     configureTableWidget(headerLabels, ui->tableWidget_fixedIncome);
 
     // Init asset controller
@@ -63,8 +63,10 @@ MainWindow::MainWindow(QWidget *parent)
     // Set tab widget style sheet
     ui->tabWidget->setStyleSheet(
         "QTabWidget::pane { background-color: rgb(18, 18, 18); }"
-        "QTabBar::tab { background-color: rgb(28, 28, 28); color: rgb(255, 255, 255); font-size: 14px; font-weight: bold; }"
-        "QTabBar::tab:selected { background-color: rgb(18, 18, 18); color: rgb(255, 255, 255); font-size: 14px; font-weight: bold; }"
+        "QTabBar::tab { background-color: rgb(28, 28, 28); color: rgb(255, 255, 255);"
+        "font-size: 14px; font-weight: bold; }"
+        "QTabBar::tab:selected { background-color: rgb(18, 18, 18); color: rgb(255, 255, 255);"
+        "font-size: 14px; font-weight: bold; }"
     );
 
     // Set initial tab
@@ -143,7 +145,8 @@ void MainWindow::updateSotckAndFundTable()
                          QString::number(profitPercentage, 'f', 2) + "%",
                          "R$ " + QString::number(captalGain, 'f', 2)};
 
-                addTableWidgetItens(ui->tableWidget_stocks, stockRow, itens, STANDART_CELL);
+                int style = (quantity == 0) ? HIGHLIGHT_CELL : STANDART_CELL;
+                addTableWidgetItens(ui->tableWidget_stocks, stockRow, itens, style);
                 ++stockRow;
             }
         }
@@ -161,7 +164,8 @@ void MainWindow::updateSotckAndFundTable()
                          QString::number(profitPercentage, 'f', 2) + "%",
                          "R$ " + QString::number(captalGain, 'f', 2)};
 
-                addTableWidgetItens(ui->tableWidget_funds, fundRow, itens, STANDART_CELL);
+                int style = (quantity == 0) ? HIGHLIGHT_CELL : STANDART_CELL;
+                addTableWidgetItens(ui->tableWidget_funds, fundRow, itens, style);
                 ++fundRow;
             }
         }
@@ -255,8 +259,6 @@ void MainWindow::updateFixedIncomeTable()
     // Set variables
     QStringList itens;
     int row = 0;
-    double totalInvested = 0;
-    double totalCurrent = 0;
 
     for(auto fixedIncome: fixedIncomes)
     {
@@ -276,20 +278,16 @@ void MainWindow::updateFixedIncomeTable()
 
             // Insert itens
             addTableWidgetItens(ui->tableWidget_fixedIncome, row, itens, style);
-
-            // Update variables
-            totalInvested += fixedIncome->getInvestedValue();
-            totalCurrent += fixedIncome->getCurrentValue();
             ++row;
         }
     }
 
     // Set itens
     itens = {"-", "Total", "-",
-             "R$ " + QString::number(totalInvested, 'f', 2),
-             "R$ " + QString::number(totalCurrent, 'f', 2),
-             "R$ " + QString::number(totalCurrent - totalInvested, 'f', 2),
-             (totalCurrent == 0) ? "-" : QString::number(((totalCurrent - totalInvested) / totalCurrent) * 100, 'f', 2) + "%"};
+             "R$ " + QString::number(investmentController.getFixedIncomeTotalInvested(FixedIncome::VALID), 'f', 2),
+             "R$ " + QString::number(investmentController.getFixedIncomeCurrentTotal(FixedIncome::VALID), 'f', 2),
+             "R$ " + QString::number(investmentController.getFixedIncomeTotalYield(FixedIncome::VALID), 'f', 2),
+             QString::number(investmentController.getFixedIncomeTotalYieldPercentage(FixedIncome::VALID), 'f', 2) + "%"};
 
     // Insert total row
     addTableWidgetItens(ui->tableWidget_fixedIncome, row, itens, (HIGHLIGHT_CELL | FONT_BOLD | FONT_SIZE));

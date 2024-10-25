@@ -123,7 +123,7 @@ double Asset::getTotalInvested()
 double Asset::getProfitPercentage()
 {
     // Return profit percentage
-    return ((getCurrentPrice() - getAveragePrice()) / getAveragePrice()) * 100;
+    return (getAveragePrice() == 0) ? 0 : ((getCurrentPrice() - getAveragePrice()) / getAveragePrice()) * 100;
 }
 
 double Asset::getCapitalGain()

@@ -343,9 +343,9 @@ bool Database::investmentControllerInitialization(InvestmentController* investme
         QStringList tickers;
         if(selectAllTicker(&tickers))
         {
+            AssetApi assetApi;
             for(const QString &ticker: tickers)
             {
-                AssetApi assetApi;
                 updateTickerCurrentPrice(ticker, assetApi.getAssetCurrentPrice(ticker));
             }
 

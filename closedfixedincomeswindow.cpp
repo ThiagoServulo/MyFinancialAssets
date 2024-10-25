@@ -7,8 +7,8 @@ ClosedFixedIncomesWindow::ClosedFixedIncomesWindow(InvestmentController *investm
     ui(new Ui::ClosedFixedIncomesWindow)
 {
     ui->setupUi(this);
-    this->setMaximumSize(983, 600);
-    this->setMinimumSize(983, 600);
+    this->setMaximumSize(1061, 600);
+    this->setMinimumSize(1061, 600);
 
     // Set investment controller
     this->investmentController = investmentController;
@@ -20,8 +20,8 @@ ClosedFixedIncomesWindow::ClosedFixedIncomesWindow(InvestmentController *investm
     ui->label->setStyleSheet("color: rgb(255, 255, 255);");
 
     // Configure table widget
-    QStringList headerLabels = {"Descrição do investimento", "Data da compra", "Data da venda", "Valor investido",
-                                "Valor resgatado", "Rencimento", "Rendimento [%]"};
+    QStringList headerLabels = {"Descrição do investimento", "Data da compra", "Data da venda", "  Valor investido  ",
+                                "  Valor resgatado  ", "  Rendimento  ", "Rendimento [%]"};
     configureTableWidget(headerLabels, ui->tableWidget);
 
     // Update table widget

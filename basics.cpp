@@ -63,7 +63,9 @@ void configureTableWidget(QStringList headerLabels, QTableWidget *tableWidget)
 
     // Set header style
     QHeaderView* header = tableWidget->horizontalHeader();
-    header->setStyleSheet("QHeaderView::section { font-size: 14px; font-weight: bold; background-color: rgb(28, 28, 28); color: rgb(255, 255, 255); }");
+    header->setStyleSheet("QHeaderView::section { font-size: 14px; font-weight: bold;"
+                          "background-color: rgb(28, 28, 28);"
+                          "color: rgb(255, 255, 255); }");
 }
 
 void addTableWidgetItem(QTableWidget *tableWidget, int row, int column, QString item, int style)

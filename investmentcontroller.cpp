@@ -181,7 +181,7 @@ double InvestmentController::getFixedIncomeTotalYieldPercentage(bool status)
 {
     // Return total yield percentage
     return ((getFixedIncomeCurrentTotal(status) - getFixedIncomeTotalInvested(status)) /
-            getFixedIncomeCurrentTotal(status)) * 100;
+            getFixedIncomeTotalInvested(status)) * 100;
 }
 
 double InvestmentController::getTotalCapitalGainOfAssetsSold()

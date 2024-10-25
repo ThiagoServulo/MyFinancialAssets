@@ -48,7 +48,7 @@ double FixedIncome::getYield()
 
 double FixedIncome::getYieldPercentage()
 {
-    return ((currentValue == 0) ? 0 : ((currentValue - investedValue) / currentValue) * 100);
+    return (getYield() / investedValue) * 100;
 }
 
 QDate FixedIncome::getLimitDate()

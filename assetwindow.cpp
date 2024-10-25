@@ -130,6 +130,7 @@ void AssetWindow::updateTransactionTable()
                 // Calculate values
                 accumulatedQuantity -= quantity;
                 accumulatedTotal = accumulatedQuantity * averagePrice;
+                averagePrice = (accumulatedQuantity > 0) ? averagePrice : 0;
                 style = HIGHLIGHT_CELL;
             }
             else
