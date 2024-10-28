@@ -6,7 +6,9 @@
 enum class TransactionType
 {
     COMPRA,
-    VENDA
+    VENDA,
+    RESTITUICAO,
+    BONIFICACAO
 };
 
 enum class AssetType

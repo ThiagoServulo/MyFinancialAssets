@@ -336,23 +336,7 @@ bool Database::selectEventsForAsset(Asset* asset)
 bool Database::investmentControllerInitialization(InvestmentController* investmentController)
 {
     std::vector<Asset> assets;
-
-    if(checkLastUpdate())
-    {
-        // Update current price
-        QStringList tickers;
-        if(selectAllTicker(&tickers))
-        {
-            AssetApi assetApi;
-            for(const QString &ticker: tickers)
-            {
-                updateTickerCurrentPrice(ticker, assetApi.getAssetCurrentPrice(ticker));
-            }
-
-            // Update last update date
-            insertLastUpdateDate(QDate::currentDate());
-        }
-    }
+    AssetApi assetApi;
 
     // Get assets
     if(!selectAllAssets(assets))
@@ -369,7 +353,15 @@ bool Database::investmentControllerInitialization(InvestmentController* investme
 
         // Add asset
         investmentController->addAsset(std::make_shared<Asset>(asset));
+
+        if(checkLastUpdate() && asset.getQuantity() > 0)
+        {
+            asset.setCurrentPrice(assetApi.getAssetCurrentPrice(asset.getTicker()));
+            updateTickerCurrentPrice(asset.getTicker(), asset.getCurrentPrice());
+        }
     }
+
+    insertLastUpdateDate(QDate::currentDate());
 
     // Get fixed incomes
     for(auto fixedIncome : selectAllFixedIncomes())

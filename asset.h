@@ -18,6 +18,7 @@ public:
     QString getTicker();
     AssetType getAssetType();
     double getCurrentPrice();
+    void setCurrentPrice(double price);
     int getQuantity();
     double getTotalYield();
     double getAveragePrice();

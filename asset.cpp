@@ -30,6 +30,11 @@ double Asset::getCurrentPrice()
     return (getQuantity() == 0) ? 0 : currentPrice;
 }
 
+void Asset::setCurrentPrice(double price)
+{
+    currentPrice = price;
+}
+
 int Asset::getQuantity()
 {
     int quantity  = 0;
