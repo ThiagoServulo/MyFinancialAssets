@@ -7,7 +7,7 @@ QString getTransactionTypeString(TransactionType type)
     {
         case TransactionType::COMPRA: return "Compra";
         case TransactionType::VENDA: return "Venda";
-        case TransactionType::RESTITUICAO: return "Restitução de capital";
+        case TransactionType::RESTITUICAO: return "Restituição de capital";
         case TransactionType::BONIFICACAO: return "Bonificação de ações";
         default: return "Desconhecido";
     }
