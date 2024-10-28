@@ -180,13 +180,17 @@ bool DatabaseCreation::populateTransactionTypeTable()
     QString insertQuery = R"(
         INSERT INTO transaction_type_table (transaction_type) VALUES
         (:type1),
-        (:type2);
+        (:type2),
+        (:type3),
+        (:type4);
     )";
 
     QSqlQuery query;
     query.prepare(insertQuery);
     query.bindValue(":type1", getTransactionTypeString(TransactionType::COMPRA));
     query.bindValue(":type2", getTransactionTypeString(TransactionType::VENDA));
+    query.bindValue(":type3", getTransactionTypeString(TransactionType::RESTITUICAO));
+    query.bindValue(":type4", getTransactionTypeString(TransactionType::BONIFICACAO));
 
     // Execute query
     if (!query.exec())

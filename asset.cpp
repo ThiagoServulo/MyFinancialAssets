@@ -84,9 +84,9 @@ int Asset::getQuantity()
                 {
                     quantity -= transaction->getQuantity();
                 }
-                else
+                else if(transaction->getTransactionType() == TransactionType::BONIFICACAO)
                 {
-                    throw std::invalid_argument("Transaction type invalid");
+                    quantity += quantity * (transaction->getQuantity() / 100.0);
                 }
             }
         }
@@ -122,7 +122,9 @@ double Asset::getTotalInvested()
 {
     // Return total invested
     return (getQuantity() == 0) ? 0 :
-           (getTransactionsTotal(TransactionType::COMPRA) - getTransactionsTotal(TransactionType::VENDA));
+           (getTransactionsTotal(TransactionType::COMPRA) -
+            getTransactionsTotal(TransactionType::VENDA) -
+            getTransactionsTotal(TransactionType::RESTITUICAO));
 }
 
 double Asset::getProfitPercentage()
@@ -147,10 +149,14 @@ double Asset::getTransactionsTotal(TransactionType transactionType)
 
     for(auto transaction: transactions)
     {
+        // Get quantity
+        int quantity = (transaction.getTransactionType() == TransactionType::RESTITUICAO) ?
+                    1 : transaction.getQuantity();
+
         // Check transaction type
         if(transaction.getTransactionType() == transactionType)
         {
-            total += (transaction.getUnitaryPrice() * transaction.getQuantity());
+            total += (transaction.getUnitaryPrice() * quantity);
         }
     }
 
@@ -161,13 +167,16 @@ double Asset::getTransactionsTotal(TransactionType transactionType)
 double Asset::getProfitPercentageTotal()
 {
     // Return profit percentage
-    return ((getTransactionsTotal(TransactionType::VENDA) - getTransactionsTotal(TransactionType::COMPRA)) /
-            getTransactionsTotal(TransactionType::COMPRA)) * 100;
+    return (getCapitalGainTotal() /
+            (getTransactionsTotal(TransactionType::COMPRA) -
+             getTransactionsTotal(TransactionType::RESTITUICAO))) * 100.0;
 }
 
 double Asset::getCapitalGainTotal()
 {
     // Return capital gain
-    return (getTransactionsTotal(TransactionType::VENDA) - getTransactionsTotal(TransactionType::COMPRA)) +
-            getTotalYield();
+    return (getTotalYield() +
+            getTransactionsTotal(TransactionType::RESTITUICAO) +
+            getTransactionsTotal(TransactionType::VENDA) -
+            getTransactionsTotal(TransactionType::COMPRA));
 }

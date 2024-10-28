@@ -31,17 +31,22 @@ NewTransactionWindow::NewTransactionWindow(InvestmentController *investmentContr
     ui->pushButton_cancel->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255);");
 
     // Set combo box style
-    ui->comboBox_assetType->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); border: 1px solid rgb(50, 50, 50);");
+    ui->comboBox_assetType->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255);"
+                                          "border: 1px solid rgb(50, 50, 50);");
     ui->comboBox_transactionType->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); "
                                                 "border: 1px solid rgb(50, 50, 50);");
 
     // Set line edit style
-    ui->lineEdit_quantity->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); border: 1px solid rgb(50, 50, 50);");
-    ui->lineEdit_ticker->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); border: 1px solid rgb(50, 50, 50);");
-    ui->lineEdit_value->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); border: 1px solid rgb(50, 50, 50);");
+    ui->lineEdit_quantity->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255);"
+                                         "border: 1px solid rgb(50, 50, 50);");
+    ui->lineEdit_ticker->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255);"
+                                       "border: 1px solid rgb(50, 50, 50);");
+    ui->lineEdit_value->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255);"
+                                      "border: 1px solid rgb(50, 50, 50);");
 
     // Set data edit style
-    ui->dateEdit->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); border: 1px solid rgb(50, 50, 50);");
+    ui->dateEdit->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255);"
+                                "border: 1px solid rgb(50, 50, 50);");
 
     // Add assets types
     ui->comboBox_assetType->addItem(getAssetTypeString(AssetType::ACAO));
@@ -51,6 +56,8 @@ NewTransactionWindow::NewTransactionWindow(InvestmentController *investmentContr
     // Add transaction types
     ui->comboBox_transactionType->addItem(getTransactionTypeString(TransactionType::COMPRA));
     ui->comboBox_transactionType->addItem(getTransactionTypeString(TransactionType::VENDA));
+    ui->comboBox_transactionType->addItem(getTransactionTypeString(TransactionType::BONIFICACAO));
+    ui->comboBox_transactionType->addItem(getTransactionTypeString(TransactionType::RESTITUICAO));
     ui->comboBox_transactionType->setCurrentIndex(-1);
 
     // Creating quantity validator
@@ -98,12 +105,26 @@ void NewTransactionWindow::on_pushButton_save_clicked()
 
         if(transactionType == TransactionType::VENDA)
         {
-            int quantityAvailable = investmentController->getAsset(ticker)->getQuantity();
+            // Get asset
+            auto asset = investmentController->getAsset(ticker);
 
-            if(quantityAvailable < quantity)
+            // Check asset
+            if(asset != nullptr)
             {
-                QMessageBox::critical(this, "Erro", "Você tem : " + QString::number(quantityAvailable) +
-                                      " quantidade de papéis disponíveis");
+                // Get quantity available
+                int quantityAvailable = investmentController->getAsset(ticker)->getQuantity();
+
+                // Check quantity available
+                if(quantityAvailable < quantity)
+                {
+                    QMessageBox::critical(this, "Erro", "Você tem : " + QString::number(quantityAvailable) +
+                                          " quantidade de papéis disponíveis");
+                    return;
+                }
+            }
+            else
+            {
+                QMessageBox::critical(this, "Erro", "Tipo de transação inválida. Você não tem esse papel cadastrado.");
                 return;
             }
         }
@@ -111,19 +132,27 @@ void NewTransactionWindow::on_pushButton_save_clicked()
         // Add new asset if is necessary
         if(investmentController->getAsset(ticker) == nullptr)
         {
-            // Create asset
-            AssetApi assetApi;
-            Asset asset(ticker, assetType, assetApi.getAssetCurrentPrice(ticker));
-
-            // Insert asset
-            if(!database.insertAsset(asset))
+            if(transactionType == TransactionType::COMPRA)
             {
-                QMessageBox::critical(this, "Erro", "Erro ao inserir novo ativo");
+                // Create asset
+                AssetApi assetApi;
+                Asset asset(ticker, assetType, assetApi.getAssetCurrentPrice(ticker));
+
+                // Insert asset
+                if(!database.insertAsset(asset))
+                {
+                    QMessageBox::critical(this, "Erro", "Erro ao inserir novo ativo");
+                    return;
+                }
+
+                // Add asset to investment controller
+                investmentController->addAsset(std::make_shared<Asset>(asset));
+            }
+            else
+            {
+                QMessageBox::critical(this, "Erro", "Tipo de transação inválida. Você não tem esse papel cadastrado.");
                 return;
             }
-
-            // Add asset to investment controller
-            investmentController->addAsset(std::make_shared<Asset>(asset));
         }
 
         // Create transaction
@@ -153,3 +182,16 @@ void NewTransactionWindow::on_pushButton_cancel_clicked()
     this->close();
 }
 
+void NewTransactionWindow::on_comboBox_transactionType_textActivated(const QString &arg1)
+{
+    // Get transaction type
+    TransactionType transactionType = getTransactionTypeFromString(arg1);
+
+    // Check bonification
+    ui->lineEdit_value->setText((transactionType == TransactionType::BONIFICACAO) ? "0": "");
+    ui->lineEdit_value->setReadOnly(transactionType == TransactionType::BONIFICACAO);
+
+    // Check bonification
+    ui->lineEdit_quantity->setText((transactionType == TransactionType::RESTITUICAO) ? "0": "");
+    ui->lineEdit_quantity->setReadOnly(transactionType == TransactionType::RESTITUICAO);
+}

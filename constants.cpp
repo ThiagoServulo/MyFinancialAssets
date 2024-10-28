@@ -7,6 +7,8 @@ QString getTransactionTypeString(TransactionType type)
     {
         case TransactionType::COMPRA: return "Compra";
         case TransactionType::VENDA: return "Venda";
+        case TransactionType::RESTITUICAO: return "Restitução de capital";
+        case TransactionType::BONIFICACAO: return "Bonificação de ações";
         default: return "Desconhecido";
     }
 }
@@ -51,6 +53,14 @@ TransactionType getTransactionTypeFromString(QString type)
     else if (type == getTransactionTypeString(TransactionType::VENDA))
     {
         return TransactionType::VENDA;
+    }
+    else if (type == getTransactionTypeString(TransactionType::RESTITUICAO))
+    {
+        return TransactionType::RESTITUICAO;
+    }
+    else if (type == getTransactionTypeString(TransactionType::BONIFICACAO))
+    {
+        return TransactionType::BONIFICACAO;
     }
     else
     {
@@ -112,8 +122,10 @@ YieldType getYieldTypeFromString(QString type)
 
 bool isValidTransactionType(const QString& type)
 {
-    return (type == getTransactionTypeString(TransactionType::COMPRA) ||
-            type == getTransactionTypeString(TransactionType::VENDA));
+    return (type == getTransactionTypeString(TransactionType::COMPRA)      ||
+            type == getTransactionTypeString(TransactionType::VENDA)       ||
+            type == getTransactionTypeString(TransactionType::RESTITUICAO) ||
+            type == getTransactionTypeString(TransactionType::BONIFICACAO));
 }
 
 bool isValidAssetType(const QString& type)
@@ -125,7 +137,7 @@ bool isValidAssetType(const QString& type)
 bool isValidYieldType(const QString& type)
 {
     return (type == getYieldTypeString(YieldType::RENDIMENTO) ||
-            type == getYieldTypeString(YieldType::DIVIDENDO) ||
+            type == getYieldTypeString(YieldType::DIVIDENDO)  ||
             type == getYieldTypeString(YieldType::JCP));
 }
 

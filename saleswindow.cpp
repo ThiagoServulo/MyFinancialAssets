@@ -48,7 +48,8 @@ void SalesWindow::updateTableWidgetSales()
             QDate purchaseDate = asset->getEspecifiedTransactionDate(TransactionType::COMPRA, true);
             QDate limitDate = asset->getEspecifiedTransactionDate(TransactionType::VENDA, false);
             double totalYield = asset->getTotalYield();
-            double purchaseTotal = asset->getTransactionsTotal(TransactionType::COMPRA);
+            double purchaseTotal = asset->getTransactionsTotal(TransactionType::COMPRA) -
+                    asset->getTransactionsTotal(TransactionType::RESTITUICAO);
             double saleTotal = asset->getTransactionsTotal(TransactionType::VENDA);
             double profitPercentage = asset->getProfitPercentageTotal();
             double capitalGain = asset->getCapitalGainTotal();
@@ -71,8 +72,9 @@ void SalesWindow::updateTableWidgetSales()
     // Get total values
     double capitalGain = investmentController->getTotalCapitalGainOfAssetsSold();
     double totalYield = investmentController->getTotalYieldOfAssetsSold();
-    double saleTotal = investmentController->getSaleTotalOfAssetsSold();
-    double purchaseTotal = investmentController->getPurchaseTotalOfAssetsSold();
+    double saleTotal = investmentController->getTransactionsTotalOfAssetsSold(TransactionType::VENDA);
+    double purchaseTotal = investmentController->getTransactionsTotalOfAssetsSold(TransactionType::COMPRA) -
+            investmentController->getTransactionsTotalOfAssetsSold(TransactionType::RESTITUICAO);
     double profitPercentage = investmentController->getProfitPercentageTotalOfAssetsSold();
 
     // Get itens

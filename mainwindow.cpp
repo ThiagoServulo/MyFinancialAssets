@@ -33,6 +33,7 @@ MainWindow::MainWindow(QWidget *parent)
     configureTableWidget(headerLabels, ui->tableWidget_stocks);
     configureTableWidget(headerLabels, ui->tableWidget_funds);
 
+    // Configure fixed income table
     headerLabels = {"Data da compra", "\tDescrição do investimento\t", "Rendimento esperado", " Valor investido ",
                     "   Valor atual   ", "Rendimento", "Data limite"};
     configureTableWidget(headerLabels, ui->tableWidget_fixedIncome);
@@ -140,7 +141,8 @@ void MainWindow::updateSotckAndFundTable()
                 itens = {ticker, QString::number(investmentController.getAssetDistribution(ticker), 'f', 2) + "%",
                          QString::number(quantity),
                          "R$ " + QString::number(totalInvested, 'f', 2),
-                         "R$ " + QString::number(totalYield, 'f', 2), "R$ " + QString::number(averagePrice, 'f', 2),
+                         "R$ " + QString::number(totalYield, 'f', 2),
+                         "R$ " + QString::number(averagePrice, 'f', 2),
                          "R$ " + QString::number(currentPrice, 'f', 2),
                          QString::number(profitPercentage, 'f', 2) + "%",
                          "R$ " + QString::number(captalGain, 'f', 2)};
@@ -159,7 +161,8 @@ void MainWindow::updateSotckAndFundTable()
                 itens = {ticker, QString::number(investmentController.getAssetDistribution(ticker), 'f', 2) + "%",
                          QString::number(quantity),
                          "R$ " + QString::number(totalInvested, 'f', 2),
-                         "R$ " + QString::number(totalYield, 'f', 2), "R$ " + QString::number(averagePrice, 'f', 2),
+                         "R$ " + QString::number(totalYield, 'f', 2),
+                         "R$ " + QString::number(averagePrice, 'f', 2),
                          "R$ " + QString::number(currentPrice, 'f', 2),
                          QString::number(profitPercentage, 'f', 2) + "%",
                          "R$ " + QString::number(captalGain, 'f', 2)};

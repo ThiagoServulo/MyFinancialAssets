@@ -187,7 +187,10 @@ double InvestmentController::getFixedIncomeTotalYieldPercentage(bool status)
 double InvestmentController::getTotalCapitalGainOfAssetsSold()
 {
     // Return total cpital gain
-    return (getTotalYieldOfAssetsSold() + (getSaleTotalOfAssetsSold() - getPurchaseTotalOfAssetsSold()));
+    return (getTotalYieldOfAssetsSold() +
+            getTransactionsTotalOfAssetsSold(TransactionType::VENDA) +
+            getTransactionsTotalOfAssetsSold(TransactionType::RESTITUICAO) -
+            getTransactionsTotalOfAssetsSold(TransactionType::COMPRA));
 }
 
 double InvestmentController::getTotalYieldOfAssetsSold()
@@ -208,7 +211,7 @@ double InvestmentController::getTotalYieldOfAssetsSold()
     return total;
 }
 
-double InvestmentController::getPurchaseTotalOfAssetsSold()
+double InvestmentController::getTransactionsTotalOfAssetsSold(TransactionType transactionType)
 {
     // Init total
     double total = 0;
@@ -218,25 +221,7 @@ double InvestmentController::getPurchaseTotalOfAssetsSold()
     {
         if(asset->getQuantity() == 0)
         {
-            total += asset->getTransactionsTotal(TransactionType::COMPRA);
-        }
-    }
-
-    // Return total
-    return total;
-}
-
-double InvestmentController::getSaleTotalOfAssetsSold()
-{
-    // Init total
-    double total = 0;
-
-    // Check assets
-    for(auto asset: assets)
-    {
-        if(asset->getQuantity() == 0)
-        {
-            total += asset->getTransactionsTotal(TransactionType::VENDA);
+            total += asset->getTransactionsTotal(transactionType);
         }
     }
 
@@ -247,6 +232,8 @@ double InvestmentController::getSaleTotalOfAssetsSold()
 double InvestmentController::getProfitPercentageTotalOfAssetsSold()
 {
     // Return profit percentage
-    return (getPurchaseTotalOfAssetsSold() == 0) ? 0 :
-           ((getSaleTotalOfAssetsSold() - getPurchaseTotalOfAssetsSold()) / getPurchaseTotalOfAssetsSold()) * 100;
+    return (getTransactionsTotalOfAssetsSold(TransactionType::COMPRA) == 0) ? 0 :
+           (getTotalCapitalGainOfAssetsSold() /
+            (getTransactionsTotalOfAssetsSold(TransactionType::COMPRA) -
+             getTransactionsTotalOfAssetsSold(TransactionType::RESTITUICAO))) * 100;
 }

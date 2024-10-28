@@ -119,7 +119,6 @@ void AssetWindow::updateTransactionTable()
             // Check transaction type
             if(transactionType == TransactionType::COMPRA)
             {
-                // Calculate values
                 accumulatedQuantity += quantity;
                 accumulatedTotal = (accumulatedQuantity > 0) ? accumulatedTotal + totalOperation : 0;
                 averagePrice = (accumulatedQuantity > 0) ? (accumulatedTotal / accumulatedQuantity) : 0;
@@ -127,10 +126,22 @@ void AssetWindow::updateTransactionTable()
             }
             else if (transactionType == TransactionType::VENDA)
             {
-                // Calculate values
                 accumulatedQuantity -= quantity;
                 accumulatedTotal = accumulatedQuantity * averagePrice;
                 averagePrice = (accumulatedQuantity > 0) ? averagePrice : 0;
+                style = HIGHLIGHT_CELL;
+            }
+            else if (transactionType == TransactionType::BONIFICACAO)
+            {
+                accumulatedQuantity += quantity * (quantity / 100.0);
+                averagePrice = (accumulatedQuantity > 0) ? (accumulatedTotal / accumulatedQuantity) : 0;
+                accumulatedTotal = accumulatedQuantity * averagePrice;
+                style = HIGHLIGHT_CELL;
+            }
+            else if (transactionType == TransactionType::RESTITUICAO)
+            {
+                accumulatedTotal -= unitaryPrice;
+                averagePrice = (accumulatedQuantity > 0) ? (accumulatedTotal / accumulatedQuantity) : 0;
                 style = HIGHLIGHT_CELL;
             }
             else
@@ -139,7 +150,8 @@ void AssetWindow::updateTransactionTable()
             }
 
             // Populate string list
-            itens = {getTransactionTypeString(transactionType), date.toString("dd/MM/yyyy"), QString::number(quantity),
+            itens = {getTransactionTypeString(transactionType), date.toString("dd/MM/yyyy"),
+                     QString::number(quantity) + ((transactionType == TransactionType::BONIFICACAO) ? "%" : ""),
                     "R$ " + QString::number(unitaryPrice, 'f', 2), "R$ " + QString::number(totalOperation, 'f', 2),
                     QString::number(accumulatedQuantity), "R$ " + QString::number(averagePrice, 'f', 2),
                     "R$ " + QString::number(accumulatedQuantity * averagePrice, 'f', 2)};

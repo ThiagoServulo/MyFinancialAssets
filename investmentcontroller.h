@@ -29,8 +29,7 @@ public:
     double getFixedIncomeTotalYieldPercentage(bool status);
     double getTotalCapitalGainOfAssetsSold();
     double getTotalYieldOfAssetsSold();
-    double getPurchaseTotalOfAssetsSold();
-    double getSaleTotalOfAssetsSold();
+    double getTransactionsTotalOfAssetsSold(TransactionType transactionType);
     double getProfitPercentageTotalOfAssetsSold();
 };
 

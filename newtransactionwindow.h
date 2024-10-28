@@ -19,6 +19,7 @@ public:
 private slots:
     void on_pushButton_save_clicked();
     void on_pushButton_cancel_clicked();
+    void on_comboBox_transactionType_textActivated(const QString &arg1);
 
 private:
     Ui::NewTransactionWindow *ui;
