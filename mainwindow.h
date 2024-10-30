@@ -30,6 +30,7 @@ private slots:
     void on_tableWidget_fixedIncome_cellDoubleClicked(int row, int column);
     void on_checkBox_hideFounds_stateChanged(int arg1);
     void on_actionClosedFixedIncomes_triggered();
+    void on_actionVariableIncome_triggered();
 
 private:
     Ui::MainWindow *ui;

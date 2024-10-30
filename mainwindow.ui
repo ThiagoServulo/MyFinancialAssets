@@ -147,8 +147,15 @@
     <addaction name="actionClosedFixedIncomes"/>
     <addaction name="separator"/>
    </widget>
+   <widget class="QMenu" name="menuRelat_rios">
+    <property name="title">
+     <string>Relatórios</string>
+    </property>
+    <addaction name="actionVariableIncome"/>
+   </widget>
    <addaction name="menuNew"/>
    <addaction name="menuAnalysis"/>
+   <addaction name="menuRelat_rios"/>
   </widget>
   <action name="actionTransaction">
    <property name="text">
@@ -178,6 +185,11 @@
   <action name="actionClosedFixedIncomes">
    <property name="text">
     <string>Renda fixa encerradas</string>
+   </property>
+  </action>
+  <action name="actionVariableIncome">
+   <property name="text">
+    <string>Renda variável</string>
    </property>
   </action>
  </widget>

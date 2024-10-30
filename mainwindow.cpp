@@ -15,6 +15,7 @@
 #include "newfixedincomewindow.h"
 #include "updatefixedincomewindow.h"
 #include "closedfixedincomeswindow.h"
+#include "variableincomeperformancewindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -323,3 +324,10 @@ void MainWindow::on_actionClosedFixedIncomes_triggered()
     ClosedFixedIncomesWindow *fixedIncomeWindow = new ClosedFixedIncomesWindow(&investmentController, this);
     fixedIncomeWindow->show();
 }
+
+void MainWindow::on_actionVariableIncome_triggered()
+{
+    VariableIncomePerformanceWindow *variableIncomeWindow = new VariableIncomePerformanceWindow(&investmentController, this);
+    variableIncomeWindow->show();
+}
+
