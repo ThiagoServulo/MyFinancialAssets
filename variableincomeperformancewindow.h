@@ -19,7 +19,6 @@ public:
 private:
     Ui::VariableIncomePerformanceWindow *ui;
     InvestmentController *investmentController;
-    QDate initialDate = QDate(2021, 1, 1);
     void updateTableWidget();
 };
 

@@ -42,15 +42,15 @@ void SalesWindow::updateTableWidgetSales()
 
     for(auto asset: this->investmentController->getAllAssets())
     {
-        if(investmentController->getAsset(asset->getTicker())->getQuantity() == 0)
+        if(investmentController->getAsset(asset->getTicker())->getQuantity(nullptr, nullptr) == 0)
         {
             // Get values
             QDate purchaseDate = asset->getEspecifiedTransactionDate(TransactionType::COMPRA, true);
             QDate limitDate = asset->getEspecifiedTransactionDate(TransactionType::VENDA, false);
-            double totalYield = asset->getTotalYield();
-            double purchaseTotal = asset->getTransactionsTotal(TransactionType::COMPRA) -
-                    asset->getTransactionsTotal(TransactionType::RESTITUICAO);
-            double saleTotal = asset->getTransactionsTotal(TransactionType::VENDA);
+            double totalYield = asset->getTotalYield(nullptr, nullptr);
+            double purchaseTotal = asset->getTransactionsTotal(TransactionType::COMPRA, nullptr, nullptr) -
+                    asset->getTransactionsTotal(TransactionType::RESTITUICAO, nullptr, nullptr);
+            double saleTotal = asset->getTransactionsTotal(TransactionType::VENDA, nullptr, nullptr);
             double profitPercentage = asset->getProfitPercentageTotal();
             double capitalGain = asset->getCapitalGainTotal();
 

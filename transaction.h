@@ -16,6 +16,7 @@ public:
     TransactionType getTransactionType() const;
     int getQuantity() const;
     double getUnitaryPrice() const;
+    QDate getEventDate() const;
 };
 
 #endif // TRANSACTION_H

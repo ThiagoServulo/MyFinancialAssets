@@ -112,7 +112,7 @@ void NewTransactionWindow::on_pushButton_save_clicked()
             if(asset != nullptr)
             {
                 // Get quantity available
-                int quantityAvailable = investmentController->getAsset(ticker)->getQuantity();
+                int quantityAvailable = investmentController->getAsset(ticker)->getQuantity(nullptr, nullptr);
 
                 // Check quantity available
                 if(quantityAvailable < quantity)

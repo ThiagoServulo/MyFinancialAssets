@@ -22,3 +22,8 @@ double Transaction::getUnitaryPrice() const
 {
     return this->unitaryPrice;
 }
+
+QDate Transaction::getEventDate() const
+{
+    return getDate();
+}

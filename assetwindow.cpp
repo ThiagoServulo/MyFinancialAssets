@@ -37,8 +37,8 @@ AssetWindow::~AssetWindow()
 void AssetWindow::updateTransactionTable()
 {
     // Get events
-    auto transactions = asset->getTransactions();
-    auto reorganizations = asset->getReorganizations();
+    auto transactions = asset->getTransactions(nullptr, nullptr);
+    auto reorganizations = asset->getReorganizations(nullptr, nullptr);
     auto events = mergeAndSortEvents(transactions, reorganizations);
 
     // Configure transaction table
@@ -173,7 +173,7 @@ void AssetWindow::updateTransactionTable()
 void AssetWindow::updateYieldTable()
 {
     // Get Yield
-    auto yields = asset->getYields();
+    auto yields = asset->getYields(nullptr, nullptr);
 
     // Configure yield table
     QStringList headerLabels = {"Tipo de rendimento", "Data do rendimento", "Valor recebido", "Valor agregado"};

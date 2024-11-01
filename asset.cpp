@@ -27,7 +27,7 @@ AssetType Asset::getAssetType()
 
 double Asset::getCurrentPrice()
 {
-    return (getQuantity() == 0) ? 0 : currentPrice;
+    return (getQuantity(nullptr, nullptr) == 0) ? 0 : currentPrice;
 }
 
 void Asset::setCurrentPrice(double price)
@@ -35,11 +35,11 @@ void Asset::setCurrentPrice(double price)
     currentPrice = price;
 }
 
-int Asset::getQuantity()
+int Asset::getQuantity(QDate *init, QDate *end)
 {
     int quantity  = 0;
-    auto transactions = getTransactions();
-    auto reorganizations = getReorganizations();
+    auto transactions = getTransactions(init, end);
+    auto reorganizations = getReorganizations(init, end);
     auto events = mergeAndSortEvents(transactions, reorganizations);
 
     for(auto event: events)
@@ -52,18 +52,23 @@ int Asset::getQuantity()
             // Check cast
             if (reorganization)
             {
-                // Check reorganization type
-                if(reorganization->getReorganizationType() == ReorganizationType::GRUPAMENTO)
+                // Check dates
+                if((init == nullptr && end == nullptr) ||
+                        (reorganization->getDate() >= *init && reorganization->getDate() < *end))
                 {
-                    quantity = (quantity == 0) ? 0 : (quantity / reorganization->getRatio());
-                }
-                else if (reorganization->getReorganizationType() == ReorganizationType::DESDOBRAMENTO)
-                {
-                    quantity = static_cast<int>(quantity * reorganization->getRatio());
-                }
-                else
-                {
-                    throw std::invalid_argument("Reorganization type invalid");
+                    // Check reorganization type
+                    if(reorganization->getReorganizationType() == ReorganizationType::GRUPAMENTO)
+                    {
+                        quantity = (quantity == 0) ? 0 : (quantity / reorganization->getRatio());
+                    }
+                    else if (reorganization->getReorganizationType() == ReorganizationType::DESDOBRAMENTO)
+                    {
+                        quantity = static_cast<int>(quantity * reorganization->getRatio());
+                    }
+                    else
+                    {
+                        throw std::invalid_argument("Reorganization type invalid");
+                    }
                 }
             }
         }
@@ -94,13 +99,13 @@ int Asset::getQuantity()
     return quantity;
 }
 
-double Asset::getTotalYield()
+double Asset::getTotalYield(QDate *init, QDate *end)
 {
     // Init total
     double total = 0;
 
     // Get yields
-    auto yields = getYields();
+    auto yields = getYields(init, end);
 
     for(auto yield: yields)
     {
@@ -115,16 +120,16 @@ double Asset::getTotalYield()
 double Asset::getAveragePrice()
 {
     // Calculate average price
-    return (getQuantity() == 0) ? 0 : (getTotalInvested() / getQuantity());
+    return (getQuantity(nullptr, nullptr) == 0) ? 0 : (getTotalInvested(nullptr, nullptr) / getQuantity(nullptr, nullptr));
 }
 
-double Asset::getTotalInvested()
+double Asset::getTotalInvested(QDate *init, QDate *end)
 {
     // Return total invested
-    return (getQuantity() == 0) ? 0 :
-           (getTransactionsTotal(TransactionType::COMPRA) -
-            getTransactionsTotal(TransactionType::VENDA) -
-            getTransactionsTotal(TransactionType::RESTITUICAO));
+    return (getQuantity(init, end) == 0) ? 0 :
+           (getTransactionsTotal(TransactionType::COMPRA, init, end) -
+            getTransactionsTotal(TransactionType::VENDA, init, end) -
+            getTransactionsTotal(TransactionType::RESTITUICAO, init, end));
 }
 
 double Asset::getProfitPercentage()
@@ -136,16 +141,16 @@ double Asset::getProfitPercentage()
 double Asset::getCapitalGain()
 {
     // Return capital gain
-    return ((getCurrentPrice() - getAveragePrice()) * getQuantity()) + getTotalYield();
+    return ((getCurrentPrice() - getAveragePrice()) * getQuantity(nullptr, nullptr)) + getTotalYield(nullptr, nullptr);
 }
 
-double Asset::getTransactionsTotal(TransactionType transactionType)
+double Asset::getTransactionsTotal(TransactionType transactionType, QDate *init, QDate *end)
 {
     // Init total
     double total = 0;
 
     // Get transactions
-    std::vector<Transaction> transactions = getTransactions();
+    std::vector<Transaction> transactions = getTransactions(nullptr, nullptr);
 
     for(auto transaction: transactions)
     {
@@ -156,7 +161,12 @@ double Asset::getTransactionsTotal(TransactionType transactionType)
         // Check transaction type
         if(transaction.getTransactionType() == transactionType)
         {
-            total += (transaction.getUnitaryPrice() * quantity);
+            // Check date
+            if((init == nullptr && end == nullptr) ||
+                    (transaction.getEventDate() >= *init && transaction.getEventDate() < *end))
+            {
+                total += (transaction.getUnitaryPrice() * quantity);
+            }
         }
     }
 
@@ -168,15 +178,16 @@ double Asset::getProfitPercentageTotal()
 {
     // Return profit percentage
     return (getCapitalGainTotal() /
-            (getTransactionsTotal(TransactionType::COMPRA) -
-             getTransactionsTotal(TransactionType::RESTITUICAO))) * 100.0;
+            (getTransactionsTotal(TransactionType::COMPRA, nullptr, nullptr) -
+             getTransactionsTotal(TransactionType::RESTITUICAO, nullptr, nullptr))) * 100.0;
 }
 
 double Asset::getCapitalGainTotal()
 {
     // Return capital gain
-    return (getTotalYield() +
-            getTransactionsTotal(TransactionType::RESTITUICAO) +
-            getTransactionsTotal(TransactionType::VENDA) -
-            getTransactionsTotal(TransactionType::COMPRA));
+    return (getTotalYield(nullptr, nullptr) +
+            getTransactionsTotal(TransactionType::RESTITUICAO, nullptr, nullptr) +
+            getTransactionsTotal(TransactionType::VENDA, nullptr, nullptr) -
+            getTransactionsTotal(TransactionType::COMPRA, nullptr, nullptr));
 }
+

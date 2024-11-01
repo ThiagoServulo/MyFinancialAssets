@@ -10,7 +10,7 @@ Event::Event(QDate eventDate, EventType eventType)
     this->eventType = eventType;
 }
 
-QDate Event::getDate()
+QDate Event::getDate() const
 {
     return this->date;
 }

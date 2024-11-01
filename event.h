@@ -14,7 +14,7 @@ public:
     Event();
     virtual ~Event() {};
     Event(QDate eventDate, EventType eventType);
-    QDate getDate();
+    QDate getDate() const;
     EventType getEventType() const;
 };
 

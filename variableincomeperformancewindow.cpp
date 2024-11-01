@@ -35,5 +35,17 @@ VariableIncomePerformanceWindow::~VariableIncomePerformanceWindow()
 
 void VariableIncomePerformanceWindow::updateTableWidget()
 {
+    QDate *init = new QDate(2021,1,1);
+    QDate *end = new QDate(2021,2,1);
 
+    auto assets = investmentController->getAllAssets();
+    int aux = 0;
+    for(auto asset: assets)
+    {
+        aux += investmentController->getAsset(asset->getTicker())->getQuantity(init, end);
+        qDebug() << investmentController->getAsset(asset->getTicker())->getTotalInvested(init, end);
+        qDebug() << investmentController->getAsset(asset->getTicker())->getTotalYield(init, end);
+    }
+    //init->addMonths()
+    qDebug() << "aa: " << aux;
 }

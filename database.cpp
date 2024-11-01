@@ -354,7 +354,7 @@ bool Database::investmentControllerInitialization(InvestmentController* investme
         // Add asset
         investmentController->addAsset(std::make_shared<Asset>(asset));
 
-        if(checkLastUpdate() && asset.getQuantity() > 0)
+        if(checkLastUpdate() && asset.getQuantity(nullptr, nullptr) > 0)
         {
             asset.setCurrentPrice(assetApi.getAssetCurrentPrice(asset.getTicker()));
             updateTickerCurrentPrice(asset.getTicker(), asset.getCurrentPrice());

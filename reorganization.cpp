@@ -16,3 +16,8 @@ ReorganizationType Reorganization::getReorganizationType() const
 {
     return this->reorganizationType;
 }
+
+QDate Reorganization::getEventDate() const
+{
+    return getDate();
+}

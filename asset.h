@@ -19,13 +19,13 @@ public:
     AssetType getAssetType();
     double getCurrentPrice();
     void setCurrentPrice(double price);
-    int getQuantity();
-    double getTotalYield();
+    int getQuantity(QDate *init, QDate *end);
+    double getTotalYield(QDate *init, QDate *end);
     double getAveragePrice();
-    double getTotalInvested();
+    double getTotalInvested(QDate *init, QDate *end);
     double getProfitPercentage();
     double getCapitalGain();
-    double getTransactionsTotal(TransactionType transactionType);
+    double getTransactionsTotal(TransactionType transactionType, QDate *init, QDate *end);
     double getProfitPercentageTotal();
     double getCapitalGainTotal();
 };

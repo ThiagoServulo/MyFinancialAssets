@@ -41,7 +41,7 @@ int InvestmentController::getTotalQuantityOfAssets(AssetType assetType)
     {
         if(asset->getAssetType() == assetType)
         {
-            quantity += asset->getQuantity();
+            quantity += asset->getQuantity(nullptr, nullptr);
         }
     }
 
@@ -58,7 +58,7 @@ double InvestmentController::getTotalYieldOfAssets(AssetType assetType)
     {
         if(asset->getAssetType() == assetType)
         {
-            total += asset->getTotalYield();
+            total += asset->getTotalYield(nullptr, nullptr);
         }
     }
 
@@ -73,9 +73,9 @@ double InvestmentController::getTotalInvestedOfAssets(AssetType assetType)
     // Check assets
     for(auto asset: assets)
     {
-        if(asset->getAssetType() == assetType && asset->getQuantity() != 0)
+        if(asset->getAssetType() == assetType && asset->getQuantity(nullptr, nullptr) != 0)
         {
-            total += asset->getTotalInvested();
+            total += asset->getTotalInvested(nullptr, nullptr);
         }
     }
 
@@ -104,13 +104,13 @@ double InvestmentController::getTotalCapitalGainOfAssets(AssetType assetType)
 double InvestmentController::getAssetDistribution(QString ticker)
 {
     // Get total asset invested
-    double totalAssetInvested = (getAsset(ticker)->getTotalInvested());
+    double totalAssetInvested = (getAsset(ticker)->getTotalInvested(nullptr, nullptr));
 
     // Get total invested according to asset type
     double totalInvested = getTotalInvestedOfAssets(getAsset(ticker)->getAssetType());
 
     // Return asset distribution in percentage
-    return (getAsset(ticker)->getQuantity() == 0) ? 0 : (totalAssetInvested / totalInvested) * 100;
+    return (getAsset(ticker)->getQuantity(nullptr, nullptr) == 0) ? 0 : (totalAssetInvested / totalInvested) * 100;
 }
 
 void InvestmentController::addFixedIncome(std::shared_ptr<FixedIncome> fixedIncome)
@@ -201,9 +201,9 @@ double InvestmentController::getTotalYieldOfAssetsSold()
     // Check assets
     for(auto asset: assets)
     {
-        if(asset->getQuantity() == 0)
+        if(asset->getQuantity(nullptr, nullptr) == 0)
         {
-            total += asset->getTotalYield();
+            total += asset->getTotalYield(nullptr, nullptr);
         }
     }
 
@@ -219,9 +219,9 @@ double InvestmentController::getTransactionsTotalOfAssetsSold(TransactionType tr
     // Check assets
     for(auto asset: assets)
     {
-        if(asset->getQuantity() == 0)
+        if(asset->getQuantity(nullptr, nullptr) == 0)
         {
-            total += asset->getTransactionsTotal(transactionType);
+            total += asset->getTransactionsTotal(transactionType, nullptr, nullptr);
         }
     }
 

@@ -14,9 +14,9 @@ private:
 public:
     EventController();
     void addEvent(std::shared_ptr<Event> event);
-    std::vector<Transaction> getTransactions();
-    std::vector<Yield> getYields();
-    std::vector<Reorganization> getReorganizations();
+    std::vector<Transaction> getTransactions(QDate *init, QDate *end);
+    std::vector<Yield> getYields(QDate *init, QDate *end);
+    std::vector<Reorganization> getReorganizations(QDate *init, QDate *end);
     QDate getEspecifiedTransactionDate(TransactionType transactionType, bool type);
 };
 

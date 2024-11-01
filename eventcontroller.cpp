@@ -9,7 +9,7 @@ void EventController::addEvent(std::shared_ptr<Event> event)
     eventList.push_back(event);
 }
 
-std::vector<Transaction> EventController::getTransactions()
+std::vector<Transaction> EventController::getTransactions(QDate *init, QDate *end)
 {
     std::vector<Transaction> transactions;
 
@@ -23,8 +23,13 @@ std::vector<Transaction> EventController::getTransactions()
             // Check object
             if (transaction)
             {
-                // Add transaction
-                transactions.push_back(*transaction);
+                // Check date
+                if((init == nullptr && end == nullptr) ||
+                        (transaction->getEventDate() >= *init && transaction->getEventDate() < *end))
+                {
+                    // Add transaction
+                    transactions.push_back(*transaction);
+                }
             }
         }
     }
@@ -33,7 +38,7 @@ std::vector<Transaction> EventController::getTransactions()
     return transactions;
 }
 
-std::vector<Yield> EventController::getYields()
+std::vector<Yield> EventController::getYields(QDate *init, QDate *end)
 {
     std::vector<Yield> yields;
 
@@ -47,8 +52,13 @@ std::vector<Yield> EventController::getYields()
             // Check object
             if (yield)
             {
-                // Add yield
-                yields.push_back(*yield);
+                // Check date
+                if((init == nullptr && end == nullptr) ||
+                        (yield->getEventDate() >= *init && yield->getEventDate() < *end))
+                {
+                    // Add yield
+                    yields.push_back(*yield);
+                }
             }
         }
     }
@@ -57,7 +67,7 @@ std::vector<Yield> EventController::getYields()
     return yields;
 }
 
-std::vector<Reorganization> EventController::getReorganizations()
+std::vector<Reorganization> EventController::getReorganizations(QDate *init, QDate *end)
 {
     std::vector<Reorganization> reorganizations;
 
@@ -71,8 +81,13 @@ std::vector<Reorganization> EventController::getReorganizations()
             // Check object
             if (reorganization)
             {
-                // Add yield
-                reorganizations.push_back(*reorganization);
+                // Check date
+                if((init == nullptr && end == nullptr) ||
+                        (reorganization->getEventDate() >= *init && reorganization->getEventDate() < *end))
+                {
+                    // Add yield
+                    reorganizations.push_back(*reorganization);
+                }
             }
         }
     }
@@ -84,7 +99,7 @@ std::vector<Reorganization> EventController::getReorganizations()
 QDate EventController::getEspecifiedTransactionDate(TransactionType transactionType, bool type)
 {
     // Get transactions
-    auto transactions = getTransactions();
+    auto transactions = getTransactions(nullptr, nullptr);
 
     // Check if the vector is empty
     if (transactions.empty())

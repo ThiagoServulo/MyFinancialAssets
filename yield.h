@@ -14,6 +14,7 @@ public:
     Yield(QDate eventData, YieldType yieldType, double value);
     double getValue() const;
     YieldType getYieldType() const;
+    QDate getEventDate() const;
 };
 
 #endif // YIELD_H

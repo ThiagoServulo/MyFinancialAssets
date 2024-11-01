@@ -16,3 +16,8 @@ YieldType Yield::getYieldType() const
 {
     return this->yieldType;
 }
+
+QDate Yield::getEventDate() const
+{
+    return getDate();
+}

@@ -124,11 +124,11 @@ void MainWindow::updateSotckAndFundTable()
     {
         // Get values
         QString ticker = asset->getTicker();
-        int quantity = asset->getQuantity();
-        double totalYield = asset->getTotalYield();
+        int quantity = asset->getQuantity(nullptr, nullptr);
+        double totalYield = asset->getTotalYield(nullptr, nullptr);
         double averagePrice = asset->getAveragePrice();
         double currentPrice = asset->getCurrentPrice();
-        double totalInvested = asset->getTotalInvested();
+        double totalInvested = asset->getTotalInvested(nullptr, nullptr);
         double captalGain = asset->getCapitalGain();
         double profitPercentage = asset->getProfitPercentage();
 

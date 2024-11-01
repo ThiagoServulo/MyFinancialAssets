@@ -13,6 +13,7 @@ public:
     Reorganization(QDate eventData, ReorganizationType reorganizationType, int ratio);
     int getRatio() const;
     ReorganizationType getReorganizationType() const;
+    QDate getEventDate() const;
 };
 
 #endif // REORGANIZATION_H
