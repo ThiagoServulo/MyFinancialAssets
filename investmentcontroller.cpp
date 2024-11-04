@@ -31,7 +31,7 @@ std::shared_ptr<Asset> InvestmentController::getAsset(QString ticker)
     return nullptr;
 }
 
-int InvestmentController::getTotalQuantityOfAssets(AssetType assetType)
+int InvestmentController::getTotalQuantityOfAssets(AssetType *assetType, QDate *init, QDate *end)
 {
     // Init quantity
     int quantity = 0;
@@ -39,9 +39,13 @@ int InvestmentController::getTotalQuantityOfAssets(AssetType assetType)
     // Check assets
     for(auto asset: assets)
     {
-        if(asset->getAssetType() == assetType)
+        // Get asset type
+        AssetType type = asset->getAssetType();
+
+        // Check asset type
+        if(assetType == nullptr || type == *assetType)
         {
-            quantity += asset->getQuantity(nullptr, nullptr);
+            quantity += asset->getQuantity(init, end);
         }
     }
 
@@ -65,7 +69,7 @@ double InvestmentController::getTotalYieldOfAssets(AssetType assetType)
     return total;
 }
 
-double InvestmentController::getTotalInvestedOfAssets(AssetType assetType)
+double InvestmentController::getTotalInvestedOfAssets(AssetType *assetType, QDate *init, QDate *end)
 {
     // Init total
     double total = 0;
@@ -73,9 +77,13 @@ double InvestmentController::getTotalInvestedOfAssets(AssetType assetType)
     // Check assets
     for(auto asset: assets)
     {
-        if(asset->getAssetType() == assetType && asset->getQuantity(nullptr, nullptr) != 0)
+        // Get asset type
+        AssetType type = asset->getAssetType();
+
+        // Check values
+        if((assetType == nullptr) || (type == *assetType && asset->getQuantity(init, end) != 0))
         {
-            total += asset->getTotalInvested(nullptr, nullptr);
+            total += asset->getTotalInvested(init, end);
         }
     }
 
@@ -107,7 +115,8 @@ double InvestmentController::getAssetDistribution(QString ticker)
     double totalAssetInvested = (getAsset(ticker)->getTotalInvested(nullptr, nullptr));
 
     // Get total invested according to asset type
-    double totalInvested = getTotalInvestedOfAssets(getAsset(ticker)->getAssetType());
+    AssetType assetType = getAsset(ticker)->getAssetType();
+    double totalInvested = getTotalInvestedOfAssets(&assetType, nullptr, nullptr);
 
     // Return asset distribution in percentage
     return (getAsset(ticker)->getQuantity(nullptr, nullptr) == 0) ? 0 : (totalAssetInvested / totalInvested) * 100;

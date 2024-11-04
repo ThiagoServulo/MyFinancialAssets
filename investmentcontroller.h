@@ -14,9 +14,9 @@ public:
     InvestmentController();
     std::shared_ptr<Asset> getAsset(QString ticker);
     void addAsset(std::shared_ptr<Asset> asset);
-    int getTotalQuantityOfAssets(AssetType assetType);
+    int getTotalQuantityOfAssets(AssetType *assetType, QDate *init, QDate *end);
     double getTotalYieldOfAssets(AssetType assetType);
-    double getTotalInvestedOfAssets(AssetType assetType);
+    double getTotalInvestedOfAssets(AssetType *assetType, QDate *init, QDate *end);
     std::vector<std::shared_ptr<Asset>> getAllAssets();
     double getTotalCapitalGainOfAssets(AssetType assetType);
     double getAssetDistribution(QString ticker);

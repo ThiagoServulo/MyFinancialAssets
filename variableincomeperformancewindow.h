@@ -16,6 +16,9 @@ public:
     explicit VariableIncomePerformanceWindow(InvestmentController *investmentController, QWidget *parent = nullptr);
     ~VariableIncomePerformanceWindow();
 
+private slots:
+    void on_tableWidget_cellDoubleClicked(int row, int column);
+
 private:
     Ui::VariableIncomePerformanceWindow *ui;
     InvestmentController *investmentController;

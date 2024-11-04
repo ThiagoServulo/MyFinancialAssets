@@ -23,6 +23,7 @@ SOURCES += \
     investmentcontroller.cpp \
     main.cpp \
     mainwindow.cpp \
+    monthwindow.cpp \
     newfixedincomewindow.cpp \
     newreorganizationwindow.cpp \
     newtransactionwindow.cpp \
@@ -48,6 +49,7 @@ HEADERS += \
     fixedincome.h \
     investmentcontroller.h \
     mainwindow.h \
+    monthwindow.h \
     newfixedincomewindow.h \
     newreorganizationwindow.h \
     newtransactionwindow.h \
@@ -63,6 +65,7 @@ FORMS += \
     assetwindow.ui \
     closedfixedincomeswindow.ui \
     mainwindow.ui \
+    monthwindow.ui \
     newfixedincomewindow.ui \
     newreorganizationwindow.ui \
     newtransactionwindow.ui \

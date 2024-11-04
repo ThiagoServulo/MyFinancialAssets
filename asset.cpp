@@ -52,23 +52,18 @@ int Asset::getQuantity(QDate *init, QDate *end)
             // Check cast
             if (reorganization)
             {
-                // Check dates
-                if((init == nullptr && end == nullptr) ||
-                        (reorganization->getDate() >= *init && reorganization->getDate() < *end))
+                // Check reorganization type
+                if(reorganization->getReorganizationType() == ReorganizationType::GRUPAMENTO)
                 {
-                    // Check reorganization type
-                    if(reorganization->getReorganizationType() == ReorganizationType::GRUPAMENTO)
-                    {
-                        quantity = (quantity == 0) ? 0 : (quantity / reorganization->getRatio());
-                    }
-                    else if (reorganization->getReorganizationType() == ReorganizationType::DESDOBRAMENTO)
-                    {
-                        quantity = static_cast<int>(quantity * reorganization->getRatio());
-                    }
-                    else
-                    {
-                        throw std::invalid_argument("Reorganization type invalid");
-                    }
+                    quantity = (quantity == 0) ? 0 : (quantity / reorganization->getRatio());
+                }
+                else if (reorganization->getReorganizationType() == ReorganizationType::DESDOBRAMENTO)
+                {
+                    quantity = static_cast<int>(quantity * reorganization->getRatio());
+                }
+                else
+                {
+                    throw std::invalid_argument("Reorganization type invalid");
                 }
             }
         }

@@ -180,9 +180,10 @@ void MainWindow::updateSotckAndFundTable()
     }
 
     // Add total fund line
-    int totalQuantity = investmentController.getTotalQuantityOfAssets(AssetType::FUNDO);
+    AssetType assetType = AssetType::FUNDO;
+    int totalQuantity = investmentController.getTotalQuantityOfAssets(&assetType, nullptr, nullptr);
     double totalYield = investmentController.getTotalYieldOfAssets(AssetType::FUNDO);
-    double totalInvested = investmentController.getTotalInvestedOfAssets(AssetType::FUNDO);
+    double totalInvested = investmentController.getTotalInvestedOfAssets(&assetType, nullptr, nullptr);
     double totalCapitalGain = investmentController.getTotalCapitalGainOfAssets(AssetType::FUNDO);
 
     itens = {"Total", "100%", QString::number(totalQuantity),
@@ -193,9 +194,10 @@ void MainWindow::updateSotckAndFundTable()
     addTableWidgetItens(ui->tableWidget_funds, fundRow, itens, (HIGHLIGHT_CELL | FONT_BOLD | FONT_SIZE));
 
     // Add total stock line
-    totalQuantity = investmentController.getTotalQuantityOfAssets(AssetType::ACAO);
+    assetType = AssetType::ACAO;
+    totalQuantity = investmentController.getTotalQuantityOfAssets(&assetType, nullptr, nullptr);
     totalYield = investmentController.getTotalYieldOfAssets(AssetType::ACAO);
-    totalInvested = investmentController.getTotalInvestedOfAssets(AssetType::ACAO);
+    totalInvested = investmentController.getTotalInvestedOfAssets(&assetType, nullptr, nullptr);
     totalCapitalGain = investmentController.getTotalCapitalGainOfAssets(AssetType::ACAO);
 
     itens = {"Total", "100%", QString::number(totalQuantity),
