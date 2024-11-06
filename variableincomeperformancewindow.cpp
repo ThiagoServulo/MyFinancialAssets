@@ -22,7 +22,7 @@ VariableIncomePerformanceWindow::VariableIncomePerformanceWindow(InvestmentContr
 
     // Configure table widget
     QStringList headerLabels = {"   Mês e ano   ", "Total investido", "Quantidade de ações", "Lucro mensal",
-                                "Dividendos totais", "Dividendos no mês", "Yield acumulado"};
+                                "Dividendos no mês", "Dividendos totais", "Yield acumulado"};
     configureTableWidget(headerLabels, ui->tableWidget);
 
     // Update table widget
@@ -57,25 +57,18 @@ void VariableIncomePerformanceWindow::updateTableWidget()
                              "R$ " + QString::number(investmentController->getTotalInvestedOfAssets(nullptr, init, end), 'f', 2),
                              QString::number(investmentController->getTotalQuantityOfAssets(nullptr, init, end)),
                              "Lucro mensal",
-                             "Dividendos totais", "Dividendos no mês", "Yield acumulado"};
+                             "R$ " + QString::number(investmentController->getTotalYieldOfAssets(nullptr, aux, end), 'f', 2),
+                             "R$ " + QString::number(investmentController->getTotalYieldOfAssets(nullptr, init, end), 'f', 2),
+                             "Yield acumulado"};
 
         // Insert total row
         addTableWidgetItens(ui->tableWidget, row, itens, STANDART_CELL);
 
+        // Update variables
         *aux = aux->addMonths(1);
         *end = end->addMonths(1);
         row += 1;
     }
-/*
-    int aux = 0;
-    for(auto asset: assets)
-    {
-        aux += investmentController->getAsset(asset->getTicker())->getQuantity(init, end);
-        qDebug() << investmentController->getAsset(asset->getTicker())->getTotalInvested(init, end);
-        qDebug() << investmentController->getAsset(asset->getTicker())->getTotalYield(init, end);
-    }
-    //init->addMonths()
-    qDebug() << "aa: " << aux;*/
 }
 
 void VariableIncomePerformanceWindow::on_tableWidget_cellDoubleClicked(int row, int column)

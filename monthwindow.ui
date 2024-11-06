@@ -27,9 +27,9 @@
    <widget class="QLabel" name="label_month">
     <property name="geometry">
      <rect>
-      <x>290</x>
+      <x>270</x>
       <y>10</y>
-      <width>221</width>
+      <width>301</width>
       <height>41</height>
      </rect>
     </property>

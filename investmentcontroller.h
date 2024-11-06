@@ -15,7 +15,7 @@ public:
     std::shared_ptr<Asset> getAsset(QString ticker);
     void addAsset(std::shared_ptr<Asset> asset);
     int getTotalQuantityOfAssets(AssetType *assetType, QDate *init, QDate *end);
-    double getTotalYieldOfAssets(AssetType assetType);
+    double getTotalYieldOfAssets(AssetType *assetType, QDate *init, QDate *end);
     double getTotalInvestedOfAssets(AssetType *assetType, QDate *init, QDate *end);
     std::vector<std::shared_ptr<Asset>> getAllAssets();
     double getTotalCapitalGainOfAssets(AssetType assetType);

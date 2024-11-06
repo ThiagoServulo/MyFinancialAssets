@@ -182,7 +182,7 @@ void MainWindow::updateSotckAndFundTable()
     // Add total fund line
     AssetType assetType = AssetType::FUNDO;
     int totalQuantity = investmentController.getTotalQuantityOfAssets(&assetType, nullptr, nullptr);
-    double totalYield = investmentController.getTotalYieldOfAssets(AssetType::FUNDO);
+    double totalYield = investmentController.getTotalYieldOfAssets(&assetType, nullptr, nullptr);
     double totalInvested = investmentController.getTotalInvestedOfAssets(&assetType, nullptr, nullptr);
     double totalCapitalGain = investmentController.getTotalCapitalGainOfAssets(AssetType::FUNDO);
 
@@ -196,7 +196,7 @@ void MainWindow::updateSotckAndFundTable()
     // Add total stock line
     assetType = AssetType::ACAO;
     totalQuantity = investmentController.getTotalQuantityOfAssets(&assetType, nullptr, nullptr);
-    totalYield = investmentController.getTotalYieldOfAssets(AssetType::ACAO);
+    totalYield = investmentController.getTotalYieldOfAssets(&assetType, nullptr, nullptr);
     totalInvested = investmentController.getTotalInvestedOfAssets(&assetType, nullptr, nullptr);
     totalCapitalGain = investmentController.getTotalCapitalGainOfAssets(AssetType::ACAO);
 

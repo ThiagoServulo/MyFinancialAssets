@@ -52,7 +52,7 @@ int InvestmentController::getTotalQuantityOfAssets(AssetType *assetType, QDate *
     return quantity;
 }
 
-double InvestmentController::getTotalYieldOfAssets(AssetType assetType)
+double InvestmentController::getTotalYieldOfAssets(AssetType *assetType, QDate *init, QDate *end)
 {
     // Init total
     double total = 0;
@@ -60,9 +60,13 @@ double InvestmentController::getTotalYieldOfAssets(AssetType assetType)
     // Check assets
     for(auto asset: assets)
     {
-        if(asset->getAssetType() == assetType)
+        // Get asset type
+        AssetType type = asset->getAssetType();
+
+        // Check asset type
+        if(assetType == nullptr || type == *assetType)
         {
-            total += asset->getTotalYield(nullptr, nullptr);
+            total += asset->getTotalYield(init, end);
         }
     }
 

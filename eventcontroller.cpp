@@ -25,7 +25,7 @@ std::vector<Transaction> EventController::getTransactions(QDate *init, QDate *en
             {
                 // Check date
                 if((init == nullptr && end == nullptr) ||
-                        (transaction->getEventDate() >= *init && transaction->getEventDate() <= *end))
+                        (transaction->getEventDate() >= *init && transaction->getEventDate() < *end))
                 {
                     // Add transaction
                     transactions.push_back(*transaction);
@@ -54,7 +54,7 @@ std::vector<Yield> EventController::getYields(QDate *init, QDate *end)
             {
                 // Check date
                 if((init == nullptr && end == nullptr) ||
-                        (yield->getEventDate() >= *init && yield->getEventDate() <= *end))
+                        (yield->getEventDate() >= *init && yield->getEventDate() < *end))
                 {
                     // Add yield
                     yields.push_back(*yield);
@@ -83,7 +83,7 @@ std::vector<Reorganization> EventController::getReorganizations(QDate *init, QDa
             {
                 // Check date
                 if((init == nullptr && end == nullptr) ||
-                        (reorganization->getEventDate() >= *init && reorganization->getEventDate() <= *end))
+                        (reorganization->getEventDate() >= *init && reorganization->getEventDate() < *end))
                 {
                     // Add yield
                     reorganizations.push_back(*reorganization);
@@ -115,11 +115,7 @@ QDate EventController::getEspecifiedTransactionDate(TransactionType transactionT
     {
         if (transIt->getTransactionType() == transactionType)
         {
-            if (type && transIt->getDate() < it->getDate())
-            {
-                it = transIt;
-            }
-            else if (transIt->getDate() > it->getDate())
+            if ((type && transIt->getDate() < it->getDate()) || (transIt->getDate() > it->getDate()))
             {
                 it = transIt;
             }
