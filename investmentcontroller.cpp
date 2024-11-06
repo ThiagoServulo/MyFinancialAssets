@@ -19,8 +19,10 @@ std::vector<std::shared_ptr<Asset>> InvestmentController::getAllAssets()
 
 std::shared_ptr<Asset> InvestmentController::getAsset(QString ticker)
 {
+    // Check assets
     for(auto asset: assets)
     {
+        // Check ticker
         if(asset->getTicker() == ticker)
         {
             return asset;
@@ -103,6 +105,7 @@ double InvestmentController::getTotalCapitalGainOfAssets(AssetType assetType)
     // Check assets
     for(auto asset: assets)
     {
+        // Check asset type
         if(asset->getAssetType() == assetType)
         {
             total += asset->getCapitalGain();
@@ -155,8 +158,10 @@ double InvestmentController::getFixedIncomeTotalInvested(bool status)
     // Init total
     double total = 0;
 
+    // Check fixed incomes
     for(auto fixedIncome: fixedIncomes)
     {
+        // Check fixed income status
         if(fixedIncome->getStatus() == status)
         {
             total += fixedIncome->getInvestedValue();
@@ -172,8 +177,10 @@ double InvestmentController::getFixedIncomeCurrentTotal(bool status)
     // Init total
     double total = 0;
 
+    // Check fixed incomes
     for(auto fixedIncome: fixedIncomes)
     {
+        // Check fixed income status
         if(fixedIncome->getStatus() == status)
         {
             total += fixedIncome->getCurrentValue();
@@ -214,6 +221,7 @@ double InvestmentController::getTotalYieldOfAssetsSold()
     // Check assets
     for(auto asset: assets)
     {
+        // Check asset quantity
         if(asset->getQuantity(nullptr, nullptr) == 0)
         {
             total += asset->getTotalYield(nullptr, nullptr);
@@ -232,6 +240,7 @@ double InvestmentController::getTransactionsTotalOfAssetsSold(TransactionType tr
     // Check assets
     for(auto asset: assets)
     {
+        // Check asset quantity
         if(asset->getQuantity(nullptr, nullptr) == 0)
         {
             total += asset->getTransactionsTotal(transactionType, nullptr, nullptr);
