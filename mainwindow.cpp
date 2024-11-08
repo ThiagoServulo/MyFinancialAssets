@@ -16,6 +16,8 @@
 #include "updatefixedincomewindow.h"
 #include "closedfixedincomeswindow.h"
 #include "variableincomeperformancewindow.h"
+#include "financialinstitutionwindow.h"
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -39,6 +41,10 @@ MainWindow::MainWindow(QWidget *parent)
                     "   Valor atual   ", "Rendimento", "Data limite"};
     configureTableWidget(headerLabels, ui->tableWidget_fixedIncome);
 
+    // Configure general table
+    headerLabels = {"  Mes e ano  "};
+    configureTableWidget(headerLabels, ui->tableWidget_general);
+
     // Init asset controller
     if(!database.investmentControllerInitialization(&investmentController))
     {
@@ -48,6 +54,7 @@ MainWindow::MainWindow(QWidget *parent)
     // Init tables
     updateSotckAndFundTable();
     updateFixedIncomeTable();
+    updateGeneralTable();
 
     // Set main window background color
     this->setStyleSheet("QMainWindow { background-color: rgb(18, 18, 18); }");
@@ -303,7 +310,7 @@ void MainWindow::on_tableWidget_fixedIncome_cellDoubleClicked(int row, int colum
 {
     // Get fixed income informations
     QString description = ui->tableWidget_fixedIncome->item(row , 1)->text();
-    QDate purchaseDate =  QDate::fromString(ui->tableWidget_fixedIncome->item(row , 0)->text(), "dd/MM/yyyy");
+    QDate purchaseDate = QDate::fromString(ui->tableWidget_fixedIncome->item(row , 0)->text(), "dd/MM/yyyy");
 
     // Check description
     if(description != "Total")
@@ -333,3 +340,68 @@ void MainWindow::on_actionVariableIncome_triggered()
     variableIncomeWindow->show();
 }
 
+void MainWindow::updateGeneralTable()
+{
+    // Set dates
+    QDate *init = new QDate(2021, 1, 1);
+    QDate *end = new QDate(2021, 2, 1);
+    QDate *currentDate = new QDate(QDate::currentDate());
+
+    // Init variables
+    int row = 0;
+    QStringList itens ;
+    int style = STANDART_CELL;
+
+    // Check date
+    while ((currentDate->year() > end->year()) ||
+           (currentDate->year() == end->year() && currentDate->month() >= end->month() - 1))
+    {
+        // Get itens
+        itens = {init->toString("MMMM") + " " + QString::number(init->year())};
+
+        // Insert total row
+        addTableWidgetItens(ui->tableWidget_general, row, itens, style);
+
+        // Change style
+        if(end->year() != init->year())
+        {
+            style = (style == STANDART_CELL) ? HIGHLIGHT_CELL : STANDART_CELL;
+        }
+
+        // Update variables
+        *init = init->addMonths(1);
+        *end = end->addMonths(1);
+        row += 1;
+    }
+}
+
+void MainWindow::on_actionInstituition_triggered()
+{
+    FinancialInstitutionWindow *financialWindow = new FinancialInstitutionWindow(this);
+    financialWindow->show();
+}
+
+void MainWindow::on_tableWidget_general_cellDoubleClicked(int row, int column)
+{
+    // Get header
+    QString header = ui->tableWidget_general->horizontalHeaderItem(column)->text();
+
+    // Check header
+    if(header.contains("Mes e ano"))
+    {
+        // Get date
+        QString date = ui->tableWidget_general->item(row, column)->text();
+
+        // Create message box
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "Atenção",
+                                      "Deseja fazer o encerramento do mes: " + date + "?",
+                                      QMessageBox::Yes | QMessageBox::No);
+
+        // Check reply
+        if(reply == QMessageBox::Yes)
+        {
+
+        }
+    }
+}

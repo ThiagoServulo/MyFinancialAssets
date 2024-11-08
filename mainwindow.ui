@@ -24,12 +24,22 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab_general">
      <attribute name="title">
       <string>Geral</string>
      </attribute>
+     <widget class="QTableWidget" name="tableWidget_general">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>1101</width>
+        <height>571</height>
+       </rect>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="tab_stocks">
      <attribute name="title">
@@ -138,6 +148,8 @@
     <addaction name="actionReorganization"/>
     <addaction name="separator"/>
     <addaction name="actionFixedIncome"/>
+    <addaction name="separator"/>
+    <addaction name="actionInstituition"/>
    </widget>
    <widget class="QMenu" name="menuAnalysis">
     <property name="title">
@@ -190,6 +202,11 @@
   <action name="actionVariableIncome">
    <property name="text">
     <string>Renda variável</string>
+   </property>
+  </action>
+  <action name="actionInstituition">
+   <property name="text">
+    <string>Instituição</string>
    </property>
   </action>
  </widget>

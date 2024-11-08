@@ -19,6 +19,7 @@ SOURCES += \
     databasecreation.cpp \
     event.cpp \
     eventcontroller.cpp \
+    financialinstitutionwindow.cpp \
     fixedincome.cpp \
     investmentcontroller.cpp \
     main.cpp \
@@ -46,6 +47,7 @@ HEADERS += \
     databasecreation.h \
     event.h \
     eventcontroller.h \
+    financialinstitutionwindow.h \
     fixedincome.h \
     investmentcontroller.h \
     mainwindow.h \
@@ -64,6 +66,7 @@ HEADERS += \
 FORMS += \
     assetwindow.ui \
     closedfixedincomeswindow.ui \
+    financialinstitutionwindow.ui \
     mainwindow.ui \
     monthwindow.ui \
     newfixedincomewindow.ui \

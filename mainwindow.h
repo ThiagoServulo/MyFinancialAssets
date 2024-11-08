@@ -31,6 +31,8 @@ private slots:
     void on_checkBox_hideFounds_stateChanged(int arg1);
     void on_actionClosedFixedIncomes_triggered();
     void on_actionVariableIncome_triggered();
+    void on_actionInstituition_triggered();
+    void on_tableWidget_general_cellDoubleClicked(int row, int column);
 
 private:
     Ui::MainWindow *ui;
@@ -38,6 +40,7 @@ private:
     Database database;
     void updateSotckAndFundTable();
     void updateFixedIncomeTable();
+    void updateGeneralTable();
 
 };
 #endif // MAINWINDOW_H
