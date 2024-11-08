@@ -756,3 +756,34 @@ bool Database::updateFixedIncome(FixedIncome *fixedIncome)
     qDebug() << "Error to open database to update fixed income";
     return false;
 }
+
+bool Database::insertFinancialInstitution(FinancialInstitution financialInstitution)
+{
+    if(openDatabase())
+    {
+        QSqlQuery query;
+
+        // Prepare the SQL insert query
+        query.prepare("INSERT INTO financial_institution_table (name, date, value) "
+                      "VALUES (:name, :date, :value)");
+
+        // Bind values to the query
+        query.bindValue(":name", financialInstitution.getName());
+        query.bindValue(":date", financialInstitution.getDate());
+        query.bindValue(":value", financialInstitution.getValue());
+
+        // Execute the query and check for success
+        if (!query.exec())
+        {
+            qDebug() << "Erro to insert new financial institution";
+            closeDatabase();
+            return false;
+        }
+
+        closeDatabase();
+        return true;
+    }
+
+    qDebug() << "Error to open database to insert financial institution";
+    return false;
+}

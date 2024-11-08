@@ -20,6 +20,7 @@ bool DatabaseCreation::createDatabase()
     createStatus |= createReorganizationTable();
     createStatus |= createLastUpdateTable();
     createStatus |= createFixedIncomeTable();
+    createStatus |= createFinancialInstitutionTable();
     return createStatus;
 }
 
@@ -385,5 +386,30 @@ bool DatabaseCreation::createFixedIncomeTable()
 
     // Table created
     qDebug() << "Table fixed_income_table created";
+    return true;
+}
+
+bool DatabaseCreation::createFinancialInstitutionTable()
+{
+    // Query to create financial institution table
+    QString createTableQuery = R"(
+        CREATE TABLE IF NOT EXISTS financial_institution_table (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            value DOUBLE NOT NULL,
+            date DATE NOT NULL
+        );
+    )";
+
+    // Execute query
+    QSqlQuery query;
+    if (!query.exec(createTableQuery))
+    {
+        qDebug() << "Error to create financial_institution_table";
+        return false;
+    }
+
+    // Table created
+    qDebug() << "Table financial_institution_table created";
     return true;
 }

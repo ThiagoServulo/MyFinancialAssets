@@ -377,7 +377,8 @@ void MainWindow::updateGeneralTable()
 
 void MainWindow::on_actionInstituition_triggered()
 {
-    FinancialInstitutionWindow *financialWindow = new FinancialInstitutionWindow(this);
+    QDate currentDate = QDate::currentDate();
+    FinancialInstitutionWindow *financialWindow = new FinancialInstitutionWindow(nullptr, currentDate, this);
     financialWindow->show();
 }
 

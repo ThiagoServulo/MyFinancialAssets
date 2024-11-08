@@ -1,8 +1,11 @@
 #include "financialinstitutionwindow.h"
 #include "ui_financialinstitutionwindow.h"
+#include "financialinstitution.h"
+#include "database.h"
+#include <QMessageBox>
 #include <QRegularExpressionValidator>
 
-FinancialInstitutionWindow::FinancialInstitutionWindow(QWidget *parent) :
+FinancialInstitutionWindow::FinancialInstitutionWindow(QString *name, QDate date, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::FinancialInstitutionWindow)
 {
@@ -10,8 +13,15 @@ FinancialInstitutionWindow::FinancialInstitutionWindow(QWidget *parent) :
     this->setMaximumSize(367, 159);
     this->setMinimumSize(367, 159);
 
+    // Update variables
+    this->name = name;
+    this->date = date;
+
     // Update label
-    //ui->label_ticker->setText(asset->getTicker());
+    if(this->name != nullptr)
+    {
+        ui->label_institutionName->setText(*name);
+    }
 
     // Configure label styles
     ui->label_institutionName->setStyleSheet("color: rgb(255, 255, 255);");
@@ -40,3 +50,39 @@ FinancialInstitutionWindow::~FinancialInstitutionWindow()
 {
     delete ui;
 }
+
+void FinancialInstitutionWindow::on_pushButton_save_clicked()
+{
+    // Check fields
+    if(ui->lineEdit_institutionName->text() != "" && ui->lineEdit_value->text() != "")
+    {
+        Database database;
+        if(this->name == nullptr)
+        {
+            FinancialInstitution financialInstitution(ui->lineEdit_institutionName->text(), this->date,
+                                                      ui->lineEdit_value->text().toDouble());
+
+            qDebug() << "aaaaa";
+            /*if(database.insertFinancialInstitution(financialInstitution))
+            {
+                //this->investmentController->getAsset(ui->comboBox_asset->currentText())->addEvent(
+                //                                     std::make_shared<Reorganization>(reorganization));
+                QMessageBox::information(this, "Sucesso", "Instituição financeira inserida com sucesso");
+            }
+            else
+            {
+                QMessageBox::critical(this, "Erro", "Erro ao inserir instituição financeira");
+            }*/
+        }
+        else
+        {
+            // Atualizar o valor
+        }
+    }
+}
+
+void FinancialInstitutionWindow::on_pushButton_cancel_clicked()
+{
+    this->close();
+}
+

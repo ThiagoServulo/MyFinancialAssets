@@ -7,6 +7,7 @@
 #include "reorganization.h"
 #include "investmentcontroller.h"
 #include "fixedincome.h"
+#include "financialinstitution.h"
 
 class Database
 {
@@ -23,6 +24,7 @@ public:
     bool insertFixedIncome(FixedIncome fixedIncome);
     bool updateTickerCurrentPrice(QString ticker, double currentPrice);
     bool updateFixedIncome(FixedIncome *fixedIncome);
+    bool insertFinancialInstitution(FinancialInstitution financialInstitution);
 
 private:
     QSqlDatabase database;

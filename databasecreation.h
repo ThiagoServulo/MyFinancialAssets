@@ -23,6 +23,7 @@ private:
     bool populateAssetTypeTable();
     bool populateTransactionTypeTable();
     bool populateYieldTypeTable();
+    bool createFinancialInstitutionTable();
 };
 
 #endif // DATABASECREATION_H

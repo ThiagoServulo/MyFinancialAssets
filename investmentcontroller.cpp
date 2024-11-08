@@ -259,3 +259,26 @@ double InvestmentController::getProfitPercentageTotalOfAssetsSold()
             (getTransactionsTotalOfAssetsSold(TransactionType::COMPRA) -
              getTransactionsTotalOfAssetsSold(TransactionType::RESTITUICAO))) * 100;
 }
+
+void InvestmentController::addFinancialInstitution(std::shared_ptr<FinancialInstitution> financialInstitution)
+{
+    financialInstitutions.push_back(financialInstitution);
+}
+
+std::vector<std::shared_ptr<FinancialInstitution>> InvestmentController::getFinancialInstitutions()
+{
+    return financialInstitutions;
+}
+
+std::shared_ptr<FinancialInstitution> InvestmentController::getFinancialInstitution(QDate date, QString name)
+{
+    for(auto financialInstitution: financialInstitutions)
+    {
+        if(financialInstitution->getDate() == date && financialInstitution->getName() == name)
+        {
+            return financialInstitution;
+        }
+    }
+
+    return nullptr;
+}

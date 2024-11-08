@@ -19,6 +19,7 @@ SOURCES += \
     databasecreation.cpp \
     event.cpp \
     eventcontroller.cpp \
+    financialinstitution.cpp \
     financialinstitutionwindow.cpp \
     fixedincome.cpp \
     investmentcontroller.cpp \
@@ -47,6 +48,7 @@ HEADERS += \
     databasecreation.h \
     event.h \
     eventcontroller.h \
+    financialinstitution.h \
     financialinstitutionwindow.h \
     fixedincome.h \
     investmentcontroller.h \

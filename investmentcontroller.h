@@ -3,12 +3,14 @@
 
 #include "asset.h"
 #include "fixedincome.h"
+#include "financialinstitution.h"
 
 class InvestmentController
 {
 private:
     std::vector<std::shared_ptr<Asset>> assets;
     std::vector<std::shared_ptr<FixedIncome>> fixedIncomes;
+    std::vector<std::shared_ptr<FinancialInstitution>> financialInstitutions;
 
 public:
     InvestmentController();
@@ -31,6 +33,9 @@ public:
     double getTotalYieldOfAssetsSold();
     double getTransactionsTotalOfAssetsSold(TransactionType transactionType);
     double getProfitPercentageTotalOfAssetsSold();
+    void addFinancialInstitution(std::shared_ptr<FinancialInstitution> financialInstitution);
+    std::vector<std::shared_ptr<FinancialInstitution>> getFinancialInstitutions();
+    std::shared_ptr<FinancialInstitution> getFinancialInstitution(QDate date, QString name);
 };
 
 #endif // INVESTMENTCONTROLLER_H
