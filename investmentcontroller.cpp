@@ -270,8 +270,9 @@ std::vector<std::shared_ptr<FinancialInstitution>> InvestmentController::getFina
     return financialInstitutions;
 }
 
-std::shared_ptr<FinancialInstitution> InvestmentController::getFinancialInstitution(QDate date, QString name)
+std::shared_ptr<FinancialInstitution> InvestmentController::getFinancialInstitution(QString name)
 {
+    /*
     for(auto financialInstitution: financialInstitutions)
     {
         if(financialInstitution->getDate() == date && financialInstitution->getName() == name)
@@ -279,6 +280,6 @@ std::shared_ptr<FinancialInstitution> InvestmentController::getFinancialInstitut
             return financialInstitution;
         }
     }
-
+*/
     return nullptr;
 }

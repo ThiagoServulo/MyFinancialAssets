@@ -25,6 +25,7 @@ public:
     bool updateTickerCurrentPrice(QString ticker, double currentPrice);
     bool updateFixedIncome(FixedIncome *fixedIncome);
     bool insertFinancialInstitution(FinancialInstitution financialInstitution);
+    bool insertFinancialInstitutionMonth(QString name, FinancialInstitutionMonth result);
 
 private:
     QSqlDatabase database;
@@ -39,6 +40,7 @@ private:
     bool selectAllTicker(QStringList *tickers);
     bool insertLastUpdateDate(QDate date);
     std::vector<FixedIncome> selectAllFixedIncomes();
+    std::vector<FinancialInstitution> selectAllFinancialInstitutions();
 };
 
 #endif // DATABASE_H

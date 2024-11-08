@@ -21,6 +21,7 @@ bool DatabaseCreation::createDatabase()
     createStatus |= createLastUpdateTable();
     createStatus |= createFixedIncomeTable();
     createStatus |= createFinancialInstitutionTable();
+    createStatus |= createFinancialInstitutionMonthTable();
     return createStatus;
 }
 
@@ -395,9 +396,7 @@ bool DatabaseCreation::createFinancialInstitutionTable()
     QString createTableQuery = R"(
         CREATE TABLE IF NOT EXISTS financial_institution_table (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            value DOUBLE NOT NULL,
-            date DATE NOT NULL
+            name TEXT NOT NULL
         );
     )";
 
@@ -411,5 +410,31 @@ bool DatabaseCreation::createFinancialInstitutionTable()
 
     // Table created
     qDebug() << "Table financial_institution_table created";
+    return true;
+}
+
+
+bool DatabaseCreation::createFinancialInstitutionMonthTable()
+{
+    // Query to create financial institution month table
+    QString createTableQuery = R"(
+        CREATE TABLE IF NOT EXISTS financial_institution_month_table (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_financial_institution INTEGER NOT NULL,
+            value DOUBLE NOT NULL,
+            date DATE NOT NULL
+        );
+    )";
+
+    // Execute query
+    QSqlQuery query;
+    if (!query.exec(createTableQuery))
+    {
+        qDebug() << "Error to create financial_institution_month_table";
+        return false;
+    }
+
+    // Table created
+    qDebug() << "Table financial_institution_month_table created";
     return true;
 }

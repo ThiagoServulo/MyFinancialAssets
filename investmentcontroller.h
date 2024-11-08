@@ -35,7 +35,7 @@ public:
     double getProfitPercentageTotalOfAssetsSold();
     void addFinancialInstitution(std::shared_ptr<FinancialInstitution> financialInstitution);
     std::vector<std::shared_ptr<FinancialInstitution>> getFinancialInstitutions();
-    std::shared_ptr<FinancialInstitution> getFinancialInstitution(QDate date, QString name);
+    std::shared_ptr<FinancialInstitution> getFinancialInstitution(QString name);
 };
 
 #endif // INVESTMENTCONTROLLER_H

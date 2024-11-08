@@ -1,22 +1,22 @@
 #ifndef FINANCIALINSTITUTION_H
 #define FINANCIALINSTITUTION_H
 
+#include "financialinstitutionmonth.h"
 #include <QString>
 #include <QDate>
 
-class FinancialInstitution
+class FinancialInstitution: FinancialInstitutionMonth
 {
 public:
     FinancialInstitution();
-    FinancialInstitution(QString name, QDate date, double value);
+    FinancialInstitution(QString name);
     QString getName();
-    QDate getDate();
-    double getValue();
+    void addFinancialResult(std::shared_ptr<FinancialInstitutionMonth> result);
+    std::vector<std::shared_ptr<FinancialInstitutionMonth>> getFinancialResults();
 
 private:
     QString name;
-    QDate date;
-    double value;
+    std::vector<std::shared_ptr<FinancialInstitutionMonth>> monthsResult;
 };
 
 #endif // FINANCIALINSTITUTION_H

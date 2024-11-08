@@ -369,6 +369,12 @@ bool Database::investmentControllerInitialization(InvestmentController* investme
         investmentController->addFixedIncome(std::make_shared<FixedIncome>(fixedIncome));
     }
 
+    // Get financial institutions
+    for(auto financialInstitution : selectAllFinancialInstitutions())
+    {
+        investmentController->addFinancialInstitution(std::make_shared<FinancialInstitution>(financialInstitution));
+    }
+
     return true;
 }
 
@@ -764,13 +770,10 @@ bool Database::insertFinancialInstitution(FinancialInstitution financialInstitut
         QSqlQuery query;
 
         // Prepare the SQL insert query
-        query.prepare("INSERT INTO financial_institution_table (name, date, value) "
-                      "VALUES (:name, :date, :value)");
+        query.prepare("INSERT INTO financial_institution_table (name) VALUES (:name)");
 
         // Bind values to the query
         query.bindValue(":name", financialInstitution.getName());
-        query.bindValue(":date", financialInstitution.getDate());
-        query.bindValue(":value", financialInstitution.getValue());
 
         // Execute the query and check for success
         if (!query.exec())
@@ -786,4 +789,114 @@ bool Database::insertFinancialInstitution(FinancialInstitution financialInstitut
 
     qDebug() << "Error to open database to insert financial institution";
     return false;
+}
+
+bool Database::insertFinancialInstitutionMonth(QString name, FinancialInstitutionMonth result)
+{
+    if(openDatabase())
+    {
+        QSqlQuery query;
+
+        // Prepare the SQL insert query
+        query.prepare("INSERT INTO financial_institution_month_table (id_financial_institution, value, date) "
+                      "VALUES ((SELECT id FROM financial_institution_table WHERE name = :name), :value, :date)");
+
+        // Bind values to the query
+        query.bindValue(":name", name);
+        query.bindValue(":value", result.getValue());
+        query.bindValue(":date", result.getDate());
+
+        // Construir uma string para depuração
+        QString debugQuery = query.executedQuery();
+        debugQuery.replace(":name", "'" + name + "'");
+        debugQuery.replace(":value", QString::number(result.getValue()));
+        debugQuery.replace(":date", "'" + result.getDate().toString("yyyy-MM-dd") + "'");
+
+        // Imprimir a query de depuração
+        qDebug() << "Query para depuração:" << debugQuery;
+
+        // Execute the query and check for success
+        if (!query.exec())
+        {
+            qDebug() << "Erro to insert new financial institution month";
+            closeDatabase();
+            return false;
+        }
+
+        closeDatabase();
+        return true;
+    }
+
+    qDebug() << "Error to open database to insert financial institution";
+    return false;
+}
+
+std::vector<FinancialInstitution> Database::selectAllFinancialInstitutions()
+{
+    std::vector<FinancialInstitution> financialInstitutions;
+
+    if (openDatabase())
+    {
+        QString selectQuery1 = R"(
+            SELECT id, name FROM financial_institution_table;
+        )";
+
+        QSqlQuery query1;
+        query1.prepare(selectQuery1);
+
+        // Execute query
+        if (!query1.exec())
+        {
+            qDebug() << "Error selecting financial institutions from financial_institution_table";
+            closeDatabase();
+            return financialInstitutions;
+        }
+
+        // Clear the vector
+        financialInstitutions.clear();
+
+        // Process the results
+        while (query1.next())
+        {
+            int id_financial_institution = query1.value(0).toString().toInt();
+            QString name = query1.value(1).toString();
+
+            FinancialInstitution financialInstitution = FinancialInstitution(name);
+
+            QSqlQuery query2;
+
+            // Prepare the SQL insert query
+            query2.prepare("SELECT value, date FROM financial_institution_month_table WHERE id_financial_institution = :id");
+
+            // Bind values to the query
+            query2.bindValue(":id", id_financial_institution);
+
+            // Execute query
+            if (!query2.exec())
+            {
+                qDebug() << "Error selecting financial institutions month from financial_institution_month_table";
+                continue;
+            }
+
+            // Process the results
+            while (query2.next())
+            {
+                double value = query2.value(0).toString().toDouble();
+                QDate date = QDate::fromString(query2.value(1).toString(), "yyyy-MM-dd");
+
+                financialInstitution.addFinancialResult(std::make_shared<FinancialInstitutionMonth>(date, value));
+            }
+
+            financialInstitutions.push_back(financialInstitution);
+        }
+
+        closeDatabase();
+        return financialInstitutions;
+    }
+    else
+    {
+        qDebug() << "Error opening database to select fixed incomes";
+    }
+
+    return financialInstitutions;
 }

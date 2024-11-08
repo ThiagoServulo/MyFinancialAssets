@@ -24,6 +24,7 @@ private:
     bool populateTransactionTypeTable();
     bool populateYieldTypeTable();
     bool createFinancialInstitutionTable();
+    bool createFinancialInstitutionMonthTable();
 };
 
 #endif // DATABASECREATION_H

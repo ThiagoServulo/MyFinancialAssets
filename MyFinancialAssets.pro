@@ -20,6 +20,7 @@ SOURCES += \
     event.cpp \
     eventcontroller.cpp \
     financialinstitution.cpp \
+    financialinstitutionmonth.cpp \
     financialinstitutionwindow.cpp \
     fixedincome.cpp \
     investmentcontroller.cpp \
@@ -49,6 +50,7 @@ HEADERS += \
     event.h \
     eventcontroller.h \
     financialinstitution.h \
+    financialinstitutionmonth.h \
     financialinstitutionwindow.h \
     fixedincome.h \
     investmentcontroller.h \

@@ -1,6 +1,7 @@
 #ifndef FINANCIALINSTITUTIONWINDOW_H
 #define FINANCIALINSTITUTIONWINDOW_H
 
+#include "investmentcontroller.h"
 #include <QMainWindow>
 #include <QDate>
 
@@ -13,7 +14,8 @@ class FinancialInstitutionWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit FinancialInstitutionWindow(QString *name, QDate date, QWidget *parent = nullptr);
+    explicit FinancialInstitutionWindow(QString *name, QDate date, InvestmentController *investmentController,
+                                        QWidget *parent = nullptr);
     ~FinancialInstitutionWindow();
 
 private slots:
@@ -24,6 +26,7 @@ private:
     Ui::FinancialInstitutionWindow *ui;
     QString *name;
     QDate date;
+    InvestmentController *investmentController;
 };
 
 #endif // FINANCIALINSTITUTIONWINDOW_H

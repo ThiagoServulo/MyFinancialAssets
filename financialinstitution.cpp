@@ -5,11 +5,9 @@ FinancialInstitution::FinancialInstitution()
 
 }
 
-FinancialInstitution::FinancialInstitution(QString name, QDate date, double value)
+FinancialInstitution::FinancialInstitution(QString name)
 {
     this->name = name;
-    this->date = date;
-    this->value = value;
 }
 
 QString FinancialInstitution::getName()
@@ -17,12 +15,12 @@ QString FinancialInstitution::getName()
     return name;
 }
 
-QDate FinancialInstitution::getDate()
+void FinancialInstitution::addFinancialResult(std::shared_ptr<FinancialInstitutionMonth> result)
 {
-    return date;
+    monthsResult.push_back(result);
 }
 
-double FinancialInstitution::getValue()
+std::vector<std::shared_ptr<FinancialInstitutionMonth>> FinancialInstitution::getFinancialResults()
 {
-    return value;
+    return monthsResult;
 }
