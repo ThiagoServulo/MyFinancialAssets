@@ -24,3 +24,16 @@ std::vector<std::shared_ptr<FinancialInstitutionMonth>> FinancialInstitution::ge
 {
     return monthsResult;
 }
+
+std::shared_ptr<FinancialInstitutionMonth> FinancialInstitution::getFinancialResult(QDate date)
+{
+    for(auto result: monthsResult)
+    {
+        if(result->getDate() == date)
+        {
+            return result;
+        }
+    }
+
+    return nullptr;
+}

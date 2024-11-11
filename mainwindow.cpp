@@ -364,13 +364,11 @@ void MainWindow::updateGeneralTable()
         itens = {init->toString("MMMM") + " " + QString::number(init->year())};
         for(int column = 1; column < ui->tableWidget_general->columnCount(); column++)
         {
-            //auto financialInstitution = investmentController.getFinancialInstitution(
-                        //ui->tableWidget_general->horizontalHeaderItem(column)->text());
+            auto financialInstitution = investmentController.getFinancialInstitution(
+                        ui->tableWidget_general->horizontalHeaderItem(column)->text());
 
-            //itens.append((financialInstitution != nullptr) ? QString::number(financialInstitution->getValue(), 'f', 2) : "0");
-
-            // Get itens
-            itens.append("0");
+            auto result = financialInstitution->getFinancialResult(*init);
+            itens.append((result != nullptr) ? QString::number(result->getValue(), 'f', 2) : "0");
         }
 
         // Insert total row
@@ -422,12 +420,20 @@ void MainWindow::on_tableWidget_general_cellDoubleClicked(int row, int column)
                 QString name =  ui->tableWidget_general->horizontalHeaderItem(i)->text();
                 FinancialInstitutionMonth result(date, value);
 
-                qDebug() << name;
-                qDebug() << date;
-
+                // Insert financial institution month
                 Database database;
                 database.insertFinancialInstitutionMonth(name, result);
             }
         }
+    }
+    else
+    {
+        // Get date
+        QDate date = QDate::fromString(ui->tableWidget_general->item(row, 0)->text(), "MMMM yyyy");
+
+        // Show financial institution window
+        FinancialInstitutionWindow *financialWindow =
+                new FinancialInstitutionWindow(&header, date, &investmentController, this);
+        financialWindow->show();
     }
 }

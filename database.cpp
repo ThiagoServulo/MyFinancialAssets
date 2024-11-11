@@ -806,15 +806,6 @@ bool Database::insertFinancialInstitutionMonth(QString name, FinancialInstitutio
         query.bindValue(":value", result.getValue());
         query.bindValue(":date", result.getDate());
 
-        // Construir uma string para depuração
-        QString debugQuery = query.executedQuery();
-        debugQuery.replace(":name", "'" + name + "'");
-        debugQuery.replace(":value", QString::number(result.getValue()));
-        debugQuery.replace(":date", "'" + result.getDate().toString("yyyy-MM-dd") + "'");
-
-        // Imprimir a query de depuração
-        qDebug() << "Query para depuração:" << debugQuery;
-
         // Execute the query and check for success
         if (!query.exec())
         {

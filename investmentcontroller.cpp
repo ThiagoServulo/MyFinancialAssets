@@ -272,14 +272,13 @@ std::vector<std::shared_ptr<FinancialInstitution>> InvestmentController::getFina
 
 std::shared_ptr<FinancialInstitution> InvestmentController::getFinancialInstitution(QString name)
 {
-    /*
     for(auto financialInstitution: financialInstitutions)
     {
-        if(financialInstitution->getDate() == date && financialInstitution->getName() == name)
+        if(financialInstitution->getName() == name)
         {
             return financialInstitution;
         }
     }
-*/
+
     return nullptr;
 }
