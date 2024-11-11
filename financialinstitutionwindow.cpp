@@ -84,17 +84,8 @@ void FinancialInstitutionWindow::on_pushButton_save_clicked()
         else
         {
             FinancialInstitutionMonth result(this->date, ui->lineEdit_value->text().toDouble());
-
-            if(database.insertFinancialInstitutionMonth(ui->lineEdit_institutionName->text(), result))
-            {
-                this->investmentController->getFinancialInstitution(ui->lineEdit_institutionName->text())->
-                        addFinancialResult(std::make_shared<FinancialInstitutionMonth>(result));
-                QMessageBox::information(this, "Sucesso", "Resultado financeiro inserido com sucesso");
-            }
-            else
-            {
-                QMessageBox::critical(this, "Erro", "Erro ao inserir resultado financeiro");
-            }
+            this->investmentController->getFinancialInstitution(ui->lineEdit_institutionName->text())->
+                    addFinancialResult(std::make_shared<FinancialInstitutionMonth>(result));
         }
 
         // Close window

@@ -338,12 +338,22 @@ void MainWindow::on_actionVariableIncome_triggered()
 
 void MainWindow::updateGeneralTable()
 {
+    // Clear table
+    ui->tableWidget_general->clear();
+    ui->tableWidget_general->setRowCount(0);
+    ui->tableWidget_general->setColumnCount(0);
+    ui->tableWidget_general->setHorizontalHeaderLabels({});
+    ui->tableWidget_general->setVerticalHeaderLabels({});
+
     QStringList headers = {"  Mes e ano  "};
     for(auto financialInstitution: investmentController.getFinancialInstitutions())
     {
         // Configure general table
         headers.append(financialInstitution->getName());
     }
+
+    //headers.append({"Renda fixa", "Total no mes"});
+    headers.append("Total no mes");
 
     configureTableWidget(headers, ui->tableWidget_general);
 
@@ -361,15 +371,24 @@ void MainWindow::updateGeneralTable()
     while ((currentDate->year() > end->year()) ||
            (currentDate->year() == end->year() && currentDate->month() >= end->month() - 1))
     {
+        double total = 0;
+
         itens = {init->toString("MMMM") + " " + QString::number(init->year())};
         for(int column = 1; column < ui->tableWidget_general->columnCount(); column++)
         {
             auto financialInstitution = investmentController.getFinancialInstitution(
                         ui->tableWidget_general->horizontalHeaderItem(column)->text());
 
-            auto result = financialInstitution->getFinancialResult(*init);
-            itens.append((result != nullptr) ? QString::number(result->getValue(), 'f', 2) : "0");
+            if(financialInstitution != NULL)
+            {
+                auto result = financialInstitution->getFinancialResult(*init);
+                itens.append((result != nullptr) ? "R$ " + QString::number(result->getValue(), 'f', 2) : "R$ 0.00");
+
+                total += ((result != nullptr) ? result->getValue() : 0);
+            }
         }
+
+        itens.append("R$ " + QString::number(total, 'f', 2));
 
         // Insert total row
         addTableWidgetItens(ui->tableWidget_general, row, itens, style);
@@ -391,6 +410,8 @@ void MainWindow::on_actionInstituition_triggered()
 {
     FinancialInstitutionWindow *financialWindow =
             new FinancialInstitutionWindow(nullptr, QDate::currentDate(), &investmentController, this);
+    financialWindow->setAttribute(Qt::WA_DeleteOnClose);
+    connect(financialWindow, &QObject::destroyed, this, &MainWindow::updateGeneralTable);
     financialWindow->show();
 }
 
@@ -400,33 +421,7 @@ void MainWindow::on_tableWidget_general_cellDoubleClicked(int row, int column)
     QString header = ui->tableWidget_general->horizontalHeaderItem(column)->text();
 
     // Check header
-    if(header.contains("Mes e ano"))
-    {
-        // Create message box
-        QMessageBox::StandardButton reply;
-        reply = QMessageBox::question(this, "Atenção",
-                                      "Deseja fazer o encerramento do mes: " +
-                                      ui->tableWidget_general->item(row, 0)->text() + "?",
-                                      QMessageBox::Yes | QMessageBox::No);
-
-        // Check reply
-        if(reply == QMessageBox::Yes)
-        {
-            for(int i = 1; i < ui->tableWidget_general->columnCount(); i++)
-            {
-                // Get date
-                QDate date = QDate::fromString(ui->tableWidget_general->item(row, 0)->text(), "MMMM yyyy");
-                double value = ui->tableWidget_general->item(row, i)->text().toDouble();
-                QString name =  ui->tableWidget_general->horizontalHeaderItem(i)->text();
-                FinancialInstitutionMonth result(date, value);
-
-                // Insert financial institution month
-                Database database;
-                database.insertFinancialInstitutionMonth(name, result);
-            }
-        }
-    }
-    else
+    if(!(header.contains("Mes e ano") || header.contains("Total no mes")))
     {
         // Get date
         QDate date = QDate::fromString(ui->tableWidget_general->item(row, 0)->text(), "MMMM yyyy");
@@ -434,6 +429,34 @@ void MainWindow::on_tableWidget_general_cellDoubleClicked(int row, int column)
         // Show financial institution window
         FinancialInstitutionWindow *financialWindow =
                 new FinancialInstitutionWindow(&header, date, &investmentController, this);
+        financialWindow->setAttribute(Qt::WA_DeleteOnClose);
+        connect(financialWindow, &QObject::destroyed, this, &MainWindow::updateGeneralTable);
         financialWindow->show();
+    }
+    else if(header.contains("Mes e ano"))
+    {
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "Atenção",
+                                      "Deseja fazer o fechamento de " +
+                                      ui->tableWidget_general->item(row, 0)->text() +" ?",
+                                      QMessageBox::Yes | QMessageBox::No);
+
+
+        if(reply == QMessageBox::Yes)
+        {
+            QDate date = QDate::fromString(ui->tableWidget_general->item(row, 0)->text(), "MMMM yyyy");
+            for(int i = 1; i < ui->tableWidget_general->columnCount() - 1; i++)
+            {
+                double value = ui->tableWidget_general->item(row, i)->text().remove("R$ ").toDouble();
+                QString name = ui->tableWidget_general->horizontalHeaderItem(i)->text();
+                Database database;
+
+                if(!database.insertFinancialInstitutionMonth(name, FinancialInstitutionMonth(date, value)))
+                {
+                    QMessageBox::critical(this, "Erro", "Erro ao inserir resultado financeiro");
+                }
+            }
+
+        }
     }
 }
