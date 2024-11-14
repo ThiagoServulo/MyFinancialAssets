@@ -17,7 +17,8 @@ MonthWindow::MonthWindow(InvestmentController *investmentController, QDate date,
     this->endDate = date.addMonths(1);
 
     // Set label month text
-    ui->label_month->setText(date.toString("MMMM") + " " + QString::number(date.year()));
+    QLocale locale(QLocale::Portuguese);
+    ui->label_month->setText(locale.toString(date, "MMMM") + " " + QString::number(date.year()));
 
     // Configure label styles
     ui->label_month->setStyleSheet("color: rgb(255, 255, 255);");
@@ -116,7 +117,7 @@ void MonthWindow::updateTransactionTable()
                 // Populate string list
                 itens = {ticker, getTransactionTypeString(transactionType), date.toString("dd/MM/yyyy"),
                          QString::number(quantity) + ((transactionType == TransactionType::BONIFICACAO) ? "%" : ""),
-                        "R$ " + QString::number(unitaryPrice, 'f', 2), "R$ " + QString::number(totalOperation, 'f', 2)};
+                        formatReais(unitaryPrice), formatReais(totalOperation)};
             }
             else
             {
@@ -159,8 +160,7 @@ void MonthWindow::updateYieldTable()
 
             // Create string list
             QStringList itens = {ticker, getYieldTypeString(yieldType),
-                                 yield.getDate().toString("dd/MM/yyyy"),
-                                 "R$ " + QString::number(value, 'f', 2)};
+                                 yield.getDate().toString("dd/MM/yyyy"), formatReais(value)};
 
             // Insert itens
             addTableWidgetItens(ui->tableWidget_yields, row, itens, style);

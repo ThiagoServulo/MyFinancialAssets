@@ -56,12 +56,9 @@ void SalesWindow::updateTableWidgetSales()
 
             // Get itens
             QStringList itens = {asset->getTicker(), purchaseDate.toString("dd/MM/yyyy"),
-                                 limitDate.toString("dd/MM/yyyy"),
-                                 "R$ " + QString::number(totalYield, 'f', 2),
-                                 "R$ " + QString::number(purchaseTotal, 'f', 2),
-                                 "R$ " + QString::number(saleTotal, 'f', 2),
-                                 QString::number(profitPercentage, 'f', 2) + "%",
-                                 "R$ " + QString::number(capitalGain, 'f', 2)};
+                                 limitDate.toString("dd/MM/yyyy"), formatReais(totalYield),
+                                 formatReais(purchaseTotal), formatReais(saleTotal),
+                                 QString::number(profitPercentage, 'f', 2) + "%", formatReais(capitalGain)};
 
             // Insert new row
             addTableWidgetItens(ui->tableWidget_sales, row, itens, STANDART_CELL);
@@ -78,12 +75,9 @@ void SalesWindow::updateTableWidgetSales()
     double profitPercentage = investmentController->getProfitPercentageTotalOfAssetsSold();
 
     // Get itens
-    QStringList itens = {"Total", "-", "-",
-                         "R$ " + QString::number(totalYield, 'f', 2),
-                         "R$ " + QString::number(purchaseTotal, 'f', 2),
-                         "R$ " + QString::number(saleTotal, 'f', 2),
-                         QString::number(profitPercentage, 'f', 2) + "%",
-                         "R$ " + QString::number(capitalGain, 'f', 2)};
+    QStringList itens = {"Total", "-", "-", formatReais(totalYield),
+                         formatReais(purchaseTotal), formatReais(saleTotal),
+                         QString::number(profitPercentage, 'f', 2) + "%", formatReais(capitalGain)};
 
     // Insert total row
     addTableWidgetItens(ui->tableWidget_sales, row, itens, (HIGHLIGHT_CELL | FONT_BOLD | FONT_SIZE));

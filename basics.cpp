@@ -128,3 +128,17 @@ std::vector<Event*> mergeAndSortEvents(const std::vector<Transaction>& transacti
 
     return events;
 }
+
+QString formatReais(double value)
+{
+    QLocale locale(QLocale::Portuguese, QLocale::Brazil);
+    return "R$ " + locale.toString(value, 'f', 2);
+}
+
+double formatDouble(QString value)
+{
+    QLocale locale(QLocale::Portuguese, QLocale::Brazil);
+    bool ok;
+    double number = locale.toDouble(value.remove("R$ "), &ok);
+    return (!ok) ? 0.0 : number;
+}

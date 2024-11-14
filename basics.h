@@ -17,5 +17,7 @@ void addTableWidgetItem(QTableWidget *tableWidget, int row, int column, QString 
 void addTableWidgetItens(QTableWidget *tableWidget, int row, QStringList itens, int style);
 void initComboBoxAssets(QComboBox *comboBox, InvestmentController *investmentController);
 std::vector<Event*> mergeAndSortEvents(const std::vector<Transaction>& transactions, const std::vector<Reorganization>& reorganizations);
+QString formatReais(double value);
+double formatDouble(QString value);
 
 #endif // BASICS_H

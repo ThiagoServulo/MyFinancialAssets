@@ -21,7 +21,7 @@ VariableIncomePerformanceWindow::VariableIncomePerformanceWindow(InvestmentContr
     ui->label->setStyleSheet("color: rgb(255, 255, 255);");
 
     // Configure table widget
-    QStringList headerLabels = {"     Mês e ano     ", "Total investido", "Quantidade de ações", "Lucro mensal",
+    QStringList headerLabels = {"     Mês e ano     ", "Total investido", "Quantidade de ações", "Investimento mensal",
                                 "Dividendos no mês", "Dividendos totais", "Yield acumulado"};
     configureTableWidget(headerLabels, ui->tableWidget);
 
@@ -49,18 +49,19 @@ void VariableIncomePerformanceWindow::updateTableWidget()
     int row = 0;
     QStringList itens ;
     int style = STANDART_CELL;
+    QLocale locale(QLocale::Portuguese);
 
     // Check date
     while ((currentDate->year() > end->year()) ||
            (currentDate->year() == end->year() && currentDate->month() >= end->month() - 1))
     {
         // Get itens
-        itens = {aux->toString("MMMM") + " " + QString::number(aux->year()),
-                 "R$ " + QString::number(investmentController->getTotalInvestedOfAssets(nullptr, init, end), 'f', 2),
+        itens = {locale.toString(*aux, "MMMM") + " " + QString::number(aux->year()),
+                 formatReais(investmentController->getTotalInvestedOfAssets(nullptr, init, end)),
                  QString::number(investmentController->getTotalQuantityOfAssets(nullptr, init, end)),
-                 "Lucro mensal",
-                 "R$ " + QString::number(investmentController->getTotalYieldOfAssets(nullptr, aux, end), 'f', 2),
-                 "R$ " + QString::number(investmentController->getTotalYieldOfAssets(nullptr, init, end), 'f', 2),
+                 formatReais(investmentController->getTotalInvestedOfAssets(nullptr, aux, end)),
+                 formatReais(investmentController->getTotalYieldOfAssets(nullptr, aux, end)),
+                 formatReais(investmentController->getTotalYieldOfAssets(nullptr, init, end)),
                  QString::number((investmentController->getTotalYieldOfAssets(nullptr, init, end) * 100) /
                                   investmentController->getTotalInvestedOfAssets(nullptr, init, end), 'f', 2) + "%"};
 
@@ -78,12 +79,15 @@ void VariableIncomePerformanceWindow::updateTableWidget()
         *end = end->addMonths(1);
         row += 1;
     }
+
+    ui->tableWidget->scrollToBottom();
 }
 
 void VariableIncomePerformanceWindow::on_tableWidget_cellDoubleClicked(int row, int column)
 {
     // Set date
-    QDate date = QDate::fromString(ui->tableWidget->item(row , 0)->text(), "MMMM yyyy");;
+    QLocale locale(QLocale::Portuguese);
+    QDate date = locale.toDate(ui->tableWidget->item(row, 0)->text(), "MMMM yyyy");
 
     // Show month window
     MonthWindow *monthWindow = new MonthWindow(investmentController, date, this);

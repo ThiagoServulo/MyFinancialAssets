@@ -93,9 +93,8 @@ void AssetWindow::updateTransactionTable()
 
             // Populate string list
             itens = {getReorganizationTypeString(reorganizationType), reorganization->getDate().toString("dd/MM/yyyy"),
-                    QString::number(reorganization->getRatio()), "-", "-",
-                    QString::number(accumulatedQuantity), "R$ " + QString::number(averagePrice, 'f', 2),
-                    "R$ " + QString::number(accumulatedTotal, 'f', 2)};
+                     QString::number(reorganization->getRatio()), "-", "-", QString::number(accumulatedQuantity),
+                     formatReais(averagePrice), formatReais(accumulatedTotal)};
         }
         else if(event->getEventType() == EventType::TRANSACTION)
         {
@@ -152,9 +151,9 @@ void AssetWindow::updateTransactionTable()
             // Populate string list
             itens = {getTransactionTypeString(transactionType), date.toString("dd/MM/yyyy"),
                      QString::number(quantity) + ((transactionType == TransactionType::BONIFICACAO) ? "%" : ""),
-                    "R$ " + QString::number(unitaryPrice, 'f', 2), "R$ " + QString::number(totalOperation, 'f', 2),
-                    QString::number(accumulatedQuantity), "R$ " + QString::number(averagePrice, 'f', 2),
-                    "R$ " + QString::number(accumulatedQuantity * averagePrice, 'f', 2)};
+                     formatReais(unitaryPrice), formatReais(totalOperation),
+                     QString::number(accumulatedQuantity), formatReais(averagePrice),
+                     formatReais(accumulatedQuantity * averagePrice)};
         }
         else
         {
@@ -195,7 +194,7 @@ void AssetWindow::updateYieldTable()
 
         // Create string list
         QStringList itens = {getYieldTypeString(yieldType), yield.getDate().toString("dd/MM/yyyy"),
-                             "R$ " + QString::number(value, 'f', 2), "R$ " + QString::number(accumulatedValue, 'f', 2)};
+                             formatReais(value), formatReais(accumulatedValue)};
 
         // Insert itens
         addTableWidgetItens(ui->tableWidget_yields, row, itens, style);

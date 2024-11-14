@@ -143,13 +143,9 @@ void MainWindow::updateSotckAndFundTable()
             {
                 // Add new line
                 itens = {ticker, QString::number(investmentController.getAssetDistribution(ticker), 'f', 2) + "%",
-                         QString::number(quantity),
-                         "R$ " + QString::number(totalInvested, 'f', 2),
-                         "R$ " + QString::number(totalYield, 'f', 2),
-                         "R$ " + QString::number(averagePrice, 'f', 2),
-                         "R$ " + QString::number(currentPrice, 'f', 2),
-                         QString::number(profitPercentage, 'f', 2) + "%",
-                         "R$ " + QString::number(captalGain, 'f', 2)};
+                         QString::number(quantity), formatReais(totalInvested), formatReais(totalYield),
+                         formatReais(averagePrice), formatReais(currentPrice),
+                         QString::number(profitPercentage, 'f', 2) + "%", formatReais(captalGain)};
 
                 int style = (quantity == 0) ? HIGHLIGHT_CELL : STANDART_CELL;
                 addTableWidgetItens(ui->tableWidget_stocks, stockRow, itens, style);
@@ -163,13 +159,9 @@ void MainWindow::updateSotckAndFundTable()
             {
                 // Add new line
                 itens = {ticker, QString::number(investmentController.getAssetDistribution(ticker), 'f', 2) + "%",
-                         QString::number(quantity),
-                         "R$ " + QString::number(totalInvested, 'f', 2),
-                         "R$ " + QString::number(totalYield, 'f', 2),
-                         "R$ " + QString::number(averagePrice, 'f', 2),
-                         "R$ " + QString::number(currentPrice, 'f', 2),
-                         QString::number(profitPercentage, 'f', 2) + "%",
-                         "R$ " + QString::number(captalGain, 'f', 2)};
+                         QString::number(quantity), formatReais(totalInvested), formatReais(totalYield),
+                         formatReais(averagePrice), formatReais(currentPrice),
+                         QString::number(profitPercentage, 'f', 2) + "%", formatReais(captalGain)};
 
                 int style = (quantity == 0) ? HIGHLIGHT_CELL : STANDART_CELL;
                 addTableWidgetItens(ui->tableWidget_funds, fundRow, itens, style);
@@ -189,10 +181,8 @@ void MainWindow::updateSotckAndFundTable()
     double totalInvested = investmentController.getTotalInvestedOfAssets(&assetType, nullptr, nullptr);
     double totalCapitalGain = investmentController.getTotalCapitalGainOfAssets(AssetType::FUNDO);
 
-    itens = {"Total", "100%", QString::number(totalQuantity),
-             "R$ " + QString::number(totalInvested, 'f', 2),
-             "R$ " + QString::number(totalYield, 'f', 2), "-", "-", "-",
-             "R$ " + QString::number(totalCapitalGain, 'f', 2)};
+    itens = {"Total", "100%", QString::number(totalQuantity), formatReais(totalInvested),
+             formatReais(totalYield), "-", "-", "-", formatReais(totalCapitalGain)};
 
     addTableWidgetItens(ui->tableWidget_funds, fundRow, itens, (HIGHLIGHT_CELL | FONT_BOLD | FONT_SIZE));
 
@@ -203,10 +193,8 @@ void MainWindow::updateSotckAndFundTable()
     totalInvested = investmentController.getTotalInvestedOfAssets(&assetType, nullptr, nullptr);
     totalCapitalGain = investmentController.getTotalCapitalGainOfAssets(AssetType::ACAO);
 
-    itens = {"Total", "100%", QString::number(totalQuantity),
-             "R$ " + QString::number(totalInvested, 'f', 2),
-             "R$ " + QString::number(totalYield, 'f', 2), "-", "-", "-",
-             "R$ " + QString::number(totalCapitalGain, 'f', 2)};
+    itens = {"Total", "100%", QString::number(totalQuantity), formatReais(totalInvested),
+             formatReais(totalYield), "-", "-", "-", formatReais(totalCapitalGain)};
 
     addTableWidgetItens(ui->tableWidget_stocks, stockRow, itens, (HIGHLIGHT_CELL | FONT_BOLD | FONT_SIZE));
 }
@@ -277,9 +265,9 @@ void MainWindow::updateFixedIncomeTable()
             itens = {fixedIncome->getPurchaseDate().toString("dd/MM/yyyy"),
                      fixedIncome->getDescription(),
                      fixedIncome->getYieldExpected(),
-                     "R$ " + QString::number(fixedIncome->getInvestedValue(), 'f', 2),
-                     "R$ " + QString::number(fixedIncome->getCurrentValue(), 'f', 2),
-                     "R$ " + QString::number(fixedIncome->getYield(), 'f', 2),
+                     formatReais(fixedIncome->getInvestedValue()),
+                     formatReais(fixedIncome->getCurrentValue()),
+                     formatReais(fixedIncome->getYield()),
                      fixedIncome->getLimitDate().toString("dd/MM/yyyy")};
 
             // Set status
@@ -293,9 +281,9 @@ void MainWindow::updateFixedIncomeTable()
 
     // Set itens
     itens = {"-", "Total", "-",
-             "R$ " + QString::number(investmentController.getFixedIncomeTotalInvested(FixedIncome::VALID), 'f', 2),
-             "R$ " + QString::number(investmentController.getFixedIncomeCurrentTotal(FixedIncome::VALID), 'f', 2),
-             "R$ " + QString::number(investmentController.getFixedIncomeTotalYield(FixedIncome::VALID), 'f', 2),
+             formatReais(investmentController.getFixedIncomeTotalInvested(FixedIncome::VALID)),
+             formatReais(investmentController.getFixedIncomeCurrentTotal(FixedIncome::VALID)),
+             formatReais(investmentController.getFixedIncomeTotalYield(FixedIncome::VALID)),
              QString::number(investmentController.getFixedIncomeTotalYieldPercentage(FixedIncome::VALID), 'f', 2) + "%"};
 
     // Insert total row
@@ -352,7 +340,6 @@ void MainWindow::updateGeneralTable()
         headers.append(financialInstitution->getName());
     }
 
-    //headers.append({"Renda fixa", "Total no mes"});
     headers.append("Total no mes");
 
     configureTableWidget(headers, ui->tableWidget_general);
@@ -367,13 +354,16 @@ void MainWindow::updateGeneralTable()
     QStringList itens ;
     int style = STANDART_CELL;
 
+    QLocale locale(QLocale::Portuguese);
+
     // Check date
     while ((currentDate->year() > end->year()) ||
            (currentDate->year() == end->year() && currentDate->month() >= end->month() - 1))
     {
         double total = 0;
 
-        itens = {init->toString("MMMM") + " " + QString::number(init->year())};
+        itens = {locale.toString(*init, "MMMM") + " " + QString::number(init->year())};
+
         for(int column = 1; column < ui->tableWidget_general->columnCount(); column++)
         {
             auto financialInstitution = investmentController.getFinancialInstitution(
@@ -382,13 +372,13 @@ void MainWindow::updateGeneralTable()
             if(financialInstitution != NULL)
             {
                 auto result = financialInstitution->getFinancialResult(*init);
-                itens.append((result != nullptr) ? "R$ " + QString::number(result->getValue(), 'f', 2) : "R$ 0.00");
+                itens.append(formatReais((result != nullptr) ? result->getValue() : 0));
 
                 total += ((result != nullptr) ? result->getValue() : 0);
             }
         }
 
-        itens.append("R$ " + QString::number(total, 'f', 2));
+        itens.append(formatReais(total));
 
         // Insert total row
         addTableWidgetItens(ui->tableWidget_general, row, itens, style);
@@ -404,6 +394,8 @@ void MainWindow::updateGeneralTable()
         *end = end->addMonths(1);
         row += 1;
     }
+
+    ui->tableWidget_general->scrollToBottom();
 }
 
 void MainWindow::on_actionInstituition_triggered()
@@ -420,12 +412,13 @@ void MainWindow::on_tableWidget_general_cellDoubleClicked(int row, int column)
     // Get header
     QString header = ui->tableWidget_general->horizontalHeaderItem(column)->text();
 
+    // Get date
+    QLocale locale(QLocale::Portuguese);
+    QDate date = locale.toDate(ui->tableWidget_general->item(row, 0)->text(), "MMMM yyyy");
+
     // Check header
     if(!(header.contains("Mes e ano") || header.contains("Total no mes")))
     {
-        // Get date
-        QDate date = QDate::fromString(ui->tableWidget_general->item(row, 0)->text(), "MMMM yyyy");
-
         // Show financial institution window
         FinancialInstitutionWindow *financialWindow =
                 new FinancialInstitutionWindow(&header, date, &investmentController, this);
@@ -444,19 +437,19 @@ void MainWindow::on_tableWidget_general_cellDoubleClicked(int row, int column)
 
         if(reply == QMessageBox::Yes)
         {
-            QDate date = QDate::fromString(ui->tableWidget_general->item(row, 0)->text(), "MMMM yyyy");
             for(int i = 1; i < ui->tableWidget_general->columnCount() - 1; i++)
             {
-                double value = ui->tableWidget_general->item(row, i)->text().remove("R$ ").toDouble();
+                double value = formatDouble(ui->tableWidget_general->item(row, i)->text());
                 QString name = ui->tableWidget_general->horizontalHeaderItem(i)->text();
                 Database database;
 
                 if(!database.insertFinancialInstitutionMonth(name, FinancialInstitutionMonth(date, value)))
                 {
-                    QMessageBox::critical(this, "Erro", "Erro ao inserir resultado financeiro");
+                    QMessageBox::critical(this, "Erro", "Erro ao inserir resultado financeiro da instituição: " + name);
                 }
             }
 
+            QMessageBox::information(this, "Fianlizado", "Resultado financeiro inserido");
         }
     }
 }

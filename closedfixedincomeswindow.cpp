@@ -48,10 +48,8 @@ void ClosedFixedIncomesWindow::updateTableWidget()
             // Set itens
             itens = {fixedIncome->getDescription(), fixedIncome->getPurchaseDate().toString("dd/MM/yyyy"),
                      fixedIncome->getLimitDate().toString("dd/MM/yyyy"),
-                     "R$ " + QString::number(fixedIncome->getInvestedValue(), 'f', 2),
-                     "R$ " + QString::number(fixedIncome->getCurrentValue(), 'f', 2),
-                     "R$ " + QString::number(fixedIncome->getYield(), 'f', 2),
-                     QString::number(fixedIncome->getYieldPercentage(), 'f', 2) + "%"};
+                     formatReais(fixedIncome->getInvestedValue()), formatReais(fixedIncome->getCurrentValue()),
+                     formatReais(fixedIncome->getYield()), QString::number(fixedIncome->getYieldPercentage(), 'f', 2) + "%"};
 
             // Insert itens
             addTableWidgetItens(ui->tableWidget, row, itens, STANDART_CELL);
@@ -63,9 +61,9 @@ void ClosedFixedIncomesWindow::updateTableWidget()
 
     // Create total row
     itens = {"Total", "-", "-",
-             "R$ " + QString::number(investmentController->getFixedIncomeTotalInvested(FixedIncome::CLOSED), 'f', 2),
-             "R$ " + QString::number(investmentController->getFixedIncomeCurrentTotal(FixedIncome::CLOSED), 'f', 2),
-             "R$ " + QString::number(investmentController->getFixedIncomeTotalYield(FixedIncome::CLOSED), 'f', 2),
+             formatReais(investmentController->getFixedIncomeTotalInvested(FixedIncome::CLOSED)),
+             formatReais(investmentController->getFixedIncomeCurrentTotal(FixedIncome::CLOSED)),
+             formatReais(investmentController->getFixedIncomeTotalYield(FixedIncome::CLOSED)),
              QString::number(investmentController->getFixedIncomeTotalYieldPercentage(FixedIncome::CLOSED), 'f', 2) + "%"};
 
     // Insert total
