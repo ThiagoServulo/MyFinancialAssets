@@ -8,8 +8,8 @@ MonthWindow::MonthWindow(InvestmentController *investmentController, QDate date,
     ui(new Ui::MonthWindow)
 {
     ui->setupUi(this);
-    this->setMaximumSize(811, 641);
-    this->setMinimumSize(811, 641);
+    this->setMaximumSize(962, 843);
+    this->setMinimumSize(962, 843);
 
     // Set variables
     this->investmentController = investmentController;
@@ -24,6 +24,7 @@ MonthWindow::MonthWindow(InvestmentController *investmentController, QDate date,
     ui->label_month->setStyleSheet("color: rgb(255, 255, 255);");
     ui->label_transactions->setStyleSheet("color: rgb(255, 255, 255);");
     ui->label_yields->setStyleSheet("color: rgb(255, 255, 255);");
+    ui->label_fixedIncome->setStyleSheet("color: rgb(255, 255, 255);");
 
     // Set window background color
     ui->centralwidget->setStyleSheet("background-color: rgb(18, 18, 18);");
@@ -37,9 +38,15 @@ MonthWindow::MonthWindow(InvestmentController *investmentController, QDate date,
     headerLabels = {"Ticker", "Tipo de rendimento", "Data do rendimento", "Valor recebido"};
     configureTableWidget(headerLabels, ui->tableWidget_yields);
 
+    // Configure yield table
+    headerLabels = {"  Status  ", "Descrição do investimento", "Data da compra", "Data da venda",
+                    "Valor investido", "Valor recebido", " Rendimento "};
+    configureTableWidget(headerLabels, ui->tableWidget_fixedIncome);
+
     // Update tables
     updateTransactionTable();
     updateYieldTable();
+    updateFixedIncomeTable();
 }
 
 MonthWindow::~MonthWindow()
@@ -168,5 +175,60 @@ void MonthWindow::updateYieldTable()
             // Add row
             ++row;
         }
+    }
+}
+
+void MonthWindow::updateFixedIncomeTable()
+{
+    // Get date
+    QDate auxDate = endDate.addDays(-1);
+
+    // Init variables
+    int row = 0;
+
+    // Add purchased fixed incomes
+    for(auto fixedIncome: investmentController->getPurchasedFixedIncomes(&auxDate))
+    {
+        // Get variables
+        QString description = fixedIncome->getDescription();
+        QDate purchaseDate = fixedIncome->getPurchaseDate();
+        QDate limitDate = fixedIncome->getLimitDate();
+        double investedValue = fixedIncome->getInvestedValue();
+
+        // Create string list
+        QStringList itens = {"Comprado", description, purchaseDate.toString("dd/MM/yyyy"),
+                             limitDate.toString("dd/MM/yyyy"), formatReais(investedValue),
+                             "-", "-", "-"};
+
+        // Insert itens
+        addTableWidgetItens(ui->tableWidget_fixedIncome, row, itens, STANDART_CELL);
+
+        // Add row
+        ++row;
+    }
+
+    // Add sold fixed incomes
+    for(auto fixedIncome: investmentController->getSoldFixedIncomes(&auxDate))
+    {
+        // Get variables
+        QString description = fixedIncome->getDescription();
+        QDate purchaseDate = fixedIncome->getPurchaseDate();
+        QDate limitDate = fixedIncome->getLimitDate();
+        double investedValue = fixedIncome->getInvestedValue();
+        double currentValue = fixedIncome->getCurrentValue();
+        double yield = fixedIncome->getYield();
+        double yieldPercentage = fixedIncome->getYieldPercentage();
+
+        // Create string list
+        QStringList itens = {"Encerrado", description, purchaseDate.toString("dd/MM/yyyy"),
+                             limitDate.toString("dd/MM/yyyy"), formatReais(investedValue),
+                             formatReais(currentValue), formatReais(yield) + " [" +
+                             QString::number(yieldPercentage, 'f', 2) + "%]"};
+
+        // Insert itens
+        addTableWidgetItens(ui->tableWidget_fixedIncome, row, itens, HIGHLIGHT_CELL);
+
+        // Add row
+        ++row;
     }
 }

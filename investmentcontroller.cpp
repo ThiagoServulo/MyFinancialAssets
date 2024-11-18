@@ -139,6 +139,38 @@ std::vector<std::shared_ptr<FixedIncome>> InvestmentController::getFixedIncomes(
     return fixedIncomes;
 }
 
+std::vector<std::shared_ptr<FixedIncome>> InvestmentController::getSoldFixedIncomes(QDate *limitDate)
+{
+    std::vector<std::shared_ptr<FixedIncome>> ret;
+
+    for(auto fixedIncome: fixedIncomes)
+    {
+        if(fixedIncome->getLimitDate().month() == limitDate->month() &&
+                fixedIncome->getLimitDate().year() == limitDate->year())
+        {
+            ret.push_back(fixedIncome);
+        }
+    }
+
+    return ret;
+}
+
+std::vector<std::shared_ptr<FixedIncome>> InvestmentController::getPurchasedFixedIncomes(QDate *initDate)
+{
+    std::vector<std::shared_ptr<FixedIncome>> ret;
+
+    for(auto fixedIncome: fixedIncomes)
+    {
+        if(fixedIncome->getPurchaseDate().month() == initDate->month() &&
+                fixedIncome->getPurchaseDate().year() == initDate->year())
+        {
+            ret.push_back(fixedIncome);
+        }
+    }
+
+    return ret;
+}
+
 std::shared_ptr<FixedIncome> InvestmentController::getFixedIncome(QDate purchaseDate, QString description)
 {
     for(auto fixedIncome: fixedIncomes)

@@ -17,6 +17,7 @@ public:
     ~MonthWindow();
     void updateTransactionTable();
     void updateYieldTable();
+    void updateFixedIncomeTable();
 
 private:
     Ui::MonthWindow *ui;
