@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>3</number>
     </property>
     <widget class="QWidget" name="tab_general">
      <attribute name="title">
@@ -201,7 +201,7 @@
   </action>
   <action name="actionVariableIncome">
    <property name="text">
-    <string>Renda variável</string>
+    <string>Mensal</string>
    </property>
   </action>
   <action name="actionInstituition">
