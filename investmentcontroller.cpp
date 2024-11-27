@@ -146,7 +146,8 @@ std::vector<std::shared_ptr<FixedIncome>> InvestmentController::getSoldFixedInco
     for(auto fixedIncome: fixedIncomes)
     {
         if(fixedIncome->getLimitDate().month() == limitDate->month() &&
-                fixedIncome->getLimitDate().year() == limitDate->year())
+                fixedIncome->getLimitDate().year() == limitDate->year() &&
+                fixedIncome->getStatus() == FixedIncome::CLOSED)
         {
             ret.push_back(fixedIncome);
         }
