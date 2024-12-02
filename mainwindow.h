@@ -33,6 +33,7 @@ private slots:
     void on_actionVariableIncome_triggered();
     void on_actionInstituition_triggered();
     void on_tableWidget_general_cellDoubleClicked(int row, int column);
+    void on_actionAnnualResult_triggered();
 
 private:
     Ui::MainWindow *ui;

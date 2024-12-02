@@ -164,6 +164,7 @@
      <string>Relatórios</string>
     </property>
     <addaction name="actionVariableIncome"/>
+    <addaction name="actionAnnualResult"/>
    </widget>
    <addaction name="menuNew"/>
    <addaction name="menuAnalysis"/>
@@ -207,6 +208,11 @@
   <action name="actionInstituition">
    <property name="text">
     <string>Instituição</string>
+   </property>
+  </action>
+  <action name="actionAnnualResult">
+   <property name="text">
+    <string>Anual</string>
    </property>
   </action>
  </widget>

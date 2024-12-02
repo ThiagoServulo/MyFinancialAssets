@@ -320,7 +320,8 @@ void MainWindow::on_actionClosedFixedIncomes_triggered()
 
 void MainWindow::on_actionVariableIncome_triggered()
 {
-    VariableIncomePerformanceWindow *variableIncomeWindow = new VariableIncomePerformanceWindow(&investmentController, this);
+    VariableIncomePerformanceWindow *variableIncomeWindow = new
+            VariableIncomePerformanceWindow(VariableIncomePerformanceWindow::MONTH_RESULT, &investmentController, this);
     variableIncomeWindow->show();
 }
 
@@ -358,7 +359,8 @@ void MainWindow::updateGeneralTable()
 
     // Check date
     while ((currentDate->year() > end->year()) ||
-           (currentDate->year() == end->year() && currentDate->month() >= end->month() - 1))
+           (currentDate->year() == end->year() && currentDate->month() >= end->month() - 1) ||
+           (currentDate->year() == end->year() - 1 && currentDate->month() == 12 && end->month() == 1))
     {
         double total = 0;
 
@@ -393,6 +395,11 @@ void MainWindow::updateGeneralTable()
         *init = init->addMonths(1);
         *end = end->addMonths(1);
         row += 1;
+
+        qDebug() << currentDate->month();
+        qDebug() << end->month() - 1;
+        qDebug() << currentDate->year();
+        qDebug() << end->year();
     }
 
     ui->tableWidget_general->scrollToBottom();
@@ -452,4 +459,11 @@ void MainWindow::on_tableWidget_general_cellDoubleClicked(int row, int column)
             QMessageBox::information(this, "Fianlizado", "Resultado financeiro inserido");
         }
     }
+}
+
+void MainWindow::on_actionAnnualResult_triggered()
+{
+    VariableIncomePerformanceWindow *variableIncomeWindow = new
+            VariableIncomePerformanceWindow(VariableIncomePerformanceWindow::YEAR_RESULT, &investmentController, this);
+    variableIncomeWindow->show();
 }

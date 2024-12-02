@@ -13,7 +13,9 @@ class VariableIncomePerformanceWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit VariableIncomePerformanceWindow(InvestmentController *investmentController, QWidget *parent = nullptr);
+    static const bool MONTH_RESULT = true;
+    static const bool YEAR_RESULT = false;
+    explicit VariableIncomePerformanceWindow(bool type, InvestmentController *investmentController, QWidget *parent = nullptr);
     ~VariableIncomePerformanceWindow();
 
 private slots:
@@ -22,7 +24,9 @@ private slots:
 private:
     Ui::VariableIncomePerformanceWindow *ui;
     InvestmentController *investmentController;
-    void updateTableWidget();
+    bool windowType;
+    void updateMonthTableWidget();
+    void updateYearTableWidget();
 };
 
 #endif // VARIABLEINCOMEPERFORMANCEWINDOW_H

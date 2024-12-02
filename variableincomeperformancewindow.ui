@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Análise dos meses</string>
+   <string>Performance</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLabel" name="label">
@@ -31,7 +31,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Renda variável: Análise mensal</string>
+     <string>Renda variável: </string>
     </property>
    </widget>
    <widget class="QTableWidget" name="tableWidget">
