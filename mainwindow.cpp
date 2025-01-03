@@ -271,7 +271,8 @@ void MainWindow::updateFixedIncomeTable()
                      fixedIncome->getLimitDate().toString("dd/MM/yyyy")};
 
             // Set status
-            int style = (fixedIncome->getLimitDate() < QDate::currentDate()) ? HIGHLIGHT_CELL : STANDART_CELL;
+            int style = (fixedIncome->getLimitDate().month() <= QDate::currentDate().month() &&
+                         fixedIncome->getLimitDate().year() <= QDate::currentDate().year()) ? HIGHLIGHT_CELL : STANDART_CELL;
 
             // Insert itens
             addTableWidgetItens(ui->tableWidget_fixedIncome, row, itens, style);
@@ -395,11 +396,6 @@ void MainWindow::updateGeneralTable()
         *init = init->addMonths(1);
         *end = end->addMonths(1);
         row += 1;
-
-        qDebug() << currentDate->month();
-        qDebug() << end->month() - 1;
-        qDebug() << currentDate->year();
-        qDebug() << end->year();
     }
 
     ui->tableWidget_general->scrollToBottom();

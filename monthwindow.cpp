@@ -8,8 +8,8 @@ MonthWindow::MonthWindow(InvestmentController *investmentController, QDate date,
     ui(new Ui::MonthWindow)
 {
     ui->setupUi(this);
-    this->setMaximumSize(962, 843);
-    this->setMinimumSize(962, 843);
+    this->setMaximumSize(991, 843);
+    this->setMinimumSize(991, 843);
 
     // Set variables
     this->investmentController = investmentController;
@@ -40,7 +40,7 @@ MonthWindow::MonthWindow(InvestmentController *investmentController, QDate date,
 
     // Configure yield table
     headerLabels = {"  Status  ", "Descrição do investimento", "Data da compra", "Data da venda",
-                    "Valor investido", "Valor recebido", " Rendimento "};
+                    " Valor investido ", "  Valor recebido  ", "   Rendimento   "};
     configureTableWidget(headerLabels, ui->tableWidget_fixedIncome);
 
     // Update tables
@@ -146,36 +146,50 @@ void MonthWindow::updateYieldTable()
     // Get assets
     auto assets = investmentController->getAllAssets();
 
-    // Init variables
-    int row = 0;
+    // Create new variable
+    std::vector<std::tuple<QString, Yield>> consolidatedYields;
 
-    // Process assets
-    for(auto asset: assets)
-    {
-        // Get Yield
-        auto yields = asset->getYields(&initDate, &endDate);
+     // Process assets
+     for (auto asset : assets)
+     {
+         // Get asset's yields
+         auto yields = asset->getYields(&initDate, &endDate);
 
-        for(auto yield: yields)
-        {
-            // Get variables
-            YieldType yieldType = yield.getYieldType();
-            double value = yield.getValue();
-            QString ticker = asset->getTicker();
+         for (auto yield : yields)
+         {
+             // Add yield and ticker
+             consolidatedYields.emplace_back(asset->getTicker(), yield);
+         }
+     }
 
-            // Set style
-            int style = (yieldType == YieldType::DIVIDENDO) ? HIGHLIGHT_CELL : STANDART_CELL;
+     // Sort yields by date
+     std::sort(consolidatedYields.begin(), consolidatedYields.end(),
+       [](const std::tuple<QString, Yield>& a, const std::tuple<QString, Yield>& b)
+       {
+           return std::get<1>(a).getEventDate() < std::get<1>(b).getEventDate();
+       });
 
-            // Create string list
-            QStringList itens = {ticker, getYieldTypeString(yieldType),
-                                 yield.getDate().toString("dd/MM/yyyy"), formatReais(value)};
+     // Insert yields to the table
+     int row = 0;
+     for (const auto& [ticker, yield] : consolidatedYields)
+     {
+         // Get values
+         YieldType yieldType = yield.getYieldType();
+         double value = yield.getValue();
 
-            // Insert itens
-            addTableWidgetItens(ui->tableWidget_yields, row, itens, style);
+         // Set the style
+         int style = (yieldType == YieldType::RENDIMENTO) ? HIGHLIGHT_CELL : STANDART_CELL;
 
-            // Add row
-            ++row;
-        }
-    }
+         // Create itens
+         QStringList itens = {ticker, getYieldTypeString(yieldType),
+                              yield.getEventDate().toString("dd/MM/yyyy"), formatReais(value)};
+
+         // Insert new row
+         addTableWidgetItens(ui->tableWidget_yields, row, itens, style);
+
+         // Increment row
+         ++row;
+     }
 }
 
 void MonthWindow::updateFixedIncomeTable()
