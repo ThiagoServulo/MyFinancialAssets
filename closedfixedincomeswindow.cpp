@@ -39,8 +39,16 @@ void ClosedFixedIncomesWindow::updateTableWidget()
     int row = 0;
     QStringList itens;
 
+    auto fixedIncomes = investmentController->getFixedIncomes();
+
+    std::sort(fixedIncomes.begin(), fixedIncomes.end(),
+       [](const std::shared_ptr<FixedIncome>& a, const std::shared_ptr<FixedIncome>& b)
+    {
+        return a->getLimitDate() < b->getLimitDate();
+    });
+
     // Get fixed incomes
-    for(auto fixedIncome: investmentController->getFixedIncomes())
+    for(auto fixedIncome: fixedIncomes)
     {
         // Check status
         if(fixedIncome->getStatus() == FixedIncome::CLOSED)
