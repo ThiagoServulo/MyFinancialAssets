@@ -62,6 +62,7 @@ void MonthWindow::updateTransactionTable()
     // Init variables
     int row = 0;
     QStringList itens;
+    std::vector<std::tuple<QString, Event*>> consolidatedEvents;
 
     // Process assets
     for(auto asset: assets)
@@ -71,74 +72,87 @@ void MonthWindow::updateTransactionTable()
         auto reorganizations = asset->getReorganizations(&initDate, &endDate);
         auto events = mergeAndSortEvents(transactions, reorganizations);
 
-        // Process events
-        for(auto event: events)
+        for (auto event : events)
         {
-            int style;
+            // Add yield and ticker
+            consolidatedEvents.emplace_back(asset->getTicker(), event);
+        }
+    }
 
-            if(event->getEventType() == EventType::REORGANIZATION)
+    // Sort yields by date
+    std::sort(consolidatedEvents.begin(), consolidatedEvents.end(),
+      [](const std::tuple<QString, Event*>& a, const std::tuple<QString, Event*>& b)
+      {
+          return std::get<1>(a)->getDate() < std::get<1>(b)->getDate();
+      });
+
+    // Process events
+    for (const auto& [ticker, event] : consolidatedEvents)
+    {
+        int style;
+
+        if(event->getEventType() == EventType::REORGANIZATION)
+        {
+            // Cast to reorganization
+            Reorganization *reorganization = dynamic_cast<Reorganization*>(event);
+
+            // Check cast
+            if (!reorganization)
             {
-                // Cast to reorganization
-                Reorganization *reorganization = dynamic_cast<Reorganization*>(event);
-
-                // Check cast
-                if (!reorganization)
-                {
-                    qDebug() << "Reorganization cast error";
-                    continue;
-                }
-
-                // Get variables
-                ReorganizationType reorganizationType = reorganization->getReorganizationType();
-                QString ticker = asset->getTicker();
-                QDate date = reorganization->getDate();
-                int ratio = reorganization->getRatio();
-                style = HIGHLIGHT_CELL;
-
-                // Populate string list
-                itens = {ticker, getReorganizationTypeString(reorganizationType),
-                         date.toString("dd/MM/yyyy"),
-                         QString::number(ratio), "-", "-" };
-            }
-            else if(event->getEventType() == EventType::TRANSACTION)
-            {
-                // Cast to transaction
-                Transaction *transaction = dynamic_cast<Transaction*>(event);
-
-                // Check cast
-                if (!transaction)
-                {
-                    qDebug() << "Transaction cast error";
-                    continue;
-                }
-
-                // Get variables
-                QString ticker = asset->getTicker();
-                TransactionType transactionType = transaction->getTransactionType();
-                int quantity = transaction->getQuantity();
-                double unitaryPrice = transaction->getUnitaryPrice();
-                double totalOperation = quantity * unitaryPrice;
-                QDate date = transaction->getDate();
-                style = STANDART_CELL;
-
-                // Populate string list
-                itens = {ticker, getTransactionTypeString(transactionType), date.toString("dd/MM/yyyy"),
-                         QString::number(quantity) + ((transactionType == TransactionType::BONIFICACAO) ? "%" : ""),
-                        formatReais(unitaryPrice), formatReais(totalOperation)};
-            }
-            else
-            {
-                qDebug() << "Invalid event type";
+                qDebug() << "Reorganization cast error";
                 continue;
             }
 
-            // Insert itens
-            addTableWidgetItens(ui->tableWidget_transactions, row, itens, style);
+            // Get variables
+            ReorganizationType reorganizationType = reorganization->getReorganizationType();
+            QDate date = reorganization->getDate();
+            int ratio = reorganization->getRatio();
+            style = HIGHLIGHT_CELL;
 
-            // Add row
-            ++row;
+            // Populate string list
+            itens = {ticker, getReorganizationTypeString(reorganizationType),
+                     date.toString("dd/MM/yyyy"),
+                     QString::number(ratio), "-", "-" };
         }
+        else if(event->getEventType() == EventType::TRANSACTION)
+        {
+            // Cast to transaction
+            Transaction *transaction = dynamic_cast<Transaction*>(event);
+
+            // Check cast
+            if (!transaction)
+            {
+                qDebug() << "Transaction cast error";
+                continue;
+            }
+
+            // Get variables
+            TransactionType transactionType = transaction->getTransactionType();
+            int quantity = transaction->getQuantity();
+            double unitaryPrice = transaction->getUnitaryPrice();
+            double totalOperation = quantity * unitaryPrice;
+            QDate date = transaction->getDate();
+            style = STANDART_CELL;
+
+            // Populate string list
+            itens = {ticker, getTransactionTypeString(transactionType), date.toString("dd/MM/yyyy"),
+                     QString::number(quantity) + ((transactionType == TransactionType::BONIFICACAO) ? "%" : ""),
+                    formatReais(unitaryPrice), formatReais(totalOperation)};
+        }
+        else
+        {
+            qDebug() << "Invalid event type: " + ticker;
+            continue;
+        }
+
+        // Insert itens
+        addTableWidgetItens(ui->tableWidget_transactions, row, itens, style);
+
+        // Add row
+        ++row;
     }
+
+    ui->tableWidget_transactions->scrollToBottom();
 }
 
 void MonthWindow::updateYieldTable()
@@ -190,6 +204,8 @@ void MonthWindow::updateYieldTable()
          // Increment row
          ++row;
      }
+
+     ui->tableWidget_yields->scrollToBottom();
 }
 
 void MonthWindow::updateFixedIncomeTable()

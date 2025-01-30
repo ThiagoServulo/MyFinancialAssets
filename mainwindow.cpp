@@ -76,6 +76,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Set initial tab
     ui->tabWidget->setCurrentIndex(0);
+
+    // Change manu bar font color
+    menuBar()->setStyleSheet("QMenuBar::item { color: white; }");
 }
 
 MainWindow::~MainWindow()

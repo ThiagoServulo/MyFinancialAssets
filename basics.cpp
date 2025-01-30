@@ -111,13 +111,13 @@ std::vector<Event*> mergeAndSortEvents(const std::vector<Transaction>& transacti
     // Add transactions
     for (const auto& transaction : transactions)
     {
-        events.push_back(const_cast<Transaction*>(&transaction));
+        events.push_back(new Transaction(transaction));
     }
 
     // Add reorganizations
     for (const auto& reorganization : reorganizations)
     {
-        events.push_back(const_cast<Reorganization*>(&reorganization));
+        events.push_back(new Reorganization(reorganization));
     }
 
     // Sort events by date
