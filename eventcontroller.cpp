@@ -131,3 +131,17 @@ QDate EventController::getEspecifiedTransactionDate(TransactionType transactionT
     // Return the transaction
     return it->getDate();
 }
+
+bool EventController::removeTransaction(Transaction transaction)
+{
+    for (auto it = eventList.begin(); it != eventList.end(); ++it)
+    {
+        std::shared_ptr<Transaction> trans = std::dynamic_pointer_cast<Transaction>(*it);
+        if (trans && *trans == transaction)
+        {
+            eventList.erase(it);
+            return true;
+        }
+    }
+    return false;
+}

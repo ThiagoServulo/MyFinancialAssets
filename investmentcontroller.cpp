@@ -315,3 +315,15 @@ std::shared_ptr<FinancialInstitution> InvestmentController::getFinancialInstitut
 
     return nullptr;
 }
+
+void InvestmentController::removeTickerTransaction(QString ticker, Transaction transaction)
+{
+    for (auto& asset : assets)
+    {
+        if (asset->getTicker() == ticker)
+        {
+            asset->removeTransaction(transaction);
+            return;
+        }
+    }
+}

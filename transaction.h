@@ -17,6 +17,7 @@ public:
     int getQuantity() const;
     double getUnitaryPrice() const;
     QDate getEventDate() const;
+    bool operator==(const Transaction& other) const;
 };
 
 #endif // TRANSACTION_H

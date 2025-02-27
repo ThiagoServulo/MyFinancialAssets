@@ -18,6 +18,7 @@
 #include "variableincomeperformancewindow.h"
 #include "financialinstitutionwindow.h"
 #include <QMessageBox>
+#include <QSettings>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -30,6 +31,12 @@ MainWindow::MainWindow(QWidget *parent)
     // Create database
     database.prepareDatabase();
 
+    // Init asset controller
+    if(!database.investmentControllerInitialization(&investmentController))
+    {
+        qDebug() << "Erro in asset controller Initialization";
+    }
+
     // Configure stock and fund tables
     QStringList headerLabels = {"Ticker", "Distribuição", "Quantidade", "Total investido", "Rendimento",
                                 "Preço médio", "Preço atual", "Valorização", "Ganho de capital"};
@@ -40,12 +47,6 @@ MainWindow::MainWindow(QWidget *parent)
     headerLabels = {"Data da compra", "\tDescrição do investimento\t", "Rendimento esperado", " Valor investido ",
                     "   Valor atual   ", "Rendimento", "Data limite"};
     configureTableWidget(headerLabels, ui->tableWidget_fixedIncome);
-
-    // Init asset controller
-    if(!database.investmentControllerInitialization(&investmentController))
-    {
-        qDebug() << "Erro in asset controller Initialization";
-    }
 
     // Init tables
     updateSotckAndFundTable();
@@ -210,7 +211,7 @@ void MainWindow::on_tableWidget_stocks_cellDoubleClicked(int row, int column)
     // Check ticker
     if(ticker != "Total")
     {
-        AssetWindow *assetWindow = new AssetWindow(investmentController.getAsset(ticker).get(), this);
+        AssetWindow *assetWindow = new AssetWindow(investmentController.getAsset(ticker).get(), &investmentController, this);
         assetWindow->show();
     }
 }
@@ -223,7 +224,7 @@ void MainWindow::on_tableWidget_funds_cellDoubleClicked(int row, int column)
     // Check ticker
     if(ticker != "Total")
     {
-        AssetWindow *assetWindow = new AssetWindow(investmentController.getAsset(ticker).get(), this);
+        AssetWindow *assetWindow = new AssetWindow(investmentController.getAsset(ticker).get(), &investmentController, this);
         assetWindow->show();
     }
 }
@@ -349,9 +350,18 @@ void MainWindow::updateGeneralTable()
 
     configureTableWidget(headers, ui->tableWidget_general);
 
+    // Get .ini file
+    QString iniFilePath = QCoreApplication::applicationDirPath() + "/config.ini";
+
+    // Create object QSettings to access the .ini
+    QSettings settings(iniFilePath, QSettings::IniFormat);
+
+    // Read the initial date
+    QString initDateStr = settings.value("Date/initDate", "").toString();
+
     // Set dates
-    QDate *init = new QDate(2021, 1, 1);
-    QDate *end = new QDate(2021, 2, 1);
+    QDate *init = new QDate(QDate::fromString("01/" + initDateStr, "dd/MM/yyyy"));
+    QDate *end = new QDate(init->addMonths(1));
     QDate *currentDate = new QDate(QDate::currentDate());
 
     // Init variables

@@ -26,6 +26,7 @@ public:
     bool updateFixedIncome(FixedIncome *fixedIncome);
     bool insertFinancialInstitution(FinancialInstitution financialInstitution);
     bool insertFinancialInstitutionMonth(QString name, FinancialInstitutionMonth result);
+    bool deleteTransaction(QString ticker, TransactionType type, QDate date, int quantity, double price);
 
 private:
     QSqlDatabase database;

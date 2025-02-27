@@ -5,7 +5,7 @@
 
 enum class TransactionType
 {
-    COMPRA,
+    COMPRA = 1,
     VENDA,
     RESTITUICAO,
     BONIFICACAO

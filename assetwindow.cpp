@@ -1,8 +1,11 @@
 #include "assetwindow.h"
 #include "ui_assetwindow.h"
 #include "basics.h"
+#include "database.h"
+#include <QMessageBox>
+#include <QMenu>
 
-AssetWindow::AssetWindow(Asset *asset, QWidget *parent) :
+AssetWindow::AssetWindow(Asset *asset, InvestmentController *investmentController, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::AssetWindow)
 {
@@ -12,6 +15,9 @@ AssetWindow::AssetWindow(Asset *asset, QWidget *parent) :
 
     // Set asset
     this->asset = asset;
+
+    // Set investiment controller
+    this->investmentController = investmentController;
 
     // Update tables
     updateTransactionTable();
@@ -27,6 +33,8 @@ AssetWindow::AssetWindow(Asset *asset, QWidget *parent) :
 
     // Set window background color
     ui->centralwidget->setStyleSheet("background-color: rgb(18, 18, 18);");
+
+    ui->tableWidget_transactions->setContextMenuPolicy(Qt::CustomContextMenu);
 }
 
 AssetWindow::~AssetWindow()
@@ -204,4 +212,63 @@ void AssetWindow::updateYieldTable()
     }
 }
 
+void AssetWindow::on_tableWidget_transactions_customContextMenuRequested(const QPoint &pos)
+{
+    // Get index
+    QModelIndex index = ui->tableWidget_transactions->indexAt(pos);
+
+    // Check index
+    if (!index.isValid())
+    {
+        return;
+    }
+
+    // Create actions
+    QMenu contextMenu;
+    QAction *actionDelete = contextMenu.addAction("Excluir");
+    QAction *actionEdit = contextMenu.addAction("Editar");
+
+    QAction *selectedAction = contextMenu.exec(ui->tableWidget_transactions->viewport()->mapToGlobal(pos));
+
+    if (selectedAction == actionDelete)
+    {
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "Atenção", "Deseja excluir essa transação?", QMessageBox::Yes | QMessageBox::No);
+
+        if(reply == QMessageBox::Yes)
+        {
+            // Get current row
+            int row = index.row();
+
+            // Get fields
+            TransactionType type = getTransactionTypeFromString(ui->tableWidget_transactions->item(row, 0)->text());
+            QDate date = QDate::fromString(ui->tableWidget_transactions->item(row, 1)->text(), "dd/MM/yyyy");
+            int quantity = ui->tableWidget_transactions->item(row, 2)->text().toInt();
+            double price = formatDouble(ui->tableWidget_transactions->item(row, 3)->text());
+            QString ticker = ui->label_ticker->text();
+
+            Database database;
+            if(database.deleteTransaction(ticker, type, date, quantity, price))
+            {
+                QMessageBox::information(this, "Sucesso", "Transação excluída com sucesso");
+
+                // Update investiment controller
+                Transaction transaction = Transaction(date, type, quantity, price);
+                this->investmentController->removeTickerTransaction(ticker, transaction);
+
+                // Update table
+                this->updateTransactionTable();
+            }
+            else
+            {
+                QMessageBox::information(this, "Erro", "Erro ao excluir transação");
+            }
+        }
+    }
+    else if (selectedAction == actionEdit)
+    {
+        // TODO: Editar uma transação
+        QMessageBox::information(this, "Info", "Opção 2 selecionada");
+    }
+}
 

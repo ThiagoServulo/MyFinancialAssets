@@ -27,3 +27,11 @@ QDate Transaction::getEventDate() const
 {
     return getDate();
 }
+
+bool Transaction::operator==(const Transaction& other) const
+{
+    return this->getDate() == other.getDate() &&
+           this->transactionType == other.transactionType &&
+           this->quantity == other.quantity &&
+           this->unitaryPrice == other.unitaryPrice;
+}

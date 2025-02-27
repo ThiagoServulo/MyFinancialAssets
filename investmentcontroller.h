@@ -38,6 +38,7 @@ public:
     void addFinancialInstitution(std::shared_ptr<FinancialInstitution> financialInstitution);
     std::vector<std::shared_ptr<FinancialInstitution>> getFinancialInstitutions();
     std::shared_ptr<FinancialInstitution> getFinancialInstitution(QString name);
+    void removeTickerTransaction(QString ticker, Transaction transaction);
 };
 
 #endif // INVESTMENTCONTROLLER_H

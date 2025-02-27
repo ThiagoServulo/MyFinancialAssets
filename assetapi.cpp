@@ -9,11 +9,23 @@
 #include <QJsonObject>
 #include <QJsonValue>
 #include <QDebug>
+#include <QSettings>
 
 AssetApi::AssetApi()
 {
-    // Init api key
-    apiKey = "SAFNHJO46M4G14SI";
+    // Get .ini file
+    QString iniFilePath = QCoreApplication::applicationDirPath() + "/config.ini";
+
+    // Create object QSettings to access the .ini
+    QSettings settings(iniFilePath, QSettings::IniFormat);
+
+    // Read key API
+    apiKey = settings.value("API/apiKey", "").toString();
+
+    if (apiKey.isEmpty())
+    {
+        qDebug() << "API Key not found";
+    }
 }
 
 double AssetApi::getAssetCurrentPrice(QString ticker)

@@ -91,7 +91,7 @@ void SalesWindow::on_tableWidget_sales_cellDoubleClicked(int row, int column)
     // Check ticker
     if(ticker != "Total")
     {
-        AssetWindow *assetWindow = new AssetWindow(investmentController->getAsset(ticker).get(), this);
+        AssetWindow *assetWindow = new AssetWindow(investmentController->getAsset(ticker).get(), investmentController, this);
         assetWindow->show();
     }
 }

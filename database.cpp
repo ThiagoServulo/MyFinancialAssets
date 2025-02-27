@@ -891,3 +891,53 @@ std::vector<FinancialInstitution> Database::selectAllFinancialInstitutions()
 
     return financialInstitutions;
 }
+
+bool Database::deleteTransaction(QString ticker, TransactionType type, QDate date, int quantity, double price)
+{
+    if (openDatabase())
+    {
+        QSqlQuery query;
+
+        // Get id_ticker
+        query.prepare("SELECT id FROM ticker_table WHERE ticker = :ticker");
+        query.bindValue(":ticker", ticker);
+
+        if (!query.exec() || !query.next())
+        {
+            qDebug() << "Erro getting ticker id";
+            return false;
+        }
+
+        int id_ticker = query.value(0).toInt();
+
+        // Prepare the query
+        query.prepare(R"(
+            DELETE FROM transaction_table
+            WHERE id_ticker = :id_ticker
+            AND id_transaction_type = :id_transaction_type
+            AND date = :date
+            AND quantity = :quantity
+            AND unitary_price = :price
+        )");
+
+        query.bindValue(":id_ticker", id_ticker);
+        query.bindValue(":id_transaction_type", static_cast<int>(type));
+        query.bindValue(":date", date.toString("yyyy-MM-dd"));
+        query.bindValue(":quantity", quantity);
+        query.bindValue(":price", price);
+
+        // Execute query
+        if (!query.exec())
+        {
+            qDebug() << "Error deleting transaction from transaction_table";
+            return false;
+        }
+
+        return true;
+    }
+    else
+    {
+        qDebug() << "Error opening database to delete transaction";
+        return false;
+    }
+}
