@@ -15,6 +15,7 @@ class NewTransactionWindow : public QMainWindow
 public:
     explicit NewTransactionWindow(InvestmentController *investmentController, QWidget *parent = nullptr);
     ~NewTransactionWindow();
+    void configureEditWindow(QString ticker, TransactionType transactionType, double price, int quantity, AssetType assetType, QDate date);
 
 private slots:
     void on_pushButton_save_clicked();

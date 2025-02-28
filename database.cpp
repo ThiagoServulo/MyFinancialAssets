@@ -921,7 +921,7 @@ bool Database::deleteTransaction(QString ticker, TransactionType type, QDate dat
         )");
 
         query.bindValue(":id_ticker", id_ticker);
-        query.bindValue(":id_transaction_type", static_cast<int>(type));
+        query.bindValue(":id_transaction_type", static_cast<int>(type) + 1);
         query.bindValue(":date", date.toString("yyyy-MM-dd"));
         query.bindValue(":quantity", quantity);
         query.bindValue(":price", price);

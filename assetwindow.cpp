@@ -2,6 +2,7 @@
 #include "ui_assetwindow.h"
 #include "basics.h"
 #include "database.h"
+#include "newtransactionwindow.h"
 #include <QMessageBox>
 #include <QMenu>
 
@@ -48,6 +49,10 @@ void AssetWindow::updateTransactionTable()
     auto transactions = asset->getTransactions(nullptr, nullptr);
     auto reorganizations = asset->getReorganizations(nullptr, nullptr);
     auto events = mergeAndSortEvents(transactions, reorganizations);
+
+    // Clear table
+    ui->tableWidget_transactions->clearContents();
+    ui->tableWidget_transactions->setRowCount(0);
 
     // Configure transaction table
     QStringList headerLabels = {"Tipo de operação", "Data da operação", "Quantidade", "Preço unitário", "Total da operação",
@@ -223,10 +228,23 @@ void AssetWindow::on_tableWidget_transactions_customContextMenuRequested(const Q
         return;
     }
 
+    // Get current row
+    int row = index.row();
+
+    // Get fields
+    TransactionType transactionType = getTransactionTypeFromString(ui->tableWidget_transactions->item(row, 0)->text());
+    QDate date = QDate::fromString(ui->tableWidget_transactions->item(row, 1)->text(), "dd/MM/yyyy");
+    int quantity = ui->tableWidget_transactions->item(row, 2)->text().toInt();
+    double price = formatDouble(ui->tableWidget_transactions->item(row, 3)->text());
+    QString ticker = ui->label_ticker->text();
+    AssetType assetType = asset->getAssetType();
+
     // Create actions
     QMenu contextMenu;
     QAction *actionDelete = contextMenu.addAction("Excluir");
-    QAction *actionEdit = contextMenu.addAction("Editar");
+
+    // TODO: Editar transação
+    //QAction *actionEdit = contextMenu.addAction("Editar");
 
     QAction *selectedAction = contextMenu.exec(ui->tableWidget_transactions->viewport()->mapToGlobal(pos));
 
@@ -237,23 +255,13 @@ void AssetWindow::on_tableWidget_transactions_customContextMenuRequested(const Q
 
         if(reply == QMessageBox::Yes)
         {
-            // Get current row
-            int row = index.row();
-
-            // Get fields
-            TransactionType type = getTransactionTypeFromString(ui->tableWidget_transactions->item(row, 0)->text());
-            QDate date = QDate::fromString(ui->tableWidget_transactions->item(row, 1)->text(), "dd/MM/yyyy");
-            int quantity = ui->tableWidget_transactions->item(row, 2)->text().toInt();
-            double price = formatDouble(ui->tableWidget_transactions->item(row, 3)->text());
-            QString ticker = ui->label_ticker->text();
-
             Database database;
-            if(database.deleteTransaction(ticker, type, date, quantity, price))
+            if(database.deleteTransaction(ticker, transactionType, date, quantity, price))
             {
                 QMessageBox::information(this, "Sucesso", "Transação excluída com sucesso");
 
                 // Update investiment controller
-                Transaction transaction = Transaction(date, type, quantity, price);
+                Transaction transaction = Transaction(date, transactionType, quantity, price);
                 this->investmentController->removeTickerTransaction(ticker, transaction);
 
                 // Update table
@@ -265,10 +273,15 @@ void AssetWindow::on_tableWidget_transactions_customContextMenuRequested(const Q
             }
         }
     }
+    // TODO: Editar transação
+    /*
     else if (selectedAction == actionEdit)
     {
-        // TODO: Editar uma transação
-        QMessageBox::information(this, "Info", "Opção 2 selecionada");
+        NewTransactionWindow *newTransactionWindow = new NewTransactionWindow(investmentController, this);
+        newTransactionWindow->configureEditWindow(ticker, transactionType, price, quantity, assetType, date);
+
+        newTransactionWindow->show();
     }
+    */
 }
 

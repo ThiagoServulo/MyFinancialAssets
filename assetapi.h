@@ -12,7 +12,6 @@ public:
 
 private:
     QString apiKey;
-    void changeApiKey();
 };
 
 #endif // ASSETAPI_H

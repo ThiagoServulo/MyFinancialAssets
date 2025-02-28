@@ -103,73 +103,86 @@ void NewTransactionWindow::on_pushButton_save_clicked()
         QDate date = ui->dateEdit->date();
         double value = ui->lineEdit_value->text().toDouble();
 
-        if(transactionType == TransactionType::VENDA)
+        // Check window type
+        if(this->windowTitle() == "Nova Transação")
         {
-            // Get asset
-            auto asset = investmentController->getAsset(ticker);
-
-            // Check asset
-            if(asset != nullptr)
+            if(transactionType == TransactionType::VENDA)
             {
-                // Get quantity available
-                int quantityAvailable = investmentController->getAsset(ticker)->getQuantity(nullptr, nullptr);
+                // Get asset
+                auto asset = investmentController->getAsset(ticker);
 
-                // Check quantity available
-                if(quantityAvailable < quantity)
+                // Check asset
+                if(asset != nullptr)
                 {
-                    QMessageBox::critical(this, "Erro", "Você tem : " + QString::number(quantityAvailable) +
-                                          " quantidade de papéis disponíveis");
+                    // Get quantity available
+                    int quantityAvailable = investmentController->getAsset(ticker)->getQuantity(nullptr, nullptr);
+
+                    // Check quantity available
+                    if(quantityAvailable < quantity)
+                    {
+                        QMessageBox::critical(this, "Erro", "Você tem : " + QString::number(quantityAvailable) +
+                                              " quantidade de papéis disponíveis");
+                        return;
+                    }
+                }
+                else
+                {
+                    QMessageBox::critical(this, "Erro", "Tipo de transação inválida. Você não tem esse papel cadastrado.");
                     return;
                 }
             }
-            else
-            {
-                QMessageBox::critical(this, "Erro", "Tipo de transação inválida. Você não tem esse papel cadastrado.");
-                return;
-            }
-        }
 
-        // Add new asset if is necessary
-        if(investmentController->getAsset(ticker) == nullptr)
-        {
-            if(transactionType == TransactionType::COMPRA)
+            // Add new asset if is necessary
+            if(investmentController->getAsset(ticker) == nullptr)
             {
-                // Create asset
-                AssetApi assetApi;
-                Asset asset(ticker, assetType, assetApi.getAssetCurrentPrice(ticker));
-
-                // Insert asset
-                if(!database.insertAsset(asset))
+                if(transactionType == TransactionType::COMPRA)
                 {
-                    QMessageBox::critical(this, "Erro", "Erro ao inserir novo ativo");
+                    // Create asset
+                    AssetApi assetApi;
+                    Asset asset(ticker, assetType, assetApi.getAssetCurrentPrice(ticker));
+
+                    // Insert asset
+                    if(!database.insertAsset(asset))
+                    {
+                        QMessageBox::critical(this, "Erro", "Erro ao inserir novo ativo");
+                        return;
+                    }
+
+                    // Add asset to investment controller
+                    investmentController->addAsset(std::make_shared<Asset>(asset));
+                }
+                else
+                {
+                    QMessageBox::critical(this, "Erro", "Tipo de transação inválida. Você não tem esse papel cadastrado.");
                     return;
                 }
+            }
 
-                // Add asset to investment controller
-                investmentController->addAsset(std::make_shared<Asset>(asset));
+            // Create transaction
+            Transaction transaction(date, transactionType, quantity, value);
+
+            // Insert transaction
+            if(database.insertTransaction(ticker, transaction))
+            {
+                investmentController->getAsset(ticker)->addEvent(std::make_shared<Transaction>(transaction));
+                QMessageBox::information(this, "Sucesso", "Transação inserida com sucesso");
             }
             else
             {
-                QMessageBox::critical(this, "Erro", "Tipo de transação inválida. Você não tem esse papel cadastrado.");
-                return;
+                 QMessageBox::critical(this, "Erro", "Erro ao inserir transação");
             }
+
+            this->close();
         }
-
-        // Create transaction
-        Transaction transaction(date, transactionType, quantity, value);
-
-        // Insert transaction
-        if(database.insertTransaction(ticker, transaction))
+        else if(this->windowTitle() == "Editar Transação")
         {
-            investmentController->getAsset(ticker)->addEvent(std::make_shared<Transaction>(transaction));
-            QMessageBox::information(this, "Sucesso", "Transação inserida com sucesso");
+            // TODO: Editar transação
+            //this->close();
         }
         else
         {
-             QMessageBox::critical(this, "Erro", "Erro ao inserir transação");
+            QMessageBox::information(this, "Erro", "Tipo de janela inválido");
         }
-
-        this->close();
     }
     else
     {
@@ -187,11 +200,32 @@ void NewTransactionWindow::on_comboBox_transactionType_textActivated(const QStri
     // Get transaction type
     TransactionType transactionType = getTransactionTypeFromString(arg1);
 
-    // Check bonification
-    ui->lineEdit_value->setText((transactionType == TransactionType::BONIFICACAO) ? "0": "");
-    ui->lineEdit_value->setReadOnly(transactionType == TransactionType::BONIFICACAO);
+    if(transactionType == TransactionType::RESTITUICAO || transactionType == TransactionType::BONIFICACAO)
+    {
+        // Check bonification
+        ui->lineEdit_value->setText((transactionType == TransactionType::BONIFICACAO) ? "0": "");
+        ui->lineEdit_value->setReadOnly(transactionType == TransactionType::BONIFICACAO);
 
-    // Check bonification
-    ui->lineEdit_quantity->setText((transactionType == TransactionType::RESTITUICAO) ? "0": "");
-    ui->lineEdit_quantity->setReadOnly(transactionType == TransactionType::RESTITUICAO);
+        // Check bonification
+        ui->lineEdit_quantity->setText((transactionType == TransactionType::RESTITUICAO) ? "0": "");
+        ui->lineEdit_quantity->setReadOnly(transactionType == TransactionType::RESTITUICAO);
+    }
+}
+
+void NewTransactionWindow::configureEditWindow(QString ticker, TransactionType transactionType, double price, int quantity, AssetType assetType, QDate date)
+{
+    ui->lineEdit_ticker->setText(ticker);
+    ui->lineEdit_ticker->setReadOnly(true);
+
+    ui->comboBox_assetType->setCurrentIndex(static_cast<int>(assetType));
+    ui->comboBox_assetType->setEnabled(false);
+
+    ui->lineEdit_value->setText(QString::number(price));
+    ui->lineEdit_quantity->setText(QString::number(quantity));
+    ui->comboBox_transactionType->setCurrentIndex(static_cast<int>(transactionType));
+
+    ui->dateEdit->setDisplayFormat("dd/MM/yyyy");
+    ui->dateEdit->setDate(date);
+
+    this->setWindowTitle("Editar transação");
 }
