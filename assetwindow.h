@@ -21,6 +21,7 @@ public:
 
 private slots:
     void on_tableWidget_transactions_customContextMenuRequested(const QPoint &pos);
+    void on_tableWidget_yields_customContextMenuRequested(const QPoint &pos);
 
 private:
     Ui::AssetWindow *ui;

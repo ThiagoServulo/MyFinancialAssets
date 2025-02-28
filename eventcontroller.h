@@ -19,6 +19,7 @@ public:
     std::vector<Reorganization> getReorganizations(QDate *init, QDate *end);
     QDate getEspecifiedTransactionDate(TransactionType transactionType, bool type);
     bool removeTransaction(Transaction transaction);
+    bool removeYield(Yield yield);
 };
 
 #endif // EVENTCONTROLLER_H

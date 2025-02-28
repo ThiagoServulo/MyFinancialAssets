@@ -15,6 +15,7 @@ public:
     double getValue() const;
     YieldType getYieldType() const;
     QDate getEventDate() const;
+    bool operator==(const Yield& other) const;
 };
 
 #endif // YIELD_H

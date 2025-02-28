@@ -327,3 +327,15 @@ void InvestmentController::removeTickerTransaction(QString ticker, Transaction t
         }
     }
 }
+
+void InvestmentController::removeTickerYield(QString ticker, Yield yield)
+{
+    for (auto& asset : assets)
+    {
+        if (asset->getTicker() == ticker)
+        {
+            asset->removeYield(yield);
+            return;
+        }
+    }
+}

@@ -212,6 +212,8 @@ void MainWindow::on_tableWidget_stocks_cellDoubleClicked(int row, int column)
     if(ticker != "Total")
     {
         AssetWindow *assetWindow = new AssetWindow(investmentController.getAsset(ticker).get(), &investmentController, this);
+        assetWindow->setAttribute(Qt::WA_DeleteOnClose);
+        connect(assetWindow, &QObject::destroyed, this, &MainWindow::updateSotckAndFundTable);
         assetWindow->show();
     }
 }
@@ -225,6 +227,8 @@ void MainWindow::on_tableWidget_funds_cellDoubleClicked(int row, int column)
     if(ticker != "Total")
     {
         AssetWindow *assetWindow = new AssetWindow(investmentController.getAsset(ticker).get(), &investmentController, this);
+        assetWindow->setAttribute(Qt::WA_DeleteOnClose);
+        connect(assetWindow, &QObject::destroyed, this, &MainWindow::updateSotckAndFundTable);
         assetWindow->show();
     }
 }

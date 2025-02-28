@@ -941,3 +941,51 @@ bool Database::deleteTransaction(QString ticker, TransactionType type, QDate dat
         return false;
     }
 }
+
+bool Database::deleteYield(QString ticker, YieldType type, QDate date, double value)
+{
+    if (openDatabase())
+    {
+        QSqlQuery query;
+
+        // Get id_ticker
+        query.prepare("SELECT id FROM ticker_table WHERE ticker = :ticker");
+        query.bindValue(":ticker", ticker);
+
+        if (!query.exec() || !query.next())
+        {
+            qDebug() << "Erro getting ticker id";
+            return false;
+        }
+
+        int id_ticker = query.value(0).toInt();
+
+        // Prepare the query
+        query.prepare(R"(
+            DELETE FROM yield_table
+            WHERE id_ticker = :id_ticker
+            AND id_yield_type = :id_yield_type
+            AND date = :date
+            AND value = :value
+        )");
+
+        query.bindValue(":id_ticker", id_ticker);
+        query.bindValue(":id_yield_type", static_cast<int>(type) + 1);
+        query.bindValue(":date", date.toString("yyyy-MM-dd"));
+        query.bindValue(":value", value);
+
+        // Execute query
+        if (!query.exec())
+        {
+            qDebug() << "Error deleting yield from yield_table";
+            return false;
+        }
+
+        return true;
+    }
+    else
+    {
+        qDebug() << "Error opening database to delete yield";
+        return false;
+    }
+}

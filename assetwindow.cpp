@@ -35,7 +35,9 @@ AssetWindow::AssetWindow(Asset *asset, InvestmentController *investmentControlle
     // Set window background color
     ui->centralwidget->setStyleSheet("background-color: rgb(18, 18, 18);");
 
+    // Change tables policy
     ui->tableWidget_transactions->setContextMenuPolicy(Qt::CustomContextMenu);
+    ui->tableWidget_yields->setContextMenuPolicy(Qt::CustomContextMenu);
 }
 
 AssetWindow::~AssetWindow()
@@ -187,6 +189,10 @@ void AssetWindow::updateYieldTable()
     // Get Yield
     auto yields = asset->getYields(nullptr, nullptr);
 
+    // Clear table
+    ui->tableWidget_yields->clearContents();
+    ui->tableWidget_yields->setRowCount(0);
+
     // Configure yield table
     QStringList headerLabels = {"Tipo de rendimento", "Data do rendimento", "Valor recebido", "Valor agregado"};
     configureTableWidget(headerLabels, ui->tableWidget_yields);
@@ -258,6 +264,7 @@ void AssetWindow::on_tableWidget_transactions_customContextMenuRequested(const Q
             Database database;
             if(database.deleteTransaction(ticker, transactionType, date, quantity, price))
             {
+                // Show message box
                 QMessageBox::information(this, "Sucesso", "Transação excluída com sucesso");
 
                 // Update investiment controller
@@ -281,6 +288,70 @@ void AssetWindow::on_tableWidget_transactions_customContextMenuRequested(const Q
         newTransactionWindow->configureEditWindow(ticker, transactionType, price, quantity, assetType, date);
 
         newTransactionWindow->show();
+    }
+    */
+}
+
+void AssetWindow::on_tableWidget_yields_customContextMenuRequested(const QPoint &pos)
+{
+    // Get index
+    QModelIndex index = ui->tableWidget_yields->indexAt(pos);
+
+    // Check index
+    if (!index.isValid())
+    {
+        return;
+    }
+
+    // Get current row
+    int row = index.row();
+
+    // Get fields
+    YieldType yieldType = getYieldTypeFromString(ui->tableWidget_yields->item(row, 0)->text());
+    QDate date = QDate::fromString(ui->tableWidget_yields->item(row, 1)->text(), "dd/MM/yyyy");
+    double value = formatDouble(ui->tableWidget_yields->item(row, 2)->text());
+    QString ticker = ui->label_ticker->text();
+
+    // Create actions
+    QMenu contextMenu;
+    QAction *actionDelete = contextMenu.addAction("Excluir");
+
+    // TODO: Editar rendimento
+    //QAction *actionEdit = contextMenu.addAction("Editar");
+
+    QAction *selectedAction = contextMenu.exec(ui->tableWidget_yields->viewport()->mapToGlobal(pos));
+
+    if (selectedAction == actionDelete)
+    {
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "Atenção", "Deseja excluir esse rendimento?", QMessageBox::Yes | QMessageBox::No);
+
+        if(reply == QMessageBox::Yes)
+        {
+            Database database;
+            if(database.deleteYield(ticker, yieldType, date, value))
+            {
+                // Show message box
+                QMessageBox::information(this, "Sucesso", "Rendimento excluído com sucesso");
+
+                // Update investiment controller
+                Yield yield = Yield(date, yieldType, value);
+                this->investmentController->removeTickerYield(ticker, yield);
+
+                // Update table
+                this->updateYieldTable();
+            }
+            else
+            {
+                QMessageBox::information(this, "Erro", "Erro ao excluir rendimento");
+            }
+        }
+    }
+    // TODO: Editar rendimento
+    /*
+    else if (selectedAction == actionEdit)
+    {
+
     }
     */
 }

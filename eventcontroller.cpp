@@ -145,3 +145,17 @@ bool EventController::removeTransaction(Transaction transaction)
     }
     return false;
 }
+
+bool EventController::removeYield(Yield yield)
+{
+    for (auto it = eventList.begin(); it != eventList.end(); ++it)
+    {
+        std::shared_ptr<Yield> y = std::dynamic_pointer_cast<Yield>(*it);
+        if (y && *y == yield)
+        {
+            eventList.erase(it);
+            return true;
+        }
+    }
+    return false;
+}

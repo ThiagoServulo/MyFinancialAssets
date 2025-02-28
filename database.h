@@ -27,6 +27,7 @@ public:
     bool insertFinancialInstitution(FinancialInstitution financialInstitution);
     bool insertFinancialInstitutionMonth(QString name, FinancialInstitutionMonth result);
     bool deleteTransaction(QString ticker, TransactionType type, QDate date, int quantity, double price);
+    bool deleteYield(QString ticker, YieldType type, QDate date, double value);
 
 private:
     QSqlDatabase database;

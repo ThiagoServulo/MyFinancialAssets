@@ -21,3 +21,10 @@ QDate Yield::getEventDate() const
 {
     return getDate();
 }
+
+bool Yield::operator==(const Yield& other) const
+{
+    return this->getDate() == other.getDate() &&
+           this->yieldType == other.yieldType &&
+           this->value == other.value;
+}
