@@ -17,6 +17,7 @@
 #include "closedfixedincomeswindow.h"
 #include "variableincomeperformancewindow.h"
 #include "financialinstitutionwindow.h"
+#include "editvaluewindow.h"
 #include <QMessageBox>
 #include <QSettings>
 
@@ -80,6 +81,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Change manu bar font color
     menuBar()->setStyleSheet("QMenuBar::item { color: white; }");
+
+    // Change table policy
+    ui->tableWidget_stocks->setContextMenuPolicy(Qt::CustomContextMenu);
+    ui->tableWidget_funds->setContextMenuPolicy(Qt::CustomContextMenu);
 }
 
 MainWindow::~MainWindow()
@@ -480,3 +485,35 @@ void MainWindow::on_actionAnnualResult_triggered()
             VariableIncomePerformanceWindow(VariableIncomePerformanceWindow::YEAR_RESULT, &investmentController, this);
     variableIncomeWindow->show();
 }
+
+void MainWindow::on_tableWidget_stocks_customContextMenuRequested(const QPoint &pos)
+{
+    // Get index
+    QModelIndex index = ui->tableWidget_stocks->indexAt(pos);
+
+    // Check index
+    if (!index.isValid())
+    {
+        return;
+    }
+
+    // Get current row
+    int row = index.row();
+
+    // Create actions
+    QMenu contextMenu;
+    QAction *actionEditValue = contextMenu.addAction("Editar preço atual");
+
+    // TODO: Excluir ação
+    //QAction *actionEdit = contextMenu.addAction("Excluir");
+
+    QAction *selectedAction = contextMenu.exec(ui->tableWidget_stocks->viewport()->mapToGlobal(pos));
+
+    if (selectedAction == actionEditValue)
+    {
+        // TODO: Criar janela de edição de preço
+        EditValueWindow *editValueWindow = new EditValueWindow(this);
+        editValueWindow->show();
+    }
+}
+

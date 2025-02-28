@@ -17,6 +17,7 @@ SOURCES += \
     constants.cpp \
     database.cpp \
     databasecreation.cpp \
+    editvaluewindow.cpp \
     event.cpp \
     eventcontroller.cpp \
     financialinstitution.cpp \
@@ -47,6 +48,7 @@ HEADERS += \
     constants.h \
     database.h \
     databasecreation.h \
+    editvaluewindow.h \
     event.h \
     eventcontroller.h \
     financialinstitution.h \
@@ -70,6 +72,7 @@ HEADERS += \
 FORMS += \
     assetwindow.ui \
     closedfixedincomeswindow.ui \
+    editvaluewindow.ui \
     financialinstitutionwindow.ui \
     mainwindow.ui \
     monthwindow.ui \
