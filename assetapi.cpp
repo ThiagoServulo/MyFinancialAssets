@@ -19,17 +19,26 @@ AssetApi::AssetApi()
     // Create object QSettings to access the .ini
     QSettings settings(iniFilePath, QSettings::IniFormat);
 
-    // Read key API
-    apiKey = settings.value("API/apiKey", "").toString();
-
-    if (apiKey.isEmpty())
+    // Check if the "apiKey" key exists
+    if (!settings.contains("API/apiKey"))
     {
         qDebug() << "API Key not found";
+        apiKey = "";
+        return;
     }
+
+    // Set key API
+    apiKey = settings.value("API/apiKey", "").toString();
 }
 
 double AssetApi::getAssetCurrentPrice(QString ticker)
 {
+    // Check the API Key
+    if(apiKey.isEmpty())
+    {
+        return API_ERROR;
+    }
+
     // Create the correct symbol for API
     QString symbol = ticker + ".SA";
 

@@ -20,6 +20,7 @@
 #include "editvaluewindow.h"
 #include <QMessageBox>
 #include <QSettings>
+#include <QFile>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -364,6 +365,14 @@ void MainWindow::updateGeneralTable()
 
     // Create object QSettings to access the .ini
     QSettings settings(iniFilePath, QSettings::IniFormat);
+
+    // Check if the "initDate" key exists
+    if (!settings.contains("Date/initDate"))
+    {
+        // If the key doesn't exist, show an error message box and close the application
+        QMessageBox::critical(nullptr, "Error", "'initDate' não foi encontrado no arquivo config.ini.");
+        return;
+    }
 
     // Read the initial date
     QString initDateStr = settings.value("Date/initDate", "").toString();
