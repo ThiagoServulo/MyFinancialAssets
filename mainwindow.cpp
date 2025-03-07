@@ -103,7 +103,7 @@ void MainWindow::on_actionTransaction_triggered()
 
 void MainWindow::on_actionYield_triggered()
 {
-    NewYieldWindow *newYieldWindow = new NewYieldWindow(&investmentController, this);
+    NewYieldWindow *newYieldWindow = new NewYieldWindow(&investmentController, nullptr, this);
     newYieldWindow->setAttribute(Qt::WA_DeleteOnClose);
     connect(newYieldWindow, &QObject::destroyed, this, &MainWindow::updateSotckAndFundTable);
     newYieldWindow->show();
@@ -512,6 +512,7 @@ void MainWindow::on_tableWidget_stocks_customContextMenuRequested(const QPoint &
     // Create actions
     QMenu contextMenu;
     QAction *actionEditValue = contextMenu.addAction("Editar preço atual");
+    QAction *actionNewYield = contextMenu.addAction("Adicionar rendimento");
 
     // TODO: Excluir ação
     //QAction *actionEdit = contextMenu.addAction("Excluir");
@@ -523,6 +524,15 @@ void MainWindow::on_tableWidget_stocks_customContextMenuRequested(const QPoint &
         // TODO: Criar janela de edição de preço
         EditValueWindow *editValueWindow = new EditValueWindow(this);
         editValueWindow->show();
+    }
+    else if(selectedAction == actionNewYield)
+    {
+        QString ticker = ui->tableWidget_stocks->item(row, 0)->text();
+        Asset asset = Asset(ticker, AssetType::ACAO, 0);
+        NewYieldWindow *newYieldWindow = new NewYieldWindow(&investmentController, &asset, this);
+        newYieldWindow->setAttribute(Qt::WA_DeleteOnClose);
+        connect(newYieldWindow, &QObject::destroyed, this, &MainWindow::updateSotckAndFundTable);
+        newYieldWindow->show();
     }
 }
 

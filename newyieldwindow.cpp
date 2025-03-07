@@ -4,7 +4,7 @@
 #include <QMessageBox>
 #include "basics.h"
 
-NewYieldWindow::NewYieldWindow(InvestmentController *investmentController, QWidget *parent) :
+NewYieldWindow::NewYieldWindow(InvestmentController *investmentController, Asset *asset, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::NewYieldWindow)
 {
@@ -47,6 +47,13 @@ NewYieldWindow::NewYieldWindow(InvestmentController *investmentController, QWidg
 
     // Init combo box assets
     initComboBoxAssets(ui->comboBox_asset, investmentController);
+
+    if(asset != nullptr)
+    {
+        ui->comboBox_asset->setCurrentText(asset->getTicker());
+        ui->comboBox_asset->setEnabled(false);
+        initComboBoxYieldType(asset->getAssetType());
+    }
 }
 
 NewYieldWindow::~NewYieldWindow()
@@ -92,23 +99,35 @@ void NewYieldWindow::on_pushButton_cancel_clicked()
 
 void NewYieldWindow::on_comboBox_asset_textActivated(const QString &arg1)
 {
-    ui->comboBox_yieldType->clear();
-
     AssetType assetType = investmentController->getAsset(arg1)->getAssetType();
 
-    if(assetType == AssetType::ACAO)
+    initComboBoxYieldType(assetType);
+}
+
+void NewYieldWindow::initComboBoxYieldType(AssetType assetType)
+{
+    // Clear all previous items from the combo box
+    ui->comboBox_yieldType->clear();
+
+    // Check the asset type
+    if (assetType == AssetType::ACAO)
     {
+        // Add options for stocks
         ui->comboBox_yieldType->addItem(getYieldTypeString(YieldType::DIVIDENDO));
         ui->comboBox_yieldType->addItem(getYieldTypeString(YieldType::JCP));
     }
     else if (assetType == AssetType::FUNDO)
     {
+        // Add option for funds
         ui->comboBox_yieldType->addItem(getYieldTypeString(YieldType::RENDIMENTO));
     }
     else
     {
-        throw std::invalid_argument("Yield type invalid: " + arg1.toStdString());
+        // Throw an exception if the asset type is invalid
+        throw std::invalid_argument("Yield type invalid");
     }
 
+    // Set the combo box to an unselected state by default
     ui->comboBox_yieldType->setCurrentIndex(-1);
 }
+

@@ -104,7 +104,7 @@ void NewTransactionWindow::on_pushButton_save_clicked()
         double value = ui->lineEdit_value->text().toDouble();
 
         // Check window type
-        if(this->windowTitle() == "Nova Transação")
+        if(this->windowTitle() == "Nova transação")
         {
             if(transactionType == TransactionType::VENDA)
             {
