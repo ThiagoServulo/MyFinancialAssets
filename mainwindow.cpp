@@ -391,7 +391,7 @@ void MainWindow::updateGeneralTable()
 
     // Init variables
     int row = 0;
-    QStringList itens ;
+    QStringList itens;
     int style = STANDART_CELL;
 
     QLocale locale(QLocale::Portuguese);
@@ -542,26 +542,78 @@ void MainWindow::on_tableWidget_stocks_customContextMenuRequested(const QPoint &
         newYieldWindow->show();
     }
 }
-
+/*
 void MainWindow::updateYieldCalendarTable()
 {
+    // Init variables
+    int row = 0;
+    QStringList itens;
+    int style = STANDART_CELL;
+    std::vector<std::tuple<QString, AssetFutureYield>> yields;
+    //QList<AssetFutureYield> yields;
+
     std::vector<std::shared_ptr<Asset>> assets = investmentController.getAllAssets();
     for(auto asset: assets)
     {
-        QList<AssetFutureYield> yields = getFutureYieldsForTicker(*asset);
-
-        // Debugging dos dados retornados
-        qDebug() << "Yields para o Ticker: " + asset->getTicker();
-        for (const AssetFutureYield &yield : yields)
-        {
-            qDebug() << "Ex Yield Date:" << yield.getExYieldDate().toString("dd/MM/yyyy");
-            qDebug() << "Payment Date:" << yield.getPaymentDate().toString("dd/MM/yyyy");
-            //qDebug() << "Type:" <<;
-            qDebug() << "Value:" << yield.getValue();
-            qDebug() << "Ratio:" << yield.getRatio();
-        }
-
-        qDebug() << "---------";
+        yields.append(asset->getTicker(), getFutureYieldsForTicker(*asset));
     }
 
+
+
+    for (const AssetFutureYield &yield : yields)
+    {
+        // Add new line
+        itens = {asset->getTicker(),
+                 yield.getExYieldDate().toString("dd/MM/yyyy"),
+                 yield.getPaymentDate().toString("dd/MM/yyyy"),
+                 "TYPE",
+                 formatReais(yield.getValue()),
+                 QString::number(yield.getRatio(), 'f', 2)};
+
+        addTableWidgetItens(ui->tableWidget_yieldCalendar, row, itens, style);
+        ++row;
+    }
+}
+*/
+
+void MainWindow::updateYieldCalendarTable()
+{
+    // Init variables
+    int row = 0;
+    QStringList itens;
+    int style = STANDART_CELL;
+    std::vector<std::tuple<QString, AssetFutureYield>> yields;
+
+    // Obtém todos os ativos
+    std::vector<std::shared_ptr<Asset>> assets = investmentController.getAllAssets();
+
+    // Preenche os rendimentos futuros
+    for (const auto& asset : assets)
+    {
+        QList<AssetFutureYield> assetYields = getFutureYieldsForTicker(*asset);
+        for (const auto& yield : assetYields)
+        {
+            yields.emplace_back(asset->getTicker(), yield);
+        }
+    }
+
+    std::sort(yields.begin(), yields.end(),
+        [](const std::tuple<QString, AssetFutureYield>& a, const std::tuple<QString, AssetFutureYield>& b)
+        {
+            return std::get<1>(a).getPaymentDate() < std::get<1>(b).getPaymentDate();
+        });
+
+    // Popula a tabela
+    for (const auto& [ticker, yield] : yields)
+    {
+        itens = {ticker,
+                 yield.getExYieldDate().toString("dd/MM/yyyy"),
+                 yield.getPaymentDate().toString("dd/MM/yyyy"),
+                 "TYPE", // Substituir por um método que retorne o tipo correto, se necessário
+                 formatReais(yield.getValue()),
+                 QString::number(yield.getRatio(), 'f', 2)};
+
+        addTableWidgetItens(ui->tableWidget_yieldCalendar, row, itens, style);
+        ++row;
+    }
 }
