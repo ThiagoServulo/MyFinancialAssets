@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>4</number>
     </property>
     <widget class="QWidget" name="tab_general">
      <attribute name="title">
@@ -118,6 +118,21 @@
       <string>Renda fixa</string>
      </attribute>
      <widget class="QTableWidget" name="tableWidget_fixedIncome">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>1101</width>
+        <height>571</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_yieldCalendar">
+     <attribute name="title">
+      <string>Agenda de dividendos</string>
+     </attribute>
+     <widget class="QTableWidget" name="tableWidget_yieldCalendar">
       <property name="geometry">
        <rect>
         <x>10</x>

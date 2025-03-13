@@ -102,15 +102,15 @@ ReorganizationType getReorganizationTypeFromString(QString type)
 
 YieldType getYieldTypeFromString(QString type)
 {
-    if (type == getYieldTypeString(YieldType::DIVIDENDO))
+    if (type.toUpper() == getYieldTypeString(YieldType::DIVIDENDO).toUpper())
     {
         return YieldType::DIVIDENDO;
     }
-    else if (type == getYieldTypeString(YieldType::JCP))
+    else if (type.toUpper() == getYieldTypeString(YieldType::JCP).toUpper() || type.toUpper() == "JRS CAP PROPRIO")
     {
         return YieldType::JCP;
     }
-    else if (type == getYieldTypeString(YieldType::RENDIMENTO))
+    else if (type.toUpper() == getYieldTypeString(YieldType::RENDIMENTO).toUpper())
     {
         return YieldType::RENDIMENTO;
     }

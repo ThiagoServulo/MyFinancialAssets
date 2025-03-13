@@ -43,6 +43,7 @@ private:
     void updateSotckAndFundTable();
     void updateFixedIncomeTable();
     void updateGeneralTable();
+    void updateYieldCalendarTable();
 
 };
 #endif // MAINWINDOW_H

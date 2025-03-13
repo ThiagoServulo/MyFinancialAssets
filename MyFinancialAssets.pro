@@ -1,4 +1,4 @@
-QT       += core gui sql network
+QT       += core gui sql network xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -11,6 +11,7 @@ CONFIG += c++11
 SOURCES += \
     asset.cpp \
     assetapi.cpp \
+    assetfutureyield.cpp \
     assetwindow.cpp \
     basics.cpp \
     closedfixedincomeswindow.cpp \
@@ -42,6 +43,7 @@ SOURCES += \
 HEADERS += \
     asset.h \
     assetapi.h \
+    assetfutureyield.h \
     assetwindow.h \
     basics.h \
     closedfixedincomeswindow.h \

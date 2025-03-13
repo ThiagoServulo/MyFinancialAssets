@@ -18,6 +18,7 @@
 #include "variableincomeperformancewindow.h"
 #include "financialinstitutionwindow.h"
 #include "editvaluewindow.h"
+#include "assetfutureyield.h"
 #include <QMessageBox>
 #include <QSettings>
 #include <QFile>
@@ -50,10 +51,15 @@ MainWindow::MainWindow(QWidget *parent)
                     "   Valor atual   ", "Rendimento", "Data limite"};
     configureTableWidget(headerLabels, ui->tableWidget_fixedIncome);
 
+    // Configure yield calendar table
+    headerLabels = {"Ticker", "Data com", "Data do pagamento", "   Tipo   ", " Valor pago", "Valor recebido"};
+    configureTableWidget(headerLabels, ui->tableWidget_yieldCalendar);
+
     // Init tables
     updateSotckAndFundTable();
     updateFixedIncomeTable();
     updateGeneralTable();
+    updateYieldCalendarTable();
 
     // Set main window background color
     this->setStyleSheet("QMainWindow { background-color: rgb(18, 18, 18); }");
@@ -63,6 +69,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tab_stocks->setStyleSheet("background-color: rgb(18, 18, 18);");
     ui->tab_general->setStyleSheet("background-color: rgb(18, 18, 18);");
     ui->tab_fixedIncome->setStyleSheet("background-color: rgb(18, 18, 18);");
+    ui->tab_yieldCalendar->setStyleSheet("background-color: rgb(18, 18, 18);");
 
     // Set check boxes style
     ui->checkBox_hideAssets->setStyleSheet("background-color: rgb(18, 18, 18); color: rgb(255, 255, 255);");
@@ -536,3 +543,25 @@ void MainWindow::on_tableWidget_stocks_customContextMenuRequested(const QPoint &
     }
 }
 
+void MainWindow::updateYieldCalendarTable()
+{
+    std::vector<std::shared_ptr<Asset>> assets = investmentController.getAllAssets();
+    for(auto asset: assets)
+    {
+        QList<AssetFutureYield> yields = getFutureYieldsForTicker(*asset);
+
+        // Debugging dos dados retornados
+        qDebug() << "Yields para o Ticker: " + asset->getTicker();
+        for (const AssetFutureYield &yield : yields)
+        {
+            qDebug() << "Ex Yield Date:" << yield.getExYieldDate().toString("dd/MM/yyyy");
+            qDebug() << "Payment Date:" << yield.getPaymentDate().toString("dd/MM/yyyy");
+            //qDebug() << "Type:" <<;
+            qDebug() << "Value:" << yield.getValue();
+            qDebug() << "Ratio:" << yield.getRatio();
+        }
+
+        qDebug() << "---------";
+    }
+
+}
