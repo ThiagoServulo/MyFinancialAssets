@@ -19,5 +19,6 @@ void initComboBoxAssets(QComboBox *comboBox, InvestmentController *investmentCon
 std::vector<Event*> mergeAndSortEvents(const std::vector<Transaction>& transactions, const std::vector<Reorganization>& reorganizations);
 QString formatReais(double value);
 double formatDouble(QString value);
+QString formatPercentage(double value);
 
 #endif // BASICS_H

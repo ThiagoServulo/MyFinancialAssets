@@ -15,7 +15,7 @@ Asset::Asset(QString ticker, AssetType assetType, double currentPrice)
     this->currentPrice = currentPrice;
 }
 
-QString Asset::getTicker()
+QString Asset::getTicker() const
 {
     return ticker;
 }
@@ -35,7 +35,7 @@ void Asset::setCurrentPrice(double price)
     currentPrice = price;
 }
 
-int Asset::getQuantity(QDate *init, QDate *end)
+int Asset::getQuantity(QDate *init, QDate *end) const
 {
     int quantity  = 0;
     auto transactions = getTransactions(init, end);

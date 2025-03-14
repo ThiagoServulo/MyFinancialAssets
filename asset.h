@@ -15,11 +15,11 @@ private:
 public:
     Asset();
     Asset(QString ticker, AssetType assetType, double currentPrice);
-    QString getTicker();
+    QString getTicker() const;
     AssetType getAssetType();
     double getCurrentPrice();
     void setCurrentPrice(double price);
-    int getQuantity(QDate *init, QDate *end);
+    int getQuantity(QDate *init, QDate *end) const;
     double getTotalYield(QDate *init, QDate *end);
     double getAveragePrice();
     double getTotalInvested(QDate *init, QDate *end);

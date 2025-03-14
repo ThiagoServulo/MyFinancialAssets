@@ -9,7 +9,7 @@ void EventController::addEvent(std::shared_ptr<Event> event)
     eventList.push_back(event);
 }
 
-std::vector<Transaction> EventController::getTransactions(QDate *init, QDate *end)
+std::vector<Transaction> EventController::getTransactions(QDate *init, QDate *end) const
 {
     std::vector<Transaction> transactions;
 
@@ -25,7 +25,8 @@ std::vector<Transaction> EventController::getTransactions(QDate *init, QDate *en
             {
                 // Check date
                 if((init == nullptr && end == nullptr) ||
-                        (transaction->getEventDate() >= *init && transaction->getEventDate() < *end))
+                        ((!init || transaction->getEventDate() >= *init) &&
+                         (!end || transaction->getEventDate() <= *end)))
                 {
                     // Add transaction
                     transactions.push_back(*transaction);
@@ -67,7 +68,7 @@ std::vector<Yield> EventController::getYields(QDate *init, QDate *end)
     return yields;
 }
 
-std::vector<Reorganization> EventController::getReorganizations(QDate *init, QDate *end)
+std::vector<Reorganization> EventController::getReorganizations(QDate *init, QDate *end) const
 {
     std::vector<Reorganization> reorganizations;
 
@@ -83,7 +84,8 @@ std::vector<Reorganization> EventController::getReorganizations(QDate *init, QDa
             {
                 // Check date
                 if((init == nullptr && end == nullptr) ||
-                        (reorganization->getEventDate() >= *init && reorganization->getEventDate() < *end))
+                        ((!init || reorganization->getEventDate() >= *init) &&
+                         (!end || reorganization->getEventDate() <= *end)))
                 {
                     // Add yield
                     reorganizations.push_back(*reorganization);

@@ -142,3 +142,8 @@ double formatDouble(QString value)
     double number = locale.toDouble(value.remove("R$ "), &ok);
     return (!ok) ? 0.0 : number;
 }
+
+QString formatPercentage(double value)
+{
+    return QString::number(value, 'f', 2) + "%";
+}

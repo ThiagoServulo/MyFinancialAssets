@@ -52,7 +52,7 @@ MainWindow::MainWindow(QWidget *parent)
     configureTableWidget(headerLabels, ui->tableWidget_fixedIncome);
 
     // Configure yield calendar table
-    headerLabels = {"Ticker", "Data com", "Data do pagamento", "   Tipo   ", " Valor pago", "Valor recebido"};
+    headerLabels = {"Ticker", "Data com", "Data do pagamento", "   Tipo   ", " Valor pago", "Razão", "Valor recebido"};
     configureTableWidget(headerLabels, ui->tableWidget_yieldCalendar);
 
     // Init tables
@@ -142,29 +142,27 @@ void MainWindow::updateSotckAndFundTable()
 
     for(auto asset: assets)
     {
-        // Get values
-        QString ticker = asset->getTicker();
-        int quantity = asset->getQuantity(nullptr, nullptr);
-        double totalYield = asset->getTotalYield(nullptr, nullptr);
-        double averagePrice = asset->getAveragePrice();
-        double currentPrice = asset->getCurrentPrice();
-        double totalInvested = asset->getTotalInvested(nullptr, nullptr);
-        double captalGain = asset->getCapitalGain();
-        double profitPercentage = asset->getProfitPercentage();
+        itens = {asset->getTicker(),
+                 formatPercentage(investmentController.getAssetDistribution(asset->getTicker())),
+                 QString::number(asset->getQuantity(nullptr, nullptr)),
+                 formatReais(asset->getTotalInvested(nullptr, nullptr)),
+                 formatReais(asset->getTotalYield(nullptr, nullptr)),
+                 formatReais(asset->getAveragePrice()),
+                 formatReais(asset->getCurrentPrice()),
+                 formatPercentage(asset->getProfitPercentage()),
+                 formatReais(asset->getCapitalGain())
+                };
+
+        int style = (asset->getQuantity(nullptr, nullptr) == 0) ? HIGHLIGHT_CELL : STANDART_CELL;
 
         // Check asset type
         if(asset->getAssetType() == AssetType::ACAO)
         {
             // Check checkbox
-            if(!ui->checkBox_hideAssets->isChecked() || (ui->checkBox_hideAssets->isChecked() && quantity != 0))
+            if(!ui->checkBox_hideAssets->isChecked() ||
+                    (ui->checkBox_hideAssets->isChecked() &&
+                     asset->getQuantity(nullptr, nullptr) != 0))
             {
-                // Add new line
-                itens = {ticker, QString::number(investmentController.getAssetDistribution(ticker), 'f', 2) + "%",
-                         QString::number(quantity), formatReais(totalInvested), formatReais(totalYield),
-                         formatReais(averagePrice), formatReais(currentPrice),
-                         QString::number(profitPercentage, 'f', 2) + "%", formatReais(captalGain)};
-
-                int style = (quantity == 0) ? HIGHLIGHT_CELL : STANDART_CELL;
                 addTableWidgetItens(ui->tableWidget_stocks, stockRow, itens, style);
                 ++stockRow;
             }
@@ -172,15 +170,10 @@ void MainWindow::updateSotckAndFundTable()
         else if(asset->getAssetType() == AssetType::FUNDO)
         {
             // Check checkbox
-            if(!ui->checkBox_hideFounds->isChecked() || (ui->checkBox_hideFounds->isChecked() && quantity != 0))
+            if(!ui->checkBox_hideFounds->isChecked() ||
+                    (ui->checkBox_hideFounds->isChecked() &&
+                     asset->getQuantity(nullptr, nullptr) != 0))
             {
-                // Add new line
-                itens = {ticker, QString::number(investmentController.getAssetDistribution(ticker), 'f', 2) + "%",
-                         QString::number(quantity), formatReais(totalInvested), formatReais(totalYield),
-                         formatReais(averagePrice), formatReais(currentPrice),
-                         QString::number(profitPercentage, 'f', 2) + "%", formatReais(captalGain)};
-
-                int style = (quantity == 0) ? HIGHLIGHT_CELL : STANDART_CELL;
                 addTableWidgetItens(ui->tableWidget_funds, fundRow, itens, style);
                 ++fundRow;
             }
@@ -224,7 +217,8 @@ void MainWindow::on_tableWidget_stocks_cellDoubleClicked(int row, int column)
     // Check ticker
     if(ticker != "Total")
     {
-        AssetWindow *assetWindow = new AssetWindow(investmentController.getAsset(ticker).get(), &investmentController, this);
+        AssetWindow *assetWindow = new AssetWindow(investmentController.getAsset(ticker).get(),
+                                                   &investmentController, this);
         assetWindow->setAttribute(Qt::WA_DeleteOnClose);
         connect(assetWindow, &QObject::destroyed, this, &MainWindow::updateSotckAndFundTable);
         assetWindow->show();
@@ -239,7 +233,8 @@ void MainWindow::on_tableWidget_funds_cellDoubleClicked(int row, int column)
     // Check ticker
     if(ticker != "Total")
     {
-        AssetWindow *assetWindow = new AssetWindow(investmentController.getAsset(ticker).get(), &investmentController, this);
+        AssetWindow *assetWindow = new AssetWindow(investmentController.getAsset(ticker).get(),
+                                                   &investmentController, this);
         assetWindow->setAttribute(Qt::WA_DeleteOnClose);
         connect(assetWindow, &QObject::destroyed, this, &MainWindow::updateSotckAndFundTable);
         assetWindow->show();
@@ -289,11 +284,13 @@ void MainWindow::updateFixedIncomeTable()
                      formatReais(fixedIncome->getInvestedValue()),
                      formatReais(fixedIncome->getCurrentValue()),
                      formatReais(fixedIncome->getYield()),
-                     fixedIncome->getLimitDate().toString("dd/MM/yyyy")};
+                     fixedIncome->getLimitDate().toString("dd/MM/yyyy")
+                    };
 
             // Set status
             int style = (fixedIncome->getLimitDate().month() <= QDate::currentDate().month() &&
-                         fixedIncome->getLimitDate().year() <= QDate::currentDate().year()) ? HIGHLIGHT_CELL : STANDART_CELL;
+                         fixedIncome->getLimitDate().year() <= QDate::currentDate().year()) ?
+                         HIGHLIGHT_CELL : STANDART_CELL;
 
             // Insert itens
             addTableWidgetItens(ui->tableWidget_fixedIncome, row, itens, style);
@@ -542,39 +539,6 @@ void MainWindow::on_tableWidget_stocks_customContextMenuRequested(const QPoint &
         newYieldWindow->show();
     }
 }
-/*
-void MainWindow::updateYieldCalendarTable()
-{
-    // Init variables
-    int row = 0;
-    QStringList itens;
-    int style = STANDART_CELL;
-    std::vector<std::tuple<QString, AssetFutureYield>> yields;
-    //QList<AssetFutureYield> yields;
-
-    std::vector<std::shared_ptr<Asset>> assets = investmentController.getAllAssets();
-    for(auto asset: assets)
-    {
-        yields.append(asset->getTicker(), getFutureYieldsForTicker(*asset));
-    }
-
-
-
-    for (const AssetFutureYield &yield : yields)
-    {
-        // Add new line
-        itens = {asset->getTicker(),
-                 yield.getExYieldDate().toString("dd/MM/yyyy"),
-                 yield.getPaymentDate().toString("dd/MM/yyyy"),
-                 "TYPE",
-                 formatReais(yield.getValue()),
-                 QString::number(yield.getRatio(), 'f', 2)};
-
-        addTableWidgetItens(ui->tableWidget_yieldCalendar, row, itens, style);
-        ++row;
-    }
-}
-*/
 
 void MainWindow::updateYieldCalendarTable()
 {
@@ -582,7 +546,7 @@ void MainWindow::updateYieldCalendarTable()
     int row = 0;
     QStringList itens;
     int style = STANDART_CELL;
-    std::vector<std::tuple<QString, AssetFutureYield>> yields;
+    std::vector<std::tuple<Asset, AssetFutureYield>> yields;
 
     // Obtém todos os ativos
     std::vector<std::shared_ptr<Asset>> assets = investmentController.getAllAssets();
@@ -593,27 +557,35 @@ void MainWindow::updateYieldCalendarTable()
         QList<AssetFutureYield> assetYields = getFutureYieldsForTicker(*asset);
         for (const auto& yield : assetYields)
         {
-            yields.emplace_back(asset->getTicker(), yield);
+            yields.emplace_back(*asset, yield);
         }
     }
 
     std::sort(yields.begin(), yields.end(),
-        [](const std::tuple<QString, AssetFutureYield>& a, const std::tuple<QString, AssetFutureYield>& b)
+        [](const std::tuple<Asset, AssetFutureYield>& a, const std::tuple<Asset, AssetFutureYield>& b)
         {
             return std::get<1>(a).getPaymentDate() < std::get<1>(b).getPaymentDate();
         });
 
     // Popula a tabela
-    for (const auto& [ticker, yield] : yields)
+    for (const auto& [asset, yield] : yields)
     {
-        itens = {ticker,
-                 yield.getExYieldDate().toString("dd/MM/yyyy"),
-                 yield.getPaymentDate().toString("dd/MM/yyyy"),
-                 "TYPE", // Substituir por um método que retorne o tipo correto, se necessário
-                 formatReais(yield.getValue()),
-                 QString::number(yield.getRatio(), 'f', 2)};
+        QDate exYieldDate = yield.getExYieldDate();
+        int quantity = asset.getQuantity(nullptr, &exYieldDate);
 
-        addTableWidgetItens(ui->tableWidget_yieldCalendar, row, itens, style);
-        ++row;
+        if(quantity > 0)
+        {
+            itens = {asset.getTicker(),
+                     exYieldDate.toString("dd/MM/yyyy"),
+                     yield.getPaymentDate().toString("dd/MM/yyyy"),
+                     "TYPE", // TODO: Substituir por um método que retorne o tipo correto, se necessário
+                     formatReais(yield.getValue()),
+                     QString::number(yield.getRatio(), 'f', 2),
+                     formatReais(quantity * yield.getValue() * yield.getRatio())
+                    };
+
+            addTableWidgetItens(ui->tableWidget_yieldCalendar, row, itens, style);
+            ++row;
+        }
     }
 }
