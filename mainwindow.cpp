@@ -526,11 +526,11 @@ void MainWindow::on_tableWidget_stocks_customContextMenuRequested(const QPoint &
 
     if (selectedAction == actionEditValue)
     {
-        /*
-        // TODO: Criar janela de edição de preço
-        EditValueWindow *editValueWindow = new EditValueWindow(this);
+        EditValueWindow *editValueWindow = new EditValueWindow(
+                    investmentController.getAsset(ui->tableWidget_stocks->item(row, 0)->text()).get(), this);
+        editValueWindow->setAttribute(Qt::WA_DeleteOnClose);
+        connect(editValueWindow, &QObject::destroyed, this, &MainWindow::updateSotckAndFundTable);
         editValueWindow->show();
-        */
     }
     else if(selectedAction == actionNewYield)
     {
