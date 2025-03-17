@@ -27,9 +27,10 @@ QString getYieldTypeString(YieldType type)
 {
     switch (type)
     {
-        case YieldType::RENDIMENTO: return "Rendimento";
-        case YieldType::DIVIDENDO: return "Dividendo";
-        case YieldType::JCP: return "JCP";
+        case YieldType::RENDIMENTO: return "RENDIMENTO";
+        case YieldType::DIVIDENDO: return "DIVIDENDO";
+        case YieldType::JCP: return "JRS CAP PROPRIO";
+        case YieldType::REST_CAPITAL: return "REST CAP DIN";
         default: return "Desconhecido";
     }
 }
@@ -102,17 +103,21 @@ ReorganizationType getReorganizationTypeFromString(QString type)
 
 YieldType getYieldTypeFromString(QString type)
 {
-    if (type.toUpper() == getYieldTypeString(YieldType::DIVIDENDO).toUpper())
+    if (type.toUpper() == getYieldTypeString(YieldType::DIVIDENDO))
     {
         return YieldType::DIVIDENDO;
     }
-    else if (type.toUpper() == getYieldTypeString(YieldType::JCP).toUpper() || type.toUpper() == "JRS CAP PROPRIO")
+    else if (type.toUpper() == getYieldTypeString(YieldType::JCP))
     {
         return YieldType::JCP;
     }
-    else if (type.toUpper() == getYieldTypeString(YieldType::RENDIMENTO).toUpper())
+    else if (type.toUpper() == getYieldTypeString(YieldType::RENDIMENTO))
     {
         return YieldType::RENDIMENTO;
+    }
+    else if (type.toUpper() == getYieldTypeString(YieldType::REST_CAPITAL))
+    {
+        return YieldType::REST_CAPITAL;
     }
     else
     {
@@ -138,7 +143,8 @@ bool isValidYieldType(const QString& type)
 {
     return (type == getYieldTypeString(YieldType::RENDIMENTO) ||
             type == getYieldTypeString(YieldType::DIVIDENDO)  ||
-            type == getYieldTypeString(YieldType::JCP));
+            type == getYieldTypeString(YieldType::JCP)        ||
+            type == getYieldTypeString(YieldType::REST_CAPITAL));
 }
 
 bool isValidReorganizationType(const QString& type)

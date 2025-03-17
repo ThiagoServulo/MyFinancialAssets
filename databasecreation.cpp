@@ -130,7 +130,8 @@ bool DatabaseCreation::populateYieldTypeTable()
         INSERT INTO yield_type_table (yield_type) VALUES
         (:type1),
         (:type2),
-        (:type3);
+        (:type3),
+        (:type4);
     )";
 
     QSqlQuery query;
@@ -138,6 +139,7 @@ bool DatabaseCreation::populateYieldTypeTable()
     query.bindValue(":type1", getYieldTypeString(YieldType::DIVIDENDO));
     query.bindValue(":type2", getYieldTypeString(YieldType::JCP));
     query.bindValue(":type3", getYieldTypeString(YieldType::RENDIMENTO));
+    query.bindValue(":type4", getYieldTypeString(YieldType::REST_CAPITAL));
 
     // Execute query
     if (!query.exec())

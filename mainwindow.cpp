@@ -52,7 +52,8 @@ MainWindow::MainWindow(QWidget *parent)
     configureTableWidget(headerLabels, ui->tableWidget_fixedIncome);
 
     // Configure yield calendar table
-    headerLabels = {"Ticker", "Data com", "Data do pagamento", "   Tipo   ", " Valor pago", "Razão", "Valor recebido"};
+    headerLabels = {"Ticker", "Data com", "Data do pagamento", "Tipo de rendimento",
+                    "Valor pago", "Razão", "Valor recebido"};
     configureTableWidget(headerLabels, ui->tableWidget_yieldCalendar);
 
     // Init tables
@@ -525,9 +526,11 @@ void MainWindow::on_tableWidget_stocks_customContextMenuRequested(const QPoint &
 
     if (selectedAction == actionEditValue)
     {
+        /*
         // TODO: Criar janela de edição de preço
         EditValueWindow *editValueWindow = new EditValueWindow(this);
         editValueWindow->show();
+        */
     }
     else if(selectedAction == actionNewYield)
     {
@@ -545,13 +548,12 @@ void MainWindow::updateYieldCalendarTable()
     // Init variables
     int row = 0;
     QStringList itens;
-    int style = STANDART_CELL;
+    int style = HIGHLIGHT_CELL;
+    int lastMonth = -1;
     std::vector<std::tuple<Asset, AssetFutureYield>> yields;
 
-    // Obtém todos os ativos
     std::vector<std::shared_ptr<Asset>> assets = investmentController.getAllAssets();
 
-    // Preenche os rendimentos futuros
     for (const auto& asset : assets)
     {
         QList<AssetFutureYield> assetYields = getFutureYieldsForTicker(*asset);
@@ -567,9 +569,16 @@ void MainWindow::updateYieldCalendarTable()
             return std::get<1>(a).getPaymentDate() < std::get<1>(b).getPaymentDate();
         });
 
-    // Popula a tabela
     for (const auto& [asset, yield] : yields)
     {
+        int currentMonth = yield.getPaymentDate().month();
+
+        if (currentMonth != lastMonth)
+        {
+            style = (style == HIGHLIGHT_CELL) ? STANDART_CELL : HIGHLIGHT_CELL;
+            lastMonth = currentMonth;
+        }
+
         QDate exYieldDate = yield.getExYieldDate();
         int quantity = asset.getQuantity(nullptr, &exYieldDate);
 
@@ -578,7 +587,7 @@ void MainWindow::updateYieldCalendarTable()
             itens = {asset.getTicker(),
                      exYieldDate.toString("dd/MM/yyyy"),
                      yield.getPaymentDate().toString("dd/MM/yyyy"),
-                     "TYPE", // TODO: Substituir por um método que retorne o tipo correto, se necessário
+                     getYieldTypeString(yield.getYieldType()),
                      formatReais(yield.getValue()),
                      QString::number(yield.getRatio(), 'f', 2),
                      formatReais(quantity * yield.getValue() * yield.getRatio())

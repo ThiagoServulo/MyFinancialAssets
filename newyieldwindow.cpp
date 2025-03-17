@@ -115,6 +115,7 @@ void NewYieldWindow::initComboBoxYieldType(AssetType assetType)
         // Add options for stocks
         ui->comboBox_yieldType->addItem(getYieldTypeString(YieldType::DIVIDENDO));
         ui->comboBox_yieldType->addItem(getYieldTypeString(YieldType::JCP));
+        ui->comboBox_yieldType->addItem(getYieldTypeString(YieldType::REST_CAPITAL));
     }
     else if (assetType == AssetType::FUNDO)
     {

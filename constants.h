@@ -21,7 +21,8 @@ enum class YieldType
 {
     DIVIDENDO,
     JCP,
-    RENDIMENTO
+    RENDIMENTO,
+    REST_CAPITAL
 };
 
 enum class ReorganizationType

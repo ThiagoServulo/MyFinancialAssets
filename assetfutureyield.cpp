@@ -93,7 +93,7 @@ QList<AssetFutureYield> getFutureYieldsForTicker(Asset asset)
 
     if (startIndex == -1 || endIndex == -1)
     {
-        qDebug() << "Table HTML not found!";
+        qDebug() << asset.getTicker() + ": Table HTML not found!";
         return futureYields;
     }
 
@@ -116,21 +116,20 @@ QList<AssetFutureYield> getFutureYieldsForTicker(Asset asset)
                 // Extract payment date and validate if it's a future yield
                 QDate paymentDate = QDate::fromString(match.captured(4).trimmed(), "dd/MM/yyyy");
 
-                if (paymentDate < QDate::currentDate())
+                if (paymentDate < QDate(QDate::currentDate().year(), QDate::currentDate().month(), 1))
                 {
-                    break; // Stop processing past yields
+                    // Stop processing past yields
+                    break;
                 }
 
                 // Extract and convert relevant fields
                 double value = match.captured(2).trimmed().replace(',', '.').toDouble();
-                QString type = match.captured(3).trimmed();
+                YieldType type = getYieldTypeFromString(match.captured(3).trimmed());
                 QDate exYieldDate = QDate::fromString(match.captured(1).trimmed(), "dd/MM/yyyy");
                 int ratio = match.captured(5).trimmed().toInt();
 
-                qDebug() << type;
-
                 // Create an AssetFutureYield object and add it to the list
-                AssetFutureYield yield = AssetFutureYield(exYieldDate, paymentDate, YieldType::DIVIDENDO, value, ratio);
+                AssetFutureYield yield = AssetFutureYield(exYieldDate, paymentDate, type, value, ratio);
 
                 futureYields.append(yield);
             }
@@ -149,7 +148,7 @@ QList<AssetFutureYield> getFutureYieldsForTicker(Asset asset)
             // Extract payment date and validate if it's a future yield
             QDate paymentDate = QDate::fromString(match.captured(3).trimmed(), "dd/MM/yyyy");
 
-            if (paymentDate < QDate::currentDate())
+            if (paymentDate < QDate(QDate::currentDate().year(), QDate::currentDate().month(), 1))
             {
                 // Stop processing past yields
                 break;
