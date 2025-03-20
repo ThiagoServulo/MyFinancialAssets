@@ -502,72 +502,7 @@ void MainWindow::on_actionAnnualResult_triggered()
 
 void MainWindow::on_tableWidget_stocks_customContextMenuRequested(const QPoint &pos)
 {
-    // Get index
-    QModelIndex index = ui->tableWidget_stocks->indexAt(pos);
-
-    // Check index
-    if (!index.isValid())
-    {
-        return;
-    }
-
-    // Get current row
-    int row = index.row();
-
-    // Create actions
-    QMenu contextMenu;
-    QAction *actionEditValue = contextMenu.addAction("Editar preço atual");
-    QAction *actionNewYield = contextMenu.addAction("Adicionar rendimento");
-    QAction *actionDelete = contextMenu.addAction("Excluir ativo");
-
-    QAction *selectedAction = contextMenu.exec(ui->tableWidget_stocks->viewport()->mapToGlobal(pos));
-
-    if (selectedAction == actionEditValue)
-    {
-        EditValueWindow *editValueWindow = new EditValueWindow(
-                    investmentController.getAsset(ui->tableWidget_stocks->item(row, 0)->text()).get(), this);
-        editValueWindow->setAttribute(Qt::WA_DeleteOnClose);
-        connect(editValueWindow, &QObject::destroyed, this, &MainWindow::updateSotckAndFundTable);
-        editValueWindow->show();
-    }
-    else if(selectedAction == actionNewYield)
-    {
-        QString ticker = ui->tableWidget_stocks->item(row, 0)->text();
-        Asset asset = Asset(ticker, AssetType::ACAO, 0);
-        NewYieldWindow *newYieldWindow = new NewYieldWindow(&investmentController, &asset, this);
-        newYieldWindow->setAttribute(Qt::WA_DeleteOnClose);
-        connect(newYieldWindow, &QObject::destroyed, this, &MainWindow::updateSotckAndFundTable);
-        newYieldWindow->show();
-    }
-    else if(selectedAction == actionDelete)
-    {
-        QString ticker = ui->tableWidget_stocks->item(row, 0)->text();
-
-        QMessageBox::StandardButton reply;
-        reply = QMessageBox::question(this, "Atenção",
-                                      "Deseja excluir o ativo " + ticker + " ?",
-                                      QMessageBox::Yes | QMessageBox::No);
-
-        if(reply == QMessageBox::Yes)
-        {
-            Database database;
-            if(database.deleteAsset(ticker))
-            {
-                // Show message box
-                QMessageBox::information(this, "Sucesso", "Ativo excluído com sucesso");
-
-                // Delete Asset
-                investmentController.removeAsset(ticker);
-
-                // Update table
-                updateSotckAndFundTable();
-            }
-            else
-            {
-                QMessageBox::information(this, "Erro", "Erro ao excluir ativo");
-            }
-        }
-    }
+    processSotckAndFundTableActions(ui->tableWidget_stocks, pos);
 }
 
 void MainWindow::updateYieldCalendarTable()
@@ -628,8 +563,13 @@ void MainWindow::updateYieldCalendarTable()
 
 void MainWindow::on_tableWidget_funds_customContextMenuRequested(const QPoint &pos)
 {
+    processSotckAndFundTableActions(ui->tableWidget_funds, pos);
+}
+
+void MainWindow::processSotckAndFundTableActions(QTableWidget *table, const QPoint &pos)
+{
     // Get index
-    QModelIndex index = ui->tableWidget_funds->indexAt(pos);
+    QModelIndex index = table->indexAt(pos);
 
     // Check index
     if (!index.isValid())
@@ -644,28 +584,53 @@ void MainWindow::on_tableWidget_funds_customContextMenuRequested(const QPoint &p
     QMenu contextMenu;
     QAction *actionEditValue = contextMenu.addAction("Editar preço atual");
     QAction *actionNewYield = contextMenu.addAction("Adicionar rendimento");
+    QAction *actionDelete = contextMenu.addAction("Excluir ativo");
 
-    // TODO: Excluir fundo
-    //QAction *actionEdit = contextMenu.addAction("Excluir");
-
-    QAction *selectedAction = contextMenu.exec(ui->tableWidget_funds->viewport()->mapToGlobal(pos));
+    QAction *selectedAction = contextMenu.exec(table->viewport()->mapToGlobal(pos));
+    QString ticker = table->item(row, 0)->text();
 
     if (selectedAction == actionEditValue)
     {
-        EditValueWindow *editValueWindow = new EditValueWindow(
-                    investmentController.getAsset(ui->tableWidget_funds->item(row, 0)->text()).get(), this);
+        Asset *asset = investmentController.getAsset(ticker).get();
+        EditValueWindow *editValueWindow = new EditValueWindow(asset, this);
         editValueWindow->setAttribute(Qt::WA_DeleteOnClose);
         connect(editValueWindow, &QObject::destroyed, this, &MainWindow::updateSotckAndFundTable);
         editValueWindow->show();
     }
     else if(selectedAction == actionNewYield)
     {
-        QString ticker = ui->tableWidget_funds->item(row, 0)->text();
-        Asset asset = Asset(ticker, AssetType::FUNDO, 0);
-        NewYieldWindow *newYieldWindow = new NewYieldWindow(&investmentController, &asset, this);
+        Asset *asset = investmentController.getAsset(ticker).get();
+        NewYieldWindow *newYieldWindow = new NewYieldWindow(&investmentController, asset, this);
         newYieldWindow->setAttribute(Qt::WA_DeleteOnClose);
         connect(newYieldWindow, &QObject::destroyed, this, &MainWindow::updateSotckAndFundTable);
         newYieldWindow->show();
+    }
+    else if(selectedAction == actionDelete)
+    {
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "Atenção",
+                                      "Deseja excluir o ativo " + ticker + " ?",
+                                      QMessageBox::Yes | QMessageBox::No);
+
+        if(reply == QMessageBox::Yes)
+        {
+            Database database;
+            if(database.deleteAsset(ticker))
+            {
+                // Show message box
+                QMessageBox::information(this, "Sucesso", "Ativo excluído com sucesso");
+
+                // Delete Asset
+                investmentController.removeAsset(ticker);
+
+                // Update table
+                updateSotckAndFundTable();
+            }
+            else
+            {
+                QMessageBox::information(this, "Erro", "Erro ao excluir ativo");
+            }
+        }
     }
 }
 

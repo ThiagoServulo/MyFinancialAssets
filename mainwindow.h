@@ -45,6 +45,7 @@ private:
     void updateFixedIncomeTable();
     void updateGeneralTable();
     void updateYieldCalendarTable();
+    void processSotckAndFundTableActions(QTableWidget *table, const QPoint &pos);
 
 };
 #endif // MAINWINDOW_H
