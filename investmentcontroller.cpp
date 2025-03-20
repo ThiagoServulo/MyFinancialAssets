@@ -339,3 +339,13 @@ void InvestmentController::removeTickerYield(QString ticker, Yield yield)
         }
     }
 }
+
+void InvestmentController::removeAsset(QString ticker)
+{
+    assets.erase(std::remove_if(assets.begin(), assets.end(),
+                                [&](const std::shared_ptr<Asset>& asset)
+                                {
+                                    return asset->getTicker() == ticker;
+                                }),
+                 assets.end());
+}

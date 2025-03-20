@@ -989,3 +989,72 @@ bool Database::deleteYield(QString ticker, YieldType type, QDate date, double va
         return false;
     }
 }
+
+bool Database::deleteAsset(QString ticker)
+{
+    if (openDatabase())
+    {
+        QSqlQuery query;
+
+        // Get id_ticker
+        query.prepare("SELECT id FROM ticker_table WHERE ticker = :ticker");
+        query.bindValue(":ticker", ticker);
+
+        if (!query.exec() || !query.next())
+        {
+            qDebug() << "Erro getting ticker id";
+            return false;
+        }
+
+        int id_ticker = query.value(0).toInt();
+
+        // Prepare the query
+        query.prepare(R"(
+            DELETE FROM yield_table
+            WHERE id_ticker = :id_ticker
+        )");
+        query.bindValue(":id_ticker", id_ticker);
+
+        // Execute query
+        if (!query.exec())
+        {
+            qDebug() << "Error deleting yield from yield_table";
+            return false;
+        }
+
+        // Prepare the query
+        query.prepare(R"(
+            DELETE FROM transaction_table
+            WHERE id_ticker = :id_ticker
+        )");
+        query.bindValue(":id_ticker", id_ticker);
+
+        // Execute query
+        if (!query.exec())
+        {
+            qDebug() << "Error deleting transaction from transaction_table";
+            return false;
+        }
+
+        // Prepare the query
+        query.prepare(R"(
+            DELETE FROM ticker_table
+            WHERE id = :id_ticker
+        )");
+        query.bindValue(":id", id_ticker);
+
+        // Execute query
+        if (!query.exec())
+        {
+            qDebug() << "Error deleting ticker from ticker_table";
+            return false;
+        }
+
+        return true;
+    }
+    else
+    {
+        qDebug() << "Error opening database to delete asset";
+        return false;
+    }
+}

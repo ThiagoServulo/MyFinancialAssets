@@ -40,6 +40,7 @@ public:
     std::shared_ptr<FinancialInstitution> getFinancialInstitution(QString name);
     void removeTickerTransaction(QString ticker, Transaction transaction);
     void removeTickerYield(QString ticker, Yield yield);
+    void removeAsset(QString ticker);
 };
 
 #endif // INVESTMENTCONTROLLER_H

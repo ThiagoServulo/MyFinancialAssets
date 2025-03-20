@@ -518,9 +518,7 @@ void MainWindow::on_tableWidget_stocks_customContextMenuRequested(const QPoint &
     QMenu contextMenu;
     QAction *actionEditValue = contextMenu.addAction("Editar preço atual");
     QAction *actionNewYield = contextMenu.addAction("Adicionar rendimento");
-
-    // TODO: Excluir ação
-    //QAction *actionEdit = contextMenu.addAction("Excluir");
+    QAction *actionDelete = contextMenu.addAction("Excluir ativo");
 
     QAction *selectedAction = contextMenu.exec(ui->tableWidget_stocks->viewport()->mapToGlobal(pos));
 
@@ -540,6 +538,35 @@ void MainWindow::on_tableWidget_stocks_customContextMenuRequested(const QPoint &
         newYieldWindow->setAttribute(Qt::WA_DeleteOnClose);
         connect(newYieldWindow, &QObject::destroyed, this, &MainWindow::updateSotckAndFundTable);
         newYieldWindow->show();
+    }
+    else if(selectedAction == actionDelete)
+    {
+        QString ticker = ui->tableWidget_stocks->item(row, 0)->text();
+
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "Atenção",
+                                      "Deseja excluir o ativo " + ticker + " ?",
+                                      QMessageBox::Yes | QMessageBox::No);
+
+        if(reply == QMessageBox::Yes)
+        {
+            Database database;
+            if(database.deleteAsset(ticker))
+            {
+                // Show message box
+                QMessageBox::information(this, "Sucesso", "Ativo excluído com sucesso");
+
+                // Delete Asset
+                investmentController.removeAsset(ticker);
+
+                // Update table
+                updateSotckAndFundTable();
+            }
+            else
+            {
+                QMessageBox::information(this, "Erro", "Erro ao excluir ativo");
+            }
+        }
     }
 }
 
