@@ -598,3 +598,47 @@ void MainWindow::updateYieldCalendarTable()
         }
     }
 }
+
+void MainWindow::on_tableWidget_funds_customContextMenuRequested(const QPoint &pos)
+{
+    // Get index
+    QModelIndex index = ui->tableWidget_funds->indexAt(pos);
+
+    // Check index
+    if (!index.isValid())
+    {
+        return;
+    }
+
+    // Get current row
+    int row = index.row();
+
+    // Create actions
+    QMenu contextMenu;
+    QAction *actionEditValue = contextMenu.addAction("Editar preço atual");
+    QAction *actionNewYield = contextMenu.addAction("Adicionar rendimento");
+
+    // TODO: Excluir fundo
+    //QAction *actionEdit = contextMenu.addAction("Excluir");
+
+    QAction *selectedAction = contextMenu.exec(ui->tableWidget_funds->viewport()->mapToGlobal(pos));
+
+    if (selectedAction == actionEditValue)
+    {
+        EditValueWindow *editValueWindow = new EditValueWindow(
+                    investmentController.getAsset(ui->tableWidget_funds->item(row, 0)->text()).get(), this);
+        editValueWindow->setAttribute(Qt::WA_DeleteOnClose);
+        connect(editValueWindow, &QObject::destroyed, this, &MainWindow::updateSotckAndFundTable);
+        editValueWindow->show();
+    }
+    else if(selectedAction == actionNewYield)
+    {
+        QString ticker = ui->tableWidget_funds->item(row, 0)->text();
+        Asset asset = Asset(ticker, AssetType::FUNDO, 0);
+        NewYieldWindow *newYieldWindow = new NewYieldWindow(&investmentController, &asset, this);
+        newYieldWindow->setAttribute(Qt::WA_DeleteOnClose);
+        connect(newYieldWindow, &QObject::destroyed, this, &MainWindow::updateSotckAndFundTable);
+        newYieldWindow->show();
+    }
+}
+
