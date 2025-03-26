@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "fixedincome.h"
+#include "investmentcontroller.h"
 
 namespace Ui {
 class UpdateFixedIncomeWindow;
@@ -13,7 +14,9 @@ class UpdateFixedIncomeWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit UpdateFixedIncomeWindow(FixedIncome *fixedIncome, QWidget *parent = nullptr);
+    explicit UpdateFixedIncomeWindow(FixedIncome *fixedIncome,
+                                     InvestmentController *investmentController,
+                                     QWidget *parent = nullptr);
     ~UpdateFixedIncomeWindow();
 
 private slots:
@@ -25,6 +28,7 @@ private slots:
 private:
     Ui::UpdateFixedIncomeWindow *ui;
     FixedIncome *fixedIncome;
+    InvestmentController *investmentController;
 };
 
 #endif // UPDATEFIXEDINCOMEWINDOW_H

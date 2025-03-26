@@ -29,6 +29,7 @@ public:
     bool deleteTransaction(QString ticker, TransactionType type, QDate date, int quantity, double price);
     bool deleteYield(QString ticker, YieldType type, QDate date, double value);
     bool deleteAsset(QString ticker);
+    bool deleteFixedIncome(FixedIncome *fixedIncome);
 
 private:
     QSqlDatabase database;

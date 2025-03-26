@@ -41,6 +41,7 @@ public:
     void removeTickerTransaction(QString ticker, Transaction transaction);
     void removeTickerYield(QString ticker, Yield yield);
     void removeAsset(QString ticker);
+    bool deleteFixedIncome(FixedIncome* fixedIncome);
 };
 
 #endif // INVESTMENTCONTROLLER_H

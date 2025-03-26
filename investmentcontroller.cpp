@@ -349,3 +349,18 @@ void InvestmentController::removeAsset(QString ticker)
                                 }),
                  assets.end());
 }
+
+bool InvestmentController::deleteFixedIncome(FixedIncome* fixedIncome)
+{
+    for (auto it = fixedIncomes.begin(); it != fixedIncomes.end(); ++it)
+    {
+        if (it->get() == fixedIncome)
+        {
+            fixedIncomes.erase(it);
+            return true;
+        }
+    }
+
+    qDebug() << "Error: Fixed income not found for deletion";
+    return false;
+}

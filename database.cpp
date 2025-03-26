@@ -935,11 +935,9 @@ bool Database::deleteTransaction(QString ticker, TransactionType type, QDate dat
 
         return true;
     }
-    else
-    {
-        qDebug() << "Error opening database to delete transaction";
-        return false;
-    }
+
+    qDebug() << "Error opening database to delete transaction";
+    return false;
 }
 
 bool Database::deleteYield(QString ticker, YieldType type, QDate date, double value)
@@ -983,11 +981,9 @@ bool Database::deleteYield(QString ticker, YieldType type, QDate date, double va
 
         return true;
     }
-    else
-    {
-        qDebug() << "Error opening database to delete yield";
-        return false;
-    }
+
+    qDebug() << "Error opening database to delete yield";
+    return false;
 }
 
 bool Database::deleteAsset(QString ticker)
@@ -1052,9 +1048,42 @@ bool Database::deleteAsset(QString ticker)
 
         return true;
     }
-    else
+
+    qDebug() << "Error opening database to delete asset";
+    return false;
+}
+
+bool Database::deleteFixedIncome(FixedIncome *fixedIncome)
+{
+    if(openDatabase())
     {
-        qDebug() << "Error opening database to delete asset";
-        return false;
+        QSqlQuery query;
+
+        // Prepare the SQL insert query
+        query.prepare(R"(DELETE FROM fixed_income_table WHERE
+                      description = :description AND
+                      purchase_date = :purchase_date AND
+                      limit_date = :limit_date AND
+                      invested_value = :invested_value)");
+
+        // Bind values to the query
+        query.bindValue(":description", fixedIncome->getDescription());
+        query.bindValue(":purchase_date", fixedIncome->getPurchaseDate());
+        query.bindValue(":limit_date", fixedIncome->getLimitDate());
+        query.bindValue(":invested_value", fixedIncome->getInvestedValue());
+
+        // Execute the query and check for success
+        if (!query.exec())
+        {
+            qDebug() << "Erro to delete fixed income";
+            closeDatabase();
+            return false;
+        }
+
+        closeDatabase();
+        return true;
     }
+
+    qDebug() << "Error to open database to delete fixed income";
+    return false;
 }

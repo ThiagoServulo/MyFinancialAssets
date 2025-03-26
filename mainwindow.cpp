@@ -320,7 +320,8 @@ void MainWindow::on_tableWidget_fixedIncome_cellDoubleClicked(int row, int colum
     if(description != "Total")
     {
         UpdateFixedIncomeWindow *fixedIncomeWindow =
-                new UpdateFixedIncomeWindow(investmentController.getFixedIncome(purchaseDate, description).get(), this);
+                new UpdateFixedIncomeWindow(investmentController.getFixedIncome(purchaseDate, description).get(),
+                                            &investmentController, this);
         fixedIncomeWindow->setAttribute(Qt::WA_DeleteOnClose);
         connect(fixedIncomeWindow, &QObject::destroyed, this, &MainWindow::updateFixedIncomeTable);
         fixedIncomeWindow->show();

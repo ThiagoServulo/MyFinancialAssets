@@ -3,7 +3,9 @@
 #include "database.h"
 #include <QMessageBox>
 
-UpdateFixedIncomeWindow::UpdateFixedIncomeWindow(FixedIncome *fixedIncome, QWidget *parent) :
+UpdateFixedIncomeWindow::UpdateFixedIncomeWindow(FixedIncome *fixedIncome,
+                                                 InvestmentController *investmentController,
+                                                 QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::UpdateFixedIncomeWindow)
 {
@@ -13,6 +15,9 @@ UpdateFixedIncomeWindow::UpdateFixedIncomeWindow(FixedIncome *fixedIncome, QWidg
 
     // Set fixed income
     this->fixedIncome = fixedIncome;
+
+    // Set investment controller
+    this->investmentController = investmentController;
 
     // Set labels style
     ui->label_description->setStyleSheet("color: rgb(255, 255, 255);");
@@ -139,7 +144,25 @@ void UpdateFixedIncomeWindow::on_pushButton_conclude_clicked()
 
 void UpdateFixedIncomeWindow::on_pushButton_remove_clicked()
 {
-    // TODO: Será implementado na versão 2
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "Atenção", "Deseja excluir esse investimento?",
+                                  QMessageBox::Yes | QMessageBox::No);
+
+    if(reply == QMessageBox::Yes)
+    {
+        Database database;
+        if(database.deleteFixedIncome(fixedIncome))
+        {
+            QMessageBox::information(this, "Sucesso", "Investimento excluído com sucesso");
+
+            investmentController->deleteFixedIncome(fixedIncome);
+            this->close();
+        }
+        else
+        {
+            QMessageBox::information(this, "Erro", "Erro ao excluir investimento");
+        }
+    }
 }
 
 void UpdateFixedIncomeWindow::on_pushButton_cancel_clicked()
