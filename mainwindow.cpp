@@ -103,7 +103,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_actionTransaction_triggered()
 {
-    NewTransactionWindow *newTransactionWindow = new NewTransactionWindow(&investmentController, this);
+    NewTransactionWindow *newTransactionWindow = new NewTransactionWindow(&investmentController, nullptr, this);
     newTransactionWindow->setAttribute(Qt::WA_DeleteOnClose);
     connect(newTransactionWindow, &QObject::destroyed, this, &MainWindow::updateSotckAndFundTable);
     newTransactionWindow->show();
@@ -585,6 +585,7 @@ void MainWindow::processSotckAndFundTableActions(QTableWidget *table, const QPoi
     QMenu contextMenu;
     QAction *actionEditValue = contextMenu.addAction("Editar preço atual");
     QAction *actionNewYield = contextMenu.addAction("Adicionar rendimento");
+    QAction *actionNewTransaction = contextMenu.addAction("Adicionar transação");
     QAction *actionDelete = contextMenu.addAction("Excluir ativo");
 
     QAction *selectedAction = contextMenu.exec(table->viewport()->mapToGlobal(pos));
@@ -605,6 +606,14 @@ void MainWindow::processSotckAndFundTableActions(QTableWidget *table, const QPoi
         newYieldWindow->setAttribute(Qt::WA_DeleteOnClose);
         connect(newYieldWindow, &QObject::destroyed, this, &MainWindow::updateSotckAndFundTable);
         newYieldWindow->show();
+    }
+    else if(selectedAction == actionNewTransaction)
+    {
+        Asset *asset = investmentController.getAsset(ticker).get();
+        NewTransactionWindow *newTransactionWindow = new NewTransactionWindow(&investmentController, asset, this);
+        newTransactionWindow->setAttribute(Qt::WA_DeleteOnClose);
+        connect(newTransactionWindow, &QObject::destroyed, this, &MainWindow::updateSotckAndFundTable);
+        newTransactionWindow->show();
     }
     else if(selectedAction == actionDelete)
     {

@@ -7,7 +7,8 @@
 #include <QIntValidator>
 #include <QMessageBox>
 
-NewTransactionWindow::NewTransactionWindow(InvestmentController *investmentController, QWidget *parent) :
+NewTransactionWindow::NewTransactionWindow(InvestmentController *investmentController,
+                                           Asset *asset, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::NewTransactionWindow)
 {
@@ -78,6 +79,14 @@ NewTransactionWindow::NewTransactionWindow(InvestmentController *investmentContr
     QDate currentDate = QDate::currentDate();
     ui->dateEdit->setDisplayFormat("dd/MM/yyyy");
     ui->dateEdit->setDate(currentDate);
+
+    if(asset != nullptr)
+    {
+        ui->lineEdit_ticker->setText(asset->getTicker());
+        ui->lineEdit_ticker->setReadOnly(true);
+        ui->comboBox_assetType->setCurrentText(getAssetTypeString(asset->getAssetType()));
+        ui->comboBox_assetType->setEnabled(false);
+    }
 }
 
 NewTransactionWindow::~NewTransactionWindow()
