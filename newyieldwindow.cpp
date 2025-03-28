@@ -4,7 +4,7 @@
 #include <QMessageBox>
 #include "basics.h"
 
-NewYieldWindow::NewYieldWindow(InvestmentController *investmentController, Asset *asset, QWidget *parent) :
+NewYieldWindow::NewYieldWindow(InvestmentController *investmentController, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::NewYieldWindow)
 {
@@ -26,14 +26,22 @@ NewYieldWindow::NewYieldWindow(InvestmentController *investmentController, Asset
     ui->pushButton_cancel->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255);");
 
     // Set combo box style
-    ui->comboBox_yieldType->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); border: 1px solid rgb(50, 50, 50);");
-    ui->comboBox_asset->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); border: 1px solid rgb(50, 50, 50);");
+    ui->comboBox_yieldType->setStyleSheet("background-color: rgb(50, 50, 50); "
+                                          "color: rgb(255, 255, 255); "
+                                          "border: 1px solid rgb(50, 50, 50);");
+    ui->comboBox_asset->setStyleSheet("background-color: rgb(50, 50, 50); "
+                                      "color: rgb(255, 255, 255); "
+                                      "border: 1px solid rgb(50, 50, 50);");
 
     // Set data edit style
-    ui->dateEdit->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); border: 1px solid rgb(50, 50, 50);");
+    ui->dateEdit->setStyleSheet("background-color: rgb(50, 50, 50); "
+                                "color: rgb(255, 255, 255); "
+                                "border: 1px solid rgb(50, 50, 50);");
 
     // Set line edit style
-    ui->lineEdit_value->setStyleSheet("background-color: rgb(50, 50, 50); color: rgb(255, 255, 255); border: 1px solid rgb(50, 50, 50);");
+    ui->lineEdit_value->setStyleSheet("background-color: rgb(50, 50, 50); "
+                                      "color: rgb(255, 255, 255); "
+                                      "border: 1px solid rgb(50, 50, 50);");
 
     // Create value validator
     QRegularExpression regexValue(R"(\d{0,4}([.]\d{0,2})?)");
@@ -47,12 +55,27 @@ NewYieldWindow::NewYieldWindow(InvestmentController *investmentController, Asset
 
     // Init combo box assets
     initComboBoxAssets(ui->comboBox_asset, investmentController);
+}
 
-    if(asset != nullptr)
+NewYieldWindow::NewYieldWindow(InvestmentController *investmentController, Asset *asset, QWidget *parent) :
+    NewYieldWindow(investmentController, parent)
+{
+    if (asset != nullptr)
     {
         ui->comboBox_asset->setCurrentText(asset->getTicker());
         ui->comboBox_asset->setEnabled(false);
         initComboBoxYieldType(asset->getAssetType());
+    }
+}
+
+NewYieldWindow::NewYieldWindow(InvestmentController *investmentController, Yield *yield, Asset *asset, QWidget *parent) :
+    NewYieldWindow(investmentController, asset, parent)
+{
+    if (yield != nullptr)
+    {
+        ui->comboBox_yieldType->setCurrentText(getYieldTypeString(yield->getYieldType()));
+        ui->lineEdit_value->setText(QString::number(yield->getValue()));
+        ui->dateEdit->setDate(yield->getDate());
     }
 }
 

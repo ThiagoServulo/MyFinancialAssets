@@ -94,6 +94,7 @@ MainWindow::MainWindow(QWidget *parent)
     // Change table policy
     ui->tableWidget_stocks->setContextMenuPolicy(Qt::CustomContextMenu);
     ui->tableWidget_funds->setContextMenuPolicy(Qt::CustomContextMenu);
+    ui->tableWidget_yieldCalendar->setContextMenuPolicy(Qt::CustomContextMenu);
 }
 
 MainWindow::~MainWindow()
@@ -111,7 +112,7 @@ void MainWindow::on_actionTransaction_triggered()
 
 void MainWindow::on_actionYield_triggered()
 {
-    NewYieldWindow *newYieldWindow = new NewYieldWindow(&investmentController, nullptr, this);
+    NewYieldWindow *newYieldWindow = new NewYieldWindow(&investmentController, this);
     newYieldWindow->setAttribute(Qt::WA_DeleteOnClose);
     connect(newYieldWindow, &QObject::destroyed, this, &MainWindow::updateSotckAndFundTable);
     newYieldWindow->show();
@@ -641,6 +642,43 @@ void MainWindow::processSotckAndFundTableActions(QTableWidget *table, const QPoi
                 QMessageBox::information(this, "Erro", "Erro ao excluir ativo");
             }
         }
+    }
+}
+
+void MainWindow::on_tableWidget_yieldCalendar_customContextMenuRequested(const QPoint &pos)
+{
+    // Get index
+    QModelIndex index = ui->tableWidget_yieldCalendar->indexAt(pos);
+
+    // Check index
+    if (!index.isValid())
+    {
+        return;
+    }
+
+    // Get current row
+    int row = index.row();
+
+    // Create actions
+    QMenu contextMenu;
+    QAction *actionNewYield = contextMenu.addAction("Lançar rendimento");
+
+    QAction *selectedAction = contextMenu.exec(ui->tableWidget_yieldCalendar->viewport()->mapToGlobal(pos));
+
+    if (selectedAction == actionNewYield)
+    {
+        QString ticker = ui->tableWidget_yieldCalendar->item(row, 0)->text();
+        QDate paymentDate = QDate::fromString(ui->tableWidget_yieldCalendar->item(row, 2)->text(), "dd/MM/yyyy");
+        YieldType type = getYieldTypeFromString(ui->tableWidget_yieldCalendar->item(row, 3)->text());
+        double value = formatDouble(ui->tableWidget_yieldCalendar->item(row, 6)->text());
+
+        Asset *asset = investmentController.getAsset(ticker).get();
+        Yield *yield = new Yield(paymentDate, type, value);
+
+        NewYieldWindow *newYieldWindow = new NewYieldWindow(&investmentController, yield, asset, this);
+        newYieldWindow->setAttribute(Qt::WA_DeleteOnClose);
+        connect(newYieldWindow, &QObject::destroyed, this, &MainWindow::updateSotckAndFundTable);
+        newYieldWindow->show();
     }
 }
 

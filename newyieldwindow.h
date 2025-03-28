@@ -16,7 +16,9 @@ class NewYieldWindow : public QMainWindow
     Q_OBJECT
 
 public:
+    explicit NewYieldWindow(InvestmentController *investmentController, QWidget *parent = nullptr);
     explicit NewYieldWindow(InvestmentController *investmentController, Asset *asset, QWidget *parent = nullptr);
+    explicit NewYieldWindow(InvestmentController *investmentController, Yield *yield, Asset *asset, QWidget *parent = nullptr);
     ~NewYieldWindow();
 
 private slots:

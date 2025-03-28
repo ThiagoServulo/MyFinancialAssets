@@ -36,6 +36,7 @@ private slots:
     void on_actionAnnualResult_triggered();
     void on_tableWidget_stocks_customContextMenuRequested(const QPoint &pos);
     void on_tableWidget_funds_customContextMenuRequested(const QPoint &pos);
+    void on_tableWidget_yieldCalendar_customContextMenuRequested(const QPoint &pos);
 
 private:
     Ui::MainWindow *ui;
